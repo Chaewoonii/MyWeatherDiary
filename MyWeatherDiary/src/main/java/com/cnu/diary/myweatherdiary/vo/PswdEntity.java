@@ -2,7 +2,7 @@ package com.cnu.diary.myweatherdiary.vo;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+@ToString
 @Entity(name="tbl_pswd")
 @Getter
 @Builder
