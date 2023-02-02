@@ -1,5 +1,5 @@
 package com.cnu.diary.myweatherdiary.pswd;
-
+//pswd
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
