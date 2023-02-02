@@ -5,10 +5,24 @@
     <title>Title</title>
 </head>
 <body>
+
+
 <p>hello!<br>
 안녕하세요! index페이지 입니다</p>
+<br>
+<p>Enter Your Password</p>
+<form th:action="@{/createNew}" th:object="${pswdEntity}" method="post">
+    <input type="text" th:field="*{pswd}" placeholder="test1234#$%^@" th:errorclass="fieldError">
+    <button type="submit">submit</button>
+</form>
 
-<a th:href="@{/test}">test</a>
+<div id="enter_pswd"></div>
 
+<!-- Load React. -->
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+
+<!-- Load our React component. -->
+<script src="./js/index.js"></script>
 </body>
 </html>
