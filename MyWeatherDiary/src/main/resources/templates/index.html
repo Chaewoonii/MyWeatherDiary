@@ -8,7 +8,12 @@
 <p>hello!<br>
 안녕하세요! index페이지 입니다</p>
 
-<a th:href="@{/test}">test</a>
+<h3>비밀번호 입력</h3>
+<form th:action="@{/createNew}" th:object="${pswdEntity}" method="post">
+    <input type="text" th:field="*{pswd}" placeholder="test1234@#" th:errorclass="fieldError">
+    <button type="submit">submit</button>
+</form>
+
 
 </body>
 </html>
