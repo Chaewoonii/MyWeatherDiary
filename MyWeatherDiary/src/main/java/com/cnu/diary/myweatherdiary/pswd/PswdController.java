@@ -1,4 +1,4 @@
-package com.cnu.diary.myweatherdiary.test;
+package com.cnu.diary.myweatherdiary.pswd;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,13 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-public class MainController {
+public class PswdController {
     @Autowired
-    MainService mainService;
+    PswdService mainService;
 
     @RequestMapping("/")
     public ModelAndView index(){

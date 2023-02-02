@@ -1,4 +1,4 @@
-package com.cnu.diary.myweatherdiary.test;
+package com.cnu.diary.myweatherdiary.pswd;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 
 @Service
 @RequiredArgsConstructor
-public class MainService {
+public class PswdService {
 
     @Autowired
     private final PswdRepository pswdRepo;

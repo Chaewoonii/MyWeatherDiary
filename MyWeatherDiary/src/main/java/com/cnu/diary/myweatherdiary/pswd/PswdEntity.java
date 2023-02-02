@@ -1,4 +1,4 @@
-package com.cnu.diary.myweatherdiary.test;
+package com.cnu.diary.myweatherdiary.pswd;
 
 import jakarta.persistence.*;
 import lombok.*;
