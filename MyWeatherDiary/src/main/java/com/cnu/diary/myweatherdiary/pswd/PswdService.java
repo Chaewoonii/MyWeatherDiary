@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,5 +28,11 @@ public class PswdService {
     @GetMapping("tbl_pswd")
     public Iterable<PswdEntity> findAll(){
         return pswdRepo.findAll();
+    }
+
+    @Transactional
+    @GetMapping("tbl_pswd")
+    public Optional<PswdEntity> getInfo(long id) {
+        return pswdRepo.findById(id);
     }
 }

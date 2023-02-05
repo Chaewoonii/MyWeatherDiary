@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
+
 
 @RestController
 @AllArgsConstructor
@@ -25,6 +27,11 @@ public class PswdController {
     public PswdEntity createNew(PswdEntity pswdEntity) throws RuntimeException, NoSuchAlgorithmException {
         System.out.println("createNew init");
         return mainService.createNew(pswdEntity);
+    }
+
+    @GetMapping("/{id}")
+    public PswdEntity getInfo(@PathVariable long id){
+        return mainService.getInfo(id).orElseThrow(() -> new IllegalArgumentException("illegal argument :" + id));
     }
 
 }
