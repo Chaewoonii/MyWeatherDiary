@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -29,9 +30,14 @@ public class PswdController {
         return mainService.createNew(pswdEntity);
     }
 
-    @PostMapping("/find/{id}")
-    public PswdEntity getInfo(@PathVariable("id") long id){
+    @PostMapping("/update/{id}")
+    public PswdEntity update(@PathVariable("id") long id){
         return mainService.getInfo(id);
+    }
+
+    @GetMapping("/getAllInfo")
+    public Iterable<PswdEntity> findAll(){
+        return mainService.findAll();
     }
 
 }
