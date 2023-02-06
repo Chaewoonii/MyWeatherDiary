@@ -13,7 +13,7 @@ public class PswdEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false, unique = true, length = 32)
+    @Column(nullable = false, unique = true, length = 100)
     private String pswd;
 
     public PswdEntity(String pswd){

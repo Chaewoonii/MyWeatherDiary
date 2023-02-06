@@ -13,7 +13,12 @@
     <input type="text" th:field="*{pswd}" placeholder="test1234@#" th:errorclass="fieldError">
     <button type="submit">submit</button>
 </form>
-
-
+<!--
+<form th:action="@{/find/{id}(id=${pswdEntity.id})}" th:object="${pswdEntity}" method="post">
+    <input type="text" th:field="*{id}">
+    <span th:if="${#fields.hasErrors('id')}" th:errors="*{id}"></span>
+    <button type="submit">submit</button>
+</form>
+-->
 </body>
 </html>

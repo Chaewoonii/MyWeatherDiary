@@ -29,9 +29,9 @@ public class PswdController {
         return mainService.createNew(pswdEntity);
     }
 
-    @GetMapping("/{id}")
-    public PswdEntity getInfo(@PathVariable long id){
-        return mainService.getInfo(id).orElseThrow(() -> new IllegalArgumentException("illegal argument :" + id));
+    @PostMapping("/find/{id}")
+    public PswdEntity getInfo(@PathVariable("id") long id){
+        return mainService.getInfo(id);
     }
 
 }

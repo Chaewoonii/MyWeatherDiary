@@ -31,8 +31,9 @@ public class PswdService {
     }
 
     @Transactional
-    @GetMapping("tbl_pswd")
-    public Optional<PswdEntity> getInfo(long id) {
-        return pswdRepo.findById(id);
+    @PostMapping("tbl_pswd")
+    public PswdEntity getInfo(long id) {
+        return pswdRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
     }
 }
