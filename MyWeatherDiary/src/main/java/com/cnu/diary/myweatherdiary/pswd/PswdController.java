@@ -6,21 +6,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Optional;
 
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/auth")
 public class PswdController {
     @Autowired
     PswdService mainService;
 
-    @RequestMapping("/")
+    @RequestMapping("")
     public ModelAndView index(){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject(new PswdEntity());
-        modelAndView.setViewName("index");
+        modelAndView.setViewName("auth");
         return modelAndView;
     }
 

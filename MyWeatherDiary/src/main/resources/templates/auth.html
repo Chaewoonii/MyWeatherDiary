@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="UTF-8" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>auth</title>
+</head>
+<body>
+<h3>비밀번호 입력</h3>
+<form th:action="@{/auth/createNew}" th:object="${pswdEntity}" method="post">
+  <input type="text" th:field="*{pswd}" placeholder="test1234@#" th:errorclass="fieldError">
+  <button type="submit">submit</button>
+</form>
+<a th:href="@{/auth/getAllInfo}">test:getAll</a>
+</body>
+</html>

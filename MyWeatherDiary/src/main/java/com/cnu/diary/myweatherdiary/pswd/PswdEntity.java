@@ -3,7 +3,6 @@ package com.cnu.diary.myweatherdiary.pswd;
 import jakarta.persistence.*;
 import lombok.*;
 
-@ToString
 @Entity(name="tbl_pswd")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
