@@ -36,4 +36,9 @@ public class PswdService {
         return pswdRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
     }
+
+    public Long login(PswdEntity PswdEntity) {
+        Optional<PswdEntity> pw = pswdRepo.authKey(PswdEntity.getPswd());
+        return pw.orElseThrow(() -> new IllegalArgumentException("Invalid key")).getId();
+    }
 }

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="UTF-8" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>posts</title>
+</head>
+<script src="./js/posts.js"></script>
+<body>
+<input type="button" onclick="addPost();">
+<a th:href="@{/diary/posts}">allPost</a>
+
+<form th:action="@{/diary/newpost}" th:object="${postEntity}" method="post">
+    <input type="hidden" th:field="*{pswd_id}">
+</form>
+
+<div id="postForm"></div>
+</body>
+</html>
