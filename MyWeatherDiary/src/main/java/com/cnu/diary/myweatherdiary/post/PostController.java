@@ -1,10 +1,8 @@
 package com.cnu.diary.myweatherdiary.post;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 
 @RestController
 @RequestMapping("/diary")
@@ -13,22 +11,22 @@ public class PostController {
     @Autowired
     PostService postService;
 
-    @GetMapping("")
-    public ModelAndView firstPage(){
+    @PostMapping("/{id}")
+    public ModelAndView myDiary(@PathVariable("id") Long id){
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject(new PostEntity());
+        modelAndView.addObject(new PostEntity(id));
         modelAndView.setViewName("posts");
         return modelAndView;
     }
 
-    @PostMapping("/newpost")
-    public PostEntity newPost(PostEntity post){
-        return postService.postSave(post);
+    @GetMapping({"/timeline/{id}"})
+    public Iterable<PostEntity> getTimelinePost(@PathVariable("id") Long id){
+        return postService.getAllPostsById(id);
     }
 
-    @GetMapping("/posts")
-    public Iterable<PostEntity> getMyPosts(){
-        return postService.getAllPosts();
+    @PostMapping("/addPost")
+    public PostEntity addPost(PostEntity post){
+        return postService.postSave(post);
     }
 
     @GetMapping("/post/{id}")

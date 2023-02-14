@@ -6,12 +6,23 @@
 </head>
 <script src="./js/posts.js"></script>
 <body>
-<input type="button" onclick="addPost();">
-<a th:href="@{/diary/posts}">allPost</a>
 
-<form th:action="@{/diary/newpost}" th:object="${postEntity}" method="post">
-    <input type="hidden" th:field="*{pswd_id}">
+<a th:href="@{/diary/timeline/{id}(id=${postEntity.id})}">timeLinePost</a>
+
+
+<form th:action="@{/diary/addPost}" th:object="${postEntity}" method="post">
+    <input type="text" th:field="*{diary_title}" placeholder="diary_title">
+    <input type="text" th:field="*{post_date}" placeholder="post_date">
+    <select th:field="*{feelings}">
+        <optgroup th:value=5 seleceted>좋음</optgroup>
+        <optgroup th:value=3>보통</optgroup>
+        <optgroup th:value=1>분노</optgroup>
+        <optgroup th:value=1>슬픔</optgroup>
+    </select>
+    <input type="text" th:field="*{post_comment}" placeholder="post_comment">
+    <input type="text" th:field="*{loc_pic}" placeholder="loc_pic">
 </form>
+
 
 <div id="postForm"></div>
 </body>

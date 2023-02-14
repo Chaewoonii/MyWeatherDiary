@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +39,7 @@ public class PswdService {
     }
 
     public Long login(PswdEntity PswdEntity) {
-        Optional<PswdEntity> pw = pswdRepo.authKey(PswdEntity.getPswd());
-        return pw.orElseThrow(() -> new IllegalArgumentException("Invalid key")).getId();
+        Optional<Long> id = Optional.ofNullable(pswdRepo.authKey(PswdEntity.getPswd()));
+        return id.orElseThrow(() -> new IllegalArgumentException("Invalid key"));
     }
 }

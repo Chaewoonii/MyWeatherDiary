@@ -27,9 +27,10 @@ public class PostService {
 
     @Transactional
     @GetMapping("posts")
-    public Iterable<PostEntity> getAllPosts() {
-        return postRepository.findAll();
+    public Iterable<PostEntity> getAllPostsById(Long id) {
+        return postRepository.findAllByPswd_id(id);
     }
+
 
     @Transactional
     @PostMapping("posts")

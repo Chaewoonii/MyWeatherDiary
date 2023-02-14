@@ -1,5 +1,7 @@
 package com.cnu.diary.myweatherdiary.pswd;
 //pswd
+import com.cnu.diary.myweatherdiary.post.PostController;
+import com.cnu.diary.myweatherdiary.post.PostEntity;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.NoSuchAlgorithmException;
+import java.text.MessageFormat;
 import java.util.UUID;
 
 
@@ -17,6 +20,9 @@ public class PswdController {
     @Autowired
     PswdService pswdService;
 
+    @Autowired
+    PostController postController;
+
     @RequestMapping("")
     public ModelAndView index(){
         ModelAndView modelAndView = new ModelAndView();
@@ -25,7 +31,7 @@ public class PswdController {
         return modelAndView;
     }
 
-    @PostMapping("/createNew")
+    @PostMapping("/createx")
     public PswdEntity createNew(PswdEntity pswdEntity) throws RuntimeException, NoSuchAlgorithmException {
         System.out.println("createNew init");
         return pswdService.createNew(pswdEntity);
@@ -41,10 +47,16 @@ public class PswdController {
         return pswdService.findAll();
     }
 
-    @GetMapping("/login")
-    public void login(PswdEntity pswdEntity, HttpSession session){
+    @PostMapping("/login")
+    public ModelAndView login(PswdEntity pswdEntity, HttpSession session){
         String sessionId = UUID.randomUUID().toString();
-        session.setAttribute(sessionId, pswdService.login(pswdEntity));
+        Long id = pswdService.login(pswdEntity);
+        session.setAttribute(sessionId, id);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject(new PostEntity(id));
+        modelAndView.setViewName(MessageFormat.format("redirect:/diary/{0}", id));
+        return modelAndView;
     }
+
 
 }

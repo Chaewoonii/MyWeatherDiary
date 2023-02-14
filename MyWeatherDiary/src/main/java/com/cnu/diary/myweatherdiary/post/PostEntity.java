@@ -13,6 +13,7 @@ import java.sql.Time;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,7 +35,7 @@ public class PostEntity {
     private String loc_pic;
 
 
-    public PostEntity(PswdEntity pswdEntity) {
-        this.pswd_id = pswdEntity.getId();
+    public PostEntity(Long pswd_id) {
+        this.pswd_id = pswd_id;
     }
 }
