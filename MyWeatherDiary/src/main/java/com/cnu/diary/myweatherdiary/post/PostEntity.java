@@ -6,6 +6,9 @@ import lombok.*;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Entity(name = "posts")
@@ -27,8 +30,9 @@ public class PostEntity {
     private Date post_date;
     @Column(nullable = false, length =10)
     private String feelings;
+
     @Column(nullable = false)
-    private Time post_time;
+    private LocalDateTime post_time;
     @Column(length = 300)
     private String post_comment;
     @Column

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.LocalDateTime;
+
 @Service
 public class PostService {
 
@@ -16,6 +18,7 @@ public class PostService {
     @Transactional
     @PostMapping("posts")
     public PostEntity postSave(PostEntity post) {
+        post.setPost_time(LocalDateTime.now());
         return postRepository.save(post);
     }
 

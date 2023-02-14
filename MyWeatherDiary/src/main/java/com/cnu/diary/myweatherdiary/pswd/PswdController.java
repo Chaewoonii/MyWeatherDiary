@@ -48,15 +48,8 @@ public class PswdController {
     }
 
     @PostMapping("/login")
-    public ModelAndView login(PswdEntity pswdEntity, HttpSession session){
-        String sessionId = UUID.randomUUID().toString();
-        Long id = pswdService.login(pswdEntity);
-        session.setAttribute(sessionId, id);
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject(new PostEntity(id));
-        modelAndView.setViewName(MessageFormat.format("redirect:/diary/{0}", id));
-        return modelAndView;
+    public Long login(PswdEntity pswdEntity){
+        return pswdService.login(pswdEntity);
     }
-
 
 }

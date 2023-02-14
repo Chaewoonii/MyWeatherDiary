@@ -11,16 +11,17 @@ public class PostController {
     @Autowired
     PostService postService;
 
-    @PostMapping("/{id}")
-    public ModelAndView myDiary(@PathVariable("id") Long id){
+    @GetMapping("/{pswd_id}")
+    public ModelAndView myDiary(@PathVariable("pswd_id") Long id){
+        System.out.println("**");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject(new PostEntity(id));
         modelAndView.setViewName("posts");
         return modelAndView;
     }
 
-    @GetMapping({"/timeline/{id}"})
-    public Iterable<PostEntity> getTimelinePost(@PathVariable("id") Long id){
+    @GetMapping({"/timeline/{pswd_id}"})
+    public Iterable<PostEntity> getTimelinePost(@PathVariable("pswd_id") Long id){
         return postService.getAllPostsById(id);
     }
 
