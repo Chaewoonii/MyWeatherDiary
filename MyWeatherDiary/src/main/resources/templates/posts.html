@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>posts</title>
 </head>
-<script src="./js/posts.js"></script>
 <body>
 
 <a th:href="@{/diary/timeline/{pswd_id}(pswd_id=${postEntity.pswd_id})}">timeLinePost</a>
@@ -16,15 +15,15 @@
     3. 시간 자동 입력<br>
     4. 시간, 날짜 같이 묶어도 될듯.<br>
     5. UUID로 변경 <br>
-
-    ****
-    프론트에서 다이어리 포스트를 뿌려주는 태그 만들어줘야 수정 만들 수 있음.
-    타임라인 게시물 불러오기 -> 뿌리기 -> 수정버튼(id값) -> 수정화면: 해당 id의 postEntity 정보 수정화면
-    -> 정보 수정 완료버튼 클릭 -> id값과 pswd_id값 동일, postEntity controller에 전달.
-
-    post title 만들어야됨.
-
-    class diagram, er diagram.. 구조짜기..
+    <br>
+    ****<br>
+    프론트에서 다이어리 포스트를 뿌려주는 태그 만들어줘야 수정 만들 수 있음.<br>
+    타임라인 게시물 불러오기 -> 뿌리기 -> 수정버튼(id값) -> 수정화면: 해당 id의 postEntity 정보 수정화면<br>
+    -> 정보 수정 완료버튼 클릭 -> id값과 pswd_id값 동일, postEntity controller에 전달.<br>
+    <br>
+    post title 만들어야됨.<br>
+    <br>
+    class diagram, er diagram.. 구조짜기..<br>
 </p>
 <form th:action="@{/diary/addPost}" th:object="${postEntity}" method="post">
     <input type="hidden" th:field="*{pswd_id}" th:value="${postEntity.pswd_id}">
