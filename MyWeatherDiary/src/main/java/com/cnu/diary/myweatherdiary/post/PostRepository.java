@@ -12,7 +12,8 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity, Long>{
 
-    @Query("select diary_title, feelings, post_comment, post_date, loc_pic from posts where pswd_id = :id")
-    Iterable<PostEntity> findAllByPswd_id(Long id);
+    @Query("select id, diary_title, feelings, post_comment, post_date, loc_pic from posts where pswd_id = :pswd_id")
+    Iterable<PostEntity> findAllByPswd_id(Long pswd_id);
+
 
 }

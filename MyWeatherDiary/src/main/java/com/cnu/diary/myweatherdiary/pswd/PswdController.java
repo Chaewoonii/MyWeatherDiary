@@ -1,16 +1,11 @@
 package com.cnu.diary.myweatherdiary.pswd;
 //pswd
-import com.cnu.diary.myweatherdiary.post.PostController;
-import com.cnu.diary.myweatherdiary.post.PostEntity;
-import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.NoSuchAlgorithmException;
-import java.text.MessageFormat;
-import java.util.UUID;
 
 
 @RestController
@@ -20,9 +15,7 @@ public class PswdController {
     @Autowired
     PswdService pswdService;
 
-    @Autowired
-    PostController postController;
-
+    //첫 페이지
     @RequestMapping("")
     public ModelAndView index(){
         ModelAndView modelAndView = new ModelAndView();
@@ -31,25 +24,29 @@ public class PswdController {
         return modelAndView;
     }
 
-    @PostMapping("/createx")
-    public PswdEntity createNew(PswdEntity pswdEntity) throws RuntimeException, NoSuchAlgorithmException {
+    //다이어리 생성
+    @PostMapping("/create")
+    public PswdEntity createDiary(PswdEntity pswdEntity) throws RuntimeException, NoSuchAlgorithmException {
         System.out.println("createNew init");
         return pswdService.createNew(pswdEntity);
     }
 
+    //정보 수정
     @PostMapping("/update/{id}")
     public PswdEntity update(@PathVariable("id") long id){
         return pswdService.getInfo(id);
     }
 
-    @GetMapping("/getAllInfo")
-    public Iterable<PswdEntity> findAll(){
-        return pswdService.findAll();
-    }
-
+    //로그인(pw입력)
     @PostMapping("/login")
     public Long login(PswdEntity pswdEntity){
         return pswdService.login(pswdEntity);
     }
 
+    /*
+    @GetMapping("/getAllInfo")
+    public Iterable<PswdEntity> findAll(){
+        return pswdService.findAll();
+    }
+    */
 }
