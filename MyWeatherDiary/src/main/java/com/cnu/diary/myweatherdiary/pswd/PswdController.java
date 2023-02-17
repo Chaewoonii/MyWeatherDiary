@@ -16,11 +16,11 @@ public class PswdController {
     PswdService pswdService;
 
     //첫 페이지
-    @RequestMapping("")
+    @GetMapping("")
     public ModelAndView index(){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject(new PswdEntity());
-        modelAndView.setViewName("auth");
+        modelAndView.setViewName("index");
         return modelAndView;
     }
 
