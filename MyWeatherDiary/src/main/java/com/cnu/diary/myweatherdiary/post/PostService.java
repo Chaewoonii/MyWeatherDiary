@@ -37,14 +37,15 @@ public class PostService {
 
     @Transactional
     @PostMapping("posts")
-    public PostEntity modifyPost(Long id, PostEntity post) {
-        PostEntity oldPost = postRepository.getReferenceById(id);
-        oldPost.setFeelings(post.getFeelings());
-        oldPost.setPost_date(post.getPost_date());
-        oldPost.setPost_time(post.getPost_time());
-        oldPost.setPost_comment(post.getPost_comment());
-        oldPost.setLoc_pic(post.getLoc_pic());
-        return postRepository.save(oldPost);
+    public PostEntity modifyPost(PostEntity post) {
+//        PostEntity oldPost = postRepository.getReferenceById(post.getId());
+//        oldPost.setFeelings(post.getFeelings());
+//        oldPost.setPost_date(post.getPost_date());
+//        oldPost.setPost_time(post.getPost_time());
+//        oldPost.setPost_comment(post.getPost_comment());
+//        oldPost.setLoc_pic(post.getLoc_pic());
+        post.setPost_time(LocalDateTime.now());
+        return postRepository.save(post);
     }
 
     @Transactional

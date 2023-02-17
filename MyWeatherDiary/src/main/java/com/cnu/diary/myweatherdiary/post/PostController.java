@@ -29,7 +29,7 @@ public class PostController {
 
     //포스트 생성(db insert)
     @PostMapping("/addPost")
-    public PostEntity addPost(PostEntity post){
+    public PostEntity addPost(@RequestBody PostEntity post){
         return postService.postSave(post);
     }
 
@@ -40,13 +40,14 @@ public class PostController {
     }
 
     //포스트 수정
-    @PostMapping("/post/edit/{id}")
-    public PostEntity editPost(@PathVariable("id") Long id, @RequestBody PostEntity post){
-        return postService.modifyPost(id, post);
+    @PutMapping("/post/edit")
+    public PostEntity editPost(@RequestBody PostEntity post){
+        System.out.println(post.toString());
+        return postService.modifyPost(post);
     }
 
     //포스트 삭제
-    @PostMapping("/remove/{id}")
+    @DeleteMapping("/remove/{id}")
     public void removePost(@PathVariable("id") Long id){
         postService.removePost(id);
     }
