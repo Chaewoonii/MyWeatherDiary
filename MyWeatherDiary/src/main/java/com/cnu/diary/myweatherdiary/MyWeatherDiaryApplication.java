@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MyWeatherDiaryApplication {
 
     public static void main(String[] args) {
+        // test build 1st
         // test build 2nd
         SpringApplication.run(MyWeatherDiaryApplication.class, args);
     }
