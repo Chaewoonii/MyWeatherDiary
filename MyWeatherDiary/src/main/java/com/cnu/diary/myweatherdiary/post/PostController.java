@@ -15,7 +15,7 @@ public class PostController {
 
     //로그인 후 마이페이지. id 값이 있어야 함. >> id 없어도 될듯. js에서 들고 있게?
     @GetMapping("/{pswd_id}")
-    public ModelAndView myDiary(@PathVariable("pswd_id") Long id){
+    public ModelAndView myDiary(@PathVariable("pswd_id") UUID id){
         System.out.println("**");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject(new PostEntity(id));

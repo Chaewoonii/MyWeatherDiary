@@ -4,12 +4,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import java.security.SecureRandom;
+import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,21 +31,40 @@ public class UserService {
 
     //다이어리 타이틀 변경 시 사용.
     @Transactional
-    @PutMapping("users")
+    @PostMapping("users")
     public UserEntity save(UserEntity userEntity){
+        return userRepository.save(userEntity);
+    }
+
+
+    //id로 유저 찾기
+    @Transactional
+    @GetMapping("users")
+    public UserEntity findById(UserEntity userEntity) {
+        Optional<UserEntity> u = userRepository.findById(userEntity.getId());
+        return u.orElseThrow(() -> new NoSuchElementException(UserEntity.class.getPackageName()));
+    }
+
+    //타이틀 수정
+    @Transactional
+    @PutMapping("users")
+    public UserEntity modifyTitle(UserEntity userEntity){
+        String key = findById(userEntity).getEnter_key();
+        userEntity.setEnter_key(key);
         return userRepository.save(userEntity);
     }
 
     @Transactional
     @PostMapping("users")
     public UserEntity login(UserEntity userEntity) {
-        return userRepository.authKey(userEntity.getEnter_key());
+        Optional<UserEntity> u = userRepository.findByEnter_key(userEntity.getEnter_key());
+        return u.orElseThrow(() -> new NoSuchElementException(UserEntity.class.getPackageName()));
     }
 
     /*
     @Transactional
     @GetMapping("tbl_pswd")
-    public Iterable<UserEntity> findAll(){
+    public Iterable<UserEntity> findAll(>){
         return pswdRepo.findAll();
     }
 

@@ -25,7 +25,7 @@ public class UserController {
     //다이어리 타이틀 수정
     @PutMapping("/modifyTitle")
     public UserEntity modifyTitle(@RequestBody UserEntity userEntity){
-        return userService.save(userEntity);
+        return userService.modifyTitle(userEntity);
     }
 
     //새로운 키로 변경
