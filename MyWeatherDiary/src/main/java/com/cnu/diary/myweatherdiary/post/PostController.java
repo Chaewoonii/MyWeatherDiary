@@ -46,8 +46,9 @@ public class PostController {
     }
 
     //포스트 삭제
-    @PostMapping("/remove/{id}")
+    @DeleteMapping("/remove/{id}")
     public void removePost(@PathVariable("id") Long id){
         postService.removePost(id);
     }
+
 }
