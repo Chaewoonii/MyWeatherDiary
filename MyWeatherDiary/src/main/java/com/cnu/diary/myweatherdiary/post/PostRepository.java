@@ -8,12 +8,13 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface PostRepository extends JpaRepository<PostEntity, Long>{
+public interface PostRepository extends JpaRepository<PostEntity, UUID>{
 
-    @Query("select id, diary_title, feelings, post_comment, post_date, loc_pic from posts where pswd_id = :pswd_id")
-    Iterable<PostEntity> findAllByPswd_id(Long pswd_id);
+    @Query("select id, user_id, post_comment, post_date, reg_date, mod_date from posts where user_id = :user_id")
+    Iterable<PostEntity> findAllByPswd_id(UUID user_id);
 
 
 }

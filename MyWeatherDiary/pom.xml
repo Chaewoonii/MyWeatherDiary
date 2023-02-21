@@ -35,12 +35,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-         <!--mariaDB-->
+         <!--MySQL-->
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <scope>runtime</scope>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
         </dependency>
+
 
         <!--lombok-->
         <dependency>

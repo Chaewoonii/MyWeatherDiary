@@ -1,14 +1,14 @@
 package com.cnu.diary.myweatherdiary.post;
 
-import com.cnu.diary.myweatherdiary.pswd.PswdEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.sql.Date;
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @ToString
 @Entity(name = "posts")
@@ -19,27 +19,29 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false, unique = true)
-    private Long id;
-    @Column(nullable = false, unique = true, length = 100)
-    private Long pswd_id;
-    @Column(nullable = false, length = 100)
-    private String diary_title;
-    @Column(nullable = false)
-    private Date post_date;
-    @Column(nullable = false, length =10)
-    private String feelings;
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    private UUID id;
+    @Column(nullable = false, unique = true)
+    private UUID user_id;
 
-    @Column(nullable = false)
-    private LocalDateTime post_time;
-    @Column(length = 300)
-    private String post_comment;
     @Column
-    private String loc_pic;
+    private String post_comment;
+
+    @Column
+    private int feelings;
+
+    @Column
+    private Timestamp post_date;
+
+    @Column
+    private Timestamp reg_date;
+
+    @Column
+    private Timestamp mod_date;
 
 
-    public PostEntity(Long pswd_id) {
-        this.pswd_id = pswd_id;
+    public PostEntity(UUID user_id) {
+        this.user_id = user_id;
     }
 }

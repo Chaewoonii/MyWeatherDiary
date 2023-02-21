@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class PostService {
@@ -17,40 +19,36 @@ public class PostService {
 
     @Transactional
     @PostMapping("posts")
-    public PostEntity postSave(PostEntity post) {
-        post.setPost_time(LocalDateTime.now());
+    public PostEntity addPost(PostEntity post) {
+        post.setReg_date(Timestamp.valueOf(LocalDateTime.now()));
+        post.setMod_date(Timestamp.valueOf(LocalDateTime.now()));
         return postRepository.save(post);
     }
 
     @Transactional
+    @PostMapping("posts")
+    public PostEntity modifyPost(PostEntity post) {
+        post.setMod_date(Timestamp.valueOf(LocalDateTime.now()));
+        return postRepository.save(post);
+    }
+
+
+    @Transactional
     @GetMapping("posts")
-    public PostEntity getPost(Long id) {
+    public PostEntity getPost(UUID id) {
         return postRepository.findById(id).get();
     }
 
     @Transactional
     @GetMapping("posts")
-    public Iterable<PostEntity> getAllPostsById(Long id) {
+    public Iterable<PostEntity> getAllPostsById(UUID id) {
         return postRepository.findAllByPswd_id(id);
     }
 
 
     @Transactional
-    @PostMapping("posts")
-    public PostEntity modifyPost(PostEntity post) {
-//        PostEntity oldPost = postRepository.getReferenceById(post.getId());
-//        oldPost.setFeelings(post.getFeelings());
-//        oldPost.setPost_date(post.getPost_date());
-//        oldPost.setPost_time(post.getPost_time());
-//        oldPost.setPost_comment(post.getPost_comment());
-//        oldPost.setLoc_pic(post.getLoc_pic());
-        post.setPost_time(LocalDateTime.now());
-        return postRepository.save(post);
-    }
-
-    @Transactional
     @GetMapping("posts")
-    public void removePost(Long id){
+    public void removePost(UUID id){
         postRepository.deleteById(id);
     }
 }
