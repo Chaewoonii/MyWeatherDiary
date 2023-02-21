@@ -10,7 +10,7 @@
 
 <div class="logo"></div>
 <div class="login">
-    <form th:action="@{/auth/login}" th:object="${pswdEntity}" method="post">
+    <form th:action="@{/auth/login}" th:object="${userEntity}" method="post">
         <div class="enterKey">
             <input type="password" th:field="*{pswd}" placeholder="Enther Your Key">
         </div>

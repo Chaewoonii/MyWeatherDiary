@@ -1,4 +1,4 @@
-package com.cnu.diary.myweatherdiary.pswd;
+package com.cnu.diary.myweatherdiary.users;
 
 import lombok.Getter;
 
