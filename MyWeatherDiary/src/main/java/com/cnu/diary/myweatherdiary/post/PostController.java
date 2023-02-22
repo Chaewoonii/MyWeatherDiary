@@ -13,6 +13,7 @@ public class PostController {
     @Autowired
     PostService postService;
 
+    /*
     //로그인 후 마이페이지. id 값이 있어야 함. >> id 없어도 될듯. js에서 들고 있게?
     @GetMapping("/{pswd_id}")
     public ModelAndView myDiary(@PathVariable("pswd_id") UUID id){
@@ -22,8 +23,8 @@ public class PostController {
         modelAndView.setViewName("posts");
         return modelAndView;
     }
-
-    // 같은 다이어리(pw가 같은)의 모든 포스트를 불러옴
+*/
+    // 같은 다이어리(pw가 같은)의 모든 포스트를 불러옴 ->10개씩 불러오기 수정
     @GetMapping({"/timeline/{user_id}"})
     public Iterable<PostEntity> getTimelinePost(@PathVariable("user_id") UUID id){
         return postService.getAllPostsById(id);
@@ -44,7 +45,6 @@ public class PostController {
     //포스트 수정
     @PutMapping("/post/edit")
     public PostEntity editPost(@RequestBody PostEntity post){
-        System.out.println(post.toString());
         return postService.modifyPost(post);
     }
 

@@ -15,11 +15,9 @@ public class UserController {
     UserService userService;
     
     //유저 생성(다이어리 타이틀 받음)
-    @PostMapping("/createDiary")
-    public UserEntity createDiary(@RequestBody UserEntity userEntity) {
-        System.out.println(userEntity.toString());
-        userEntity.setId(UUID.randomUUID());
-        return userService.saveWithNewKey(userEntity);
+    @PostMapping("/register")
+    public UserEntity register(@RequestBody UserEntity userEntity) {
+        return userService.register(userEntity);
     }
 
     //다이어리 타이틀 수정
@@ -37,9 +35,15 @@ public class UserController {
     //로그인
     @PostMapping("/login")
     public UserEntity login(@RequestBody UserEntity userEntity){
-        return userService.login(userEntity);
+        UUID id = userService.login(userEntity);
+        return userService.findById(id); //2번 검색해야함.. 오류 어떻게 관리??
     }
 
+    // 유저 삭제
+    @DeleteMapping("/remove/{id}")
+    public void removeUser(@PathVariable("id") UUID id){
+        userService.removeUser(id);
+    }
     /*
     //로그인(pw입력)
     @PostMapping("/login")

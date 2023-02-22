@@ -10,7 +10,10 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends CrudRepository<UserEntity, UUID> {
 
-    @Query("SELECT id, enter_key, diary_title FROM users WHERE enter_key = :key")
-    Optional<UserEntity> findByEnter_key(String key);
+//    @Query("SELECT id, enter_key, diary_title FROM users WHERE enter_key = :key")
+//    Optional<UUID> findByEnter_key(String key);
+
+    @Query("SELECT id FROM users WHERE enter_key = :key")
+    Optional<UUID> findByEnter_key(String key);
 
 }

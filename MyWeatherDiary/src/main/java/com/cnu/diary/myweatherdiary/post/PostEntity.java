@@ -1,5 +1,6 @@
 package com.cnu.diary.myweatherdiary.post;
 
+import com.cnu.diary.myweatherdiary.users.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -22,7 +23,9 @@ public class PostEntity {
     @Column(nullable = false, unique = true)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
-    @Column(nullable = false, unique = true)
+
+    @Column(name = "user_id", nullable = false, unique = true, insertable = false, updatable = false)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID user_id;
 
     @Column
@@ -40,8 +43,4 @@ public class PostEntity {
     @Column
     private Timestamp mod_date;
 
-
-    public PostEntity(UUID user_id) {
-        this.user_id = user_id;
-    }
 }
