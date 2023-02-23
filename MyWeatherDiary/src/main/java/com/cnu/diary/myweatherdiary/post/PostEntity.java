@@ -24,7 +24,7 @@ public class PostEntity {
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
 
-    @Column(name = "user_id", nullable = false, unique = true, insertable = false, updatable = false)
+    @Column(name = "user_id", nullable = false, unique = true)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID user_id;
 

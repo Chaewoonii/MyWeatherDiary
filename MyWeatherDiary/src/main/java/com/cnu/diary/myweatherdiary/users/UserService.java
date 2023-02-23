@@ -61,19 +61,18 @@ public class UserService {
         return userRepository.save(userEntity);
     }
 
-    //로그인: 안됨.
-    @Transactional
-    @PostMapping("users")
-    public UUID login(UserEntity userEntity) {
-        Optional<UUID> u = userRepository.findByEnter_key(userEntity.getEnter_key());
-        return u.orElseThrow(() -> new NoSuchElementException(UserEntity.class.getPackageName()));
-    }
-
     //유저 삭제
     @Transactional
     @PostMapping("users")
     public void removeUser(UUID id) {
         userRepository.deleteById(id);
+    }
+
+    //로그인
+    @Transactional
+    @PostMapping("users")
+    public Optional<UUID> login(UserEntity userEntity) {
+        return userRepository.findByEnter_key(userEntity.getEnter_key());
     }
 
 

@@ -33,6 +33,7 @@ public class PostController {
     //포스트 생성(db insert)
     @PostMapping("/addPost")
     public PostEntity addPost(@RequestBody PostEntity post){
+        System.out.println(post.toString());
         return postService.addPost(post);
     }
 

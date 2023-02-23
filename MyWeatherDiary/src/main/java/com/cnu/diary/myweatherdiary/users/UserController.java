@@ -1,9 +1,13 @@
 package com.cnu.diary.myweatherdiary.users;
 //pswd
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -32,18 +36,32 @@ public class UserController {
         return userService.saveWithNewKey(userEntity);
     }
 
-    //로그인
-    @PostMapping("/login")
-    public UserEntity login(@RequestBody UserEntity userEntity){
-        UUID id = userService.login(userEntity);
-        return userService.findById(id); //2번 검색해야함.. 오류 어떻게 관리??
-    }
-
     // 유저 삭제
     @DeleteMapping("/remove/{id}")
     public void removeUser(@PathVariable("id") UUID id){
         userService.removeUser(id);
     }
+
+    //로그인
+    @PostMapping("/login")
+    public HttpStatus login(@RequestBody UserEntity userEntity, HttpSession session){
+        Optional<UUID> id = userService.login(userEntity);
+        if (id.isEmpty()){
+//            throw new NoSuchElementException(UserController.class.getPackageName());
+            return HttpStatus.BAD_REQUEST;
+        }else {
+            session.setAttribute(UUID.randomUUID().toString(), userService.findById(id.get()));
+            return HttpStatus.ACCEPTED;
+        }
+    }
+
+    //로그아웃
+    @GetMapping("/logout")
+    public HttpStatus logout(HttpSession session){
+        session.invalidate();
+        return HttpStatus.ACCEPTED;
+    }
+
     /*
     //로그인(pw입력)
     @PostMapping("/login")
