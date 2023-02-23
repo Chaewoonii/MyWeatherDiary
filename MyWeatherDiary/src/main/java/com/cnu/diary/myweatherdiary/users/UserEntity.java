@@ -1,11 +1,13 @@
 package com.cnu.diary.myweatherdiary.users;
 
+import com.cnu.diary.myweatherdiary.post.PostEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
 import java.util.UUID;
 
 @ToString
