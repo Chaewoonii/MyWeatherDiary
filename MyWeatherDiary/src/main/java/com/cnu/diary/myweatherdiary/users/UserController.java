@@ -2,6 +2,7 @@ package com.cnu.diary.myweatherdiary.users;
 //pswd
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,16 +31,16 @@ public class UserController {
         return userService.modifyTitle(userEntity);
     }
 
-    //새로운 키로 변경
+    //새로운 키로 변경 :diary title null로 들어옴
     @PutMapping("/modifyAuthKey")
     public UserEntity modifyAuthKey(@RequestBody UserEntity userEntity){
         return userService.saveWithNewKey(userEntity);
     }
 
     // 유저 삭제
-    @DeleteMapping("/remove/{id}")
-    public void removeUser(@PathVariable("id") UUID id){
-        userService.removeUser(id);
+    @DeleteMapping("/remove")
+    public void removeUser(@RequestBody UserEntity userEntity){
+        userService.removeUser(userEntity.getId());
     }
 
     //로그인
@@ -50,7 +51,7 @@ public class UserController {
 //            throw new NoSuchElementException(UserController.class.getPackageName());
             return HttpStatus.BAD_REQUEST;
         }else {
-            session.setAttribute(UUID.randomUUID().toString(), userService.findById(id.get()));
+            session.setAttribute(UUID.randomUUID().toString(), userService.findById(id.get())); //DB 두번 조회해야함.
             return HttpStatus.ACCEPTED;
         }
     }

@@ -1,5 +1,6 @@
 package com.cnu.diary.myweatherdiary.post;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,7 +33,8 @@ public class PostController {
 
     //포스트 생성(db insert)
     @PostMapping("/addPost")
-    public PostEntity addPost(@RequestBody PostEntity post){
+    public PostEntity addPost(@RequestBody PostEntity post, HttpSession session){
+        session.getAttribute(session.getId()); //여기서 세션, 유저데이터 받아오기. ->알아봐야됨
         System.out.println(post.toString());
         return postService.addPost(post);
     }
