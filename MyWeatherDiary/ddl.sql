@@ -1,3 +1,8 @@
+
+
+--docker run --name diarydb -e MYSQL_PORT_HOST=% -e MYSQL_ROOT_PASSWORD=test1234@# -p3306:3306 -d mysql:8
+--docker exec -it diarydb mysql -uroot -p
+
 create database diarydb;
 
 CREATE TABLE users(
