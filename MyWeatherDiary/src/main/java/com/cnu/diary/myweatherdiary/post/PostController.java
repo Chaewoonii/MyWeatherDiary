@@ -31,7 +31,7 @@ public class PostController {
         return postService.getAllPostsById(id);
     }
 
-    //포스트 생성(db insert)
+    //일기 저장(db insert)
     @PostMapping("/addPost")
     public PostEntity addPost(@RequestBody PostEntity post, HttpSession session){
         session.getAttribute(session.getId()); //여기서 세션, 유저데이터 받아오기. ->알아봐야됨
