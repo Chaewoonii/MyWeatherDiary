@@ -11,7 +11,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("/auth")
@@ -31,7 +30,7 @@ public class UserController {
         return userService.modifyTitle(userEntity);
     }
 
-    //새로운 키로 변경 :diary title null로 들어옴
+    //새로운 키로 변경 :diary title 6null로 들어옴
     @PutMapping("/modifyAuthKey")
     public UserEntity modifyAuthKey(@RequestBody UserEntity userEntity){
         return userService.saveWithNewKey(userEntity);
