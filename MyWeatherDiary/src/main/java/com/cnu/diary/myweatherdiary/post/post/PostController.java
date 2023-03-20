@@ -1,12 +1,12 @@
-package com.cnu.diary.myweatherdiary.post;
+package com.cnu.diary.myweatherdiary.post.post;
 
-import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/diary")
 public class PostController {
@@ -27,27 +27,27 @@ public class PostController {
 */
     // 같은 다이어리(pw가 같은)의 모든 포스트를 불러옴 ->10개씩 불러오기 수정
     @GetMapping({"/timeline/{user_id}"})
-    public Iterable<PostEntity> getTimelinePost(@PathVariable("user_id") UUID id){
+    public Iterable<Post> getTimelinePost(@PathVariable("user_id") UUID id){
         return postService.getAllPostsById(id);
     }
 
     //일기 저장(db insert)
     @PostMapping("/addPost")
-    public PostEntity addPost(@RequestBody PostEntity post, HttpSession session){
-        session.getAttribute(session.getId()); //여기서 세션, 유저데이터 받아오기. ->알아봐야됨
-        System.out.println(post.toString());
-        return postService.addPost(post);
+    public Post addPost(@RequestBody PostContentDto postContentDto){
+        log.info("{}", postContentDto.toString());
+        postService.addPost(postContentDto);
+        return null;
     }
 
     //하나의 포스트만 가져오기. id값 필요.
     @GetMapping("/post/{id}")
-    public PostEntity getPost(@PathVariable("id") UUID id){
+    public Post getPost(@PathVariable("id") UUID id){
         return postService.getPost(id);
     }
 
     //포스트 수정
     @PutMapping("/post/edit")
-    public PostEntity editPost(@RequestBody PostEntity post){
+    public Post editPost(@RequestBody Post post){
         return postService.modifyPost(post);
     }
 
