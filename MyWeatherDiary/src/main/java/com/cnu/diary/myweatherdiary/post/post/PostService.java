@@ -28,17 +28,12 @@ public class PostService {
     @Autowired
     ContentRepository contentRepository;
 
-    @Autowired
-    EntityManagerFactory emf;
-
-
     @Transactional
     @PostMapping("posts")
     public Post addPost(PostContentDto postContentDto) {
 
         Post post = new Post();
-        UUID postId = UUID.randomUUID();
-        post.setId(postId);
+        post.setId(UUID.randomUUID().toString());
         post.setPostDate(postContentDto.getPostDate());
         post.setEmotion(postContentDto.getEmotion());
         post.setWrittenDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
@@ -63,20 +58,20 @@ public class PostService {
 
     @Transactional
     @GetMapping("posts")
-    public Post getPost(UUID id) {
+    public Post getPost(String id) {
         return postRepository.findById(id).get();
     }
 
     @Transactional
     @GetMapping("posts")
-    public Iterable<Post> getAllPostsById(UUID id) {
+    public Iterable<Post> getAllPostsById(String id) {
         return postRepository.findAllByUser_id(id);
     }
 
 
     @Transactional
     @GetMapping("posts")
-    public void removePost(UUID id){
+    public void removePost(String id){
         postRepository.deleteById(id);
     }
 }

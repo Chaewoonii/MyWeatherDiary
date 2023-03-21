@@ -27,7 +27,7 @@ public class PostController {
 */
     // 같은 다이어리(pw가 같은)의 모든 포스트를 불러옴 ->10개씩 불러오기 수정
     @GetMapping({"/timeline/{user_id}"})
-    public Iterable<Post> getTimelinePost(@PathVariable("user_id") UUID id){
+    public Iterable<Post> getTimelinePost(@PathVariable("user_id") String id){
         return postService.getAllPostsById(id);
     }
 
@@ -41,7 +41,7 @@ public class PostController {
 
     //하나의 포스트만 가져오기. id값 필요.
     @GetMapping("/post/{id}")
-    public Post getPost(@PathVariable("id") UUID id){
+    public Post getPost(@PathVariable("id") String id){
         return postService.getPost(id);
     }
 
@@ -53,7 +53,7 @@ public class PostController {
 
     //포스트 삭제
     @DeleteMapping("/remove/{id}")
-    public void removePost(@PathVariable("id") UUID id){
+    public void removePost(@PathVariable("id") String id){
         postService.removePost(id);
     }
 }

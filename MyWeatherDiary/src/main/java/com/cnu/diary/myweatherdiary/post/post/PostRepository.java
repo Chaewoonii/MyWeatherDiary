@@ -7,10 +7,10 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, UUID>{
+public interface PostRepository extends JpaRepository<Post, String>{
 
     @Query("select id, emotion, postDate, writtenDate, contents from posts where userId = :userId")
-    Iterable<Post> findAllByUser_id(UUID userId);
+    Iterable<Post> findAllByUser_id(String userId);
 
 
 }

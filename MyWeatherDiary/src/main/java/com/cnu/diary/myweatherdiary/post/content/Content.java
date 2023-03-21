@@ -21,7 +21,7 @@ public class Content {
     @Id
     @Column(name = "id")
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    private UUID id;
+    private String id;
     @Enumerated(EnumType.STRING)
     private Prefix prefix;
     @Column(name = "comment", nullable = true)
@@ -31,7 +31,7 @@ public class Content {
     private LocalDateTime imageSavedDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="post_id", referencedColumnName = "id")
+    @JoinColumn(name = "post_id", referencedColumnName = "id")
     private Post post;
 
 

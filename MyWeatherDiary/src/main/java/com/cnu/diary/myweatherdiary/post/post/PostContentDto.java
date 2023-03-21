@@ -20,20 +20,20 @@ import java.util.UUID;
 @Getter
 @Setter
 public class PostContentDto {
-    private UUID userId;
+    private String userId;
     private Emotion emotion;
     private LocalDateTime postDate;
-    private List<ContentDto> contents;
+    private List<ContentDto> contentDtos;
 
     public List<Content> getContentList(Post post, Prefix prefix){
         List<Content> contentList = new ArrayList<>();
-        Iterator<ContentDto> dtoIterator = this.contents.iterator();
+        Iterator<ContentDto> dtoIterator = this.contentDtos.iterator();
         int i = 0;
         while (dtoIterator.hasNext()){
             ContentDto contentDto = dtoIterator.next();
 
             Content content = new Content();
-            content.setId(UUID.randomUUID());
+            content.setId(UUID.randomUUID().toString());
             content.setComment(contentDto.getComment());
             content.setPrefix(prefix);
             content.setImageSavedDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));

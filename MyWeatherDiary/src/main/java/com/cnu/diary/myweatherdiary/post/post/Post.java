@@ -22,11 +22,11 @@ public class Post {
     @Id
     @Column(nullable = false, unique = true)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    private UUID id;
+    private String id;
 
     @Column(name = "user_id", nullable = false, updatable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    private UUID userId;
+    private String userId;
 
     @Enumerated(EnumType.ORDINAL)
     private Emotion emotion;
