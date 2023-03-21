@@ -1,14 +1,14 @@
-package com.cnu.diary.myweatherdiary.post.content;
+package com.cnu.diary.myweatherdiary.daily.content;
 
-import com.cnu.diary.myweatherdiary.post.post.Post;
+import com.cnu.diary.myweatherdiary.daily.post.Post;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 
 @Setter
@@ -19,9 +19,10 @@ import java.util.UUID;
 public class Content {
 
     @Id
-    @Column(name = "id")
-    @JdbcTypeCode(SqlTypes.VARCHAR)
-    private String id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "id", unique = true, nullable = false, columnDefinition = "BINARY(16)")
+    private UUID id;
     @Enumerated(EnumType.STRING)
     private Prefix prefix;
     @Column(name = "comment", nullable = true)
@@ -43,4 +44,5 @@ public class Content {
         this.post = post;
         post.getContents().add(this);
     }
+
 }

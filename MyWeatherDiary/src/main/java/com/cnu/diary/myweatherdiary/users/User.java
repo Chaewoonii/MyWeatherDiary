@@ -2,7 +2,9 @@ package com.cnu.diary.myweatherdiary.users;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
 
 import java.util.UUID;
@@ -15,8 +17,10 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @Column(name = "id", nullable = false, unique = true)
-    private String id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "id", nullable = false, unique = true, columnDefinition = "BINARY(16)")
+    private UUID id;
 
     @Column(name = "enter_key", nullable = false, unique = true, length = 20)
     private String enterKey;

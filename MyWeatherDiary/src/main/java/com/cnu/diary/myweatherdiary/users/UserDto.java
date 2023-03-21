@@ -11,13 +11,13 @@ import java.util.UUID;
 @Setter
 public class UserDto {
 
-    private String id;
+    private UUID id;
 
     private String enterKey;
 
     private String diaryTitle;
 
-    private Optional<String> nickName;
+    private String nickName;
 
-    private Optional<String> email;
+    private Optional<String> email = Optional.empty();
 }

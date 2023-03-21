@@ -1,6 +1,8 @@
-package com.cnu.diary.myweatherdiary.post.content;
+package com.cnu.diary.myweatherdiary.daily.content;
 
 import lombok.*;
+
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -8,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContentDto {
-    private String id;
+    private UUID id;
     private String comment;
     private String img;
 }

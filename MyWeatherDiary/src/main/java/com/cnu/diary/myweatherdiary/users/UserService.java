@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +19,7 @@ public class UserService {
     //유저 생성(다이어리 키 생성, db 자장)
     public User register(UserDto userDto){
         User user = new User();
-        user.setId(UUID.randomUUID().toString());
+//        user.setId(UUID.randomUUID());
         user.setDiaryTitle(userDto.getDiaryTitle());
         user.setNickName(new NickNameCreator().getNickName());
 
@@ -55,8 +52,10 @@ public class UserService {
                 () -> new NoSuchElementException(User.class.getPackageName())
         );
         user.setDiaryTitle(userDto.getDiaryTitle());
-        user.setEmail(userDto.getEmail().orElse(null));
-        user.setNickName(userDto.getNickName().orElse(new NickNameCreator().getNickName()));
+        if (userDto.getEmail().isPresent()){
+            user.setEmail(user.getEmail());
+        }
+        user.setNickName(userDto.getNickName());
 
         return userRepository.save(user);
     }
@@ -65,29 +64,31 @@ public class UserService {
     //id로 유저 찾기
     @Transactional
     @GetMapping("users")
-    public User findById(String id) {
+    public User findById(UUID id) {
         return userRepository.findById(id).orElseThrow();
     }
 
     //유저 삭제
     @Transactional
     @PostMapping("users")
-    public void removeUser(String id) {
+    public void removeUser(UUID id) {
         userRepository.deleteById(id);
     }
 
     //로그인
     @Transactional
     @PostMapping("users")
-    public Optional<String> login(UserDto userDto) {
+    public Optional<UUID> login(UserDto userDto) {
         return userRepository.findByEnterKey(userDto.getEnterKey());
     }
 
     //개발용
     @Transactional
     @GetMapping("users")
-    public Iterable<User> findAll() {
-        return userRepository.findAll();
+    public List<User> findAll() {
+        List<User> users = new ArrayList<>();
+        userRepository.findAll().forEach(users::add);
+        return users;
     }
 
 

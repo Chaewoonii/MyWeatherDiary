@@ -1,8 +1,10 @@
-package com.cnu.diary.myweatherdiary.post.post;
+package com.cnu.diary.myweatherdiary.daily;
 
-import com.cnu.diary.myweatherdiary.post.content.Content;
-import com.cnu.diary.myweatherdiary.post.content.ContentDto;
-import com.cnu.diary.myweatherdiary.post.content.Prefix;
+import com.cnu.diary.myweatherdiary.daily.content.Content;
+import com.cnu.diary.myweatherdiary.daily.content.ContentDto;
+import com.cnu.diary.myweatherdiary.daily.content.Prefix;
+import com.cnu.diary.myweatherdiary.daily.post.Emotion;
+import com.cnu.diary.myweatherdiary.daily.post.Post;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,12 +17,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-@Slf4j
 @ToString
 @Getter
 @Setter
 public class PostContentDto {
-    private String userId;
+    private UUID postId;
+    private UUID userId;
     private Emotion emotion;
     private LocalDateTime postDate;
     private List<ContentDto> contentDtos;
@@ -28,18 +30,16 @@ public class PostContentDto {
     public List<Content> getContentList(Post post, Prefix prefix){
         List<Content> contentList = new ArrayList<>();
         Iterator<ContentDto> dtoIterator = this.contentDtos.iterator();
-        int i = 0;
+
         while (dtoIterator.hasNext()){
             ContentDto contentDto = dtoIterator.next();
 
             Content content = new Content();
-            content.setId(UUID.randomUUID().toString());
             content.setComment(contentDto.getComment());
             content.setPrefix(prefix);
             content.setImageSavedDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
             post.addContent(content);
             contentList.add(content);
-            log.info("{}", i++);
         }
         return contentList;
     }

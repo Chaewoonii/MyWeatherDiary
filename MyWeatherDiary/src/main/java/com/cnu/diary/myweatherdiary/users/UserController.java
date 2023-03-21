@@ -46,7 +46,7 @@ public class UserController {
     //로그인
     @PostMapping("/login")
     public HttpStatus login(@RequestBody UserDto userDto, HttpSession session){
-        Optional<String> id = userService.login(userDto);
+        Optional<UUID> id = userService.login(userDto);
         if (id.isEmpty()){
 //            throw new NoSuchElementException(UserController.class.getPackageName());
             return HttpStatus.BAD_REQUEST;

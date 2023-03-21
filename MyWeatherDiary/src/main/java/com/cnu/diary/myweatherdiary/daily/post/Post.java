@@ -1,10 +1,9 @@
-package com.cnu.diary.myweatherdiary.post.post;
+package com.cnu.diary.myweatherdiary.daily.post;
 
-import com.cnu.diary.myweatherdiary.post.content.Content;
+import com.cnu.diary.myweatherdiary.daily.content.Content;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,13 +19,13 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Post {
     @Id
-    @Column(nullable = false, unique = true)
-    @JdbcTypeCode(SqlTypes.VARCHAR)
-    private String id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "id", nullable = false, unique = true, columnDefinition = "BINARY(16)")
+    private UUID id;
 
-    @Column(name = "user_id", nullable = false, updatable = false)
-    @JdbcTypeCode(SqlTypes.VARCHAR)
-    private String userId;
+    @Column(name = "user_id", nullable = false, unique = true, columnDefinition = "BINARY(16)")
+    private UUID userId;
 
     @Enumerated(EnumType.ORDINAL)
     private Emotion emotion;
@@ -39,7 +38,7 @@ public class Post {
 
 
     // post(1) : contents(N).
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.ALL})
     private List<Content> contents = new ArrayList<>();
 
 
