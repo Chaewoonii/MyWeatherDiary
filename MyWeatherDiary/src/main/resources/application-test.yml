@@ -1,0 +1,52 @@
+#spring:
+#  config:
+#    activate:
+#      on-profile: test
+#  datasource:
+#    url: jdbc:h2:~/mwd-application-test
+#    username: test
+#    password:
+#    driver-class-name: org.h2.Driver
+#  h2:
+#    console:
+#      enabled: true
+#  jpa:
+#    generate-ddl: true
+#    database: h2
+#    show-sql: true
+#    open-in-view: false
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.H2Dialect
+#        query.in_clause_parameter_padding: true
+#        hbm2ddl:
+#          auto: create-drop
+
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:mysql://localhost:3306/testdb
+    username: root
+    password: test1234@#
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        type.descriptor.slq: DEBUG
+        SQL: DEBUG

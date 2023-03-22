@@ -6,12 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 
-import java.security.SecureRandom;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -21,44 +17,55 @@ public class UserService {
     private final UserRepository userRepository;
 
     //유저 생성(다이어리 키 생성, db 자장)
-    public UserEntity register(UserEntity userEntity){
-        userEntity.setId(UUID.randomUUID());
-        return saveWithNewKey(userEntity);
+    public User register(UserDto userDto){
+        User user = new User();
+//        user.setId(UUID.randomUUID());
+        user.setDiaryTitle(userDto.getDiaryTitle());
+        user.setNickName(new NickNameCreator().getNickName());
+
+        String key = new AuthorizationKeyCreator().getRandomString(20);
+        user.setEnterKey(key);
+
+        return userRepository.save(user);
     }
 
     //키를 생성해서 저장
     //유저 생성 및 키만 변경 시 사용
     @Transactional
     @PostMapping("users")
-    public UserEntity saveWithNewKey(UserEntity userEntity) {
-        String key = new AuthorizationKeyCreator(new StringBuffer(), new SecureRandom()).getRandomString(20);
-        userEntity.setEnter_key(key);
-        return userRepository.save(userEntity);
+    public User changeKey(UserDto userDto) {
+        User user = userRepository.findById(userDto.getId()).orElseThrow(
+                () -> new NoSuchElementException(User.class.getPackageName())
+        );
+
+        String key = new AuthorizationKeyCreator().getRandomString(20);
+
+        user.setEnterKey(key);
+        return userRepository.save(user);
     }
 
-    //다이어리 타이틀 변경 시 사용.
+    //유저 수정
     @Transactional
     @PostMapping("users")
-    public UserEntity save(UserEntity userEntity){
-        return userRepository.save(userEntity);
+    public User updateUserInfo(UserDto userDto){
+        User user = userRepository.findById(userDto.getId()).orElseThrow(
+                () -> new NoSuchElementException(User.class.getPackageName())
+        );
+        user.setDiaryTitle(userDto.getDiaryTitle());
+        if (userDto.getEmail().isPresent()){
+            user.setEmail(user.getEmail());
+        }
+        user.setNickName(userDto.getNickName());
+
+        return userRepository.save(user);
     }
 
 
     //id로 유저 찾기
     @Transactional
     @GetMapping("users")
-    public UserEntity findById(UUID id) {
-        Optional<UserEntity> u = userRepository.findById(id);
-        return u.orElseThrow(() -> new NoSuchElementException(UserEntity.class.getPackageName()));
-    }
-
-    //타이틀 수정
-    @Transactional
-    @PutMapping("users")
-    public UserEntity modifyTitle(UserEntity userEntity){
-        String key = findById(userEntity.getId()).getEnter_key();
-        userEntity.setEnter_key(key);
-        return userRepository.save(userEntity);
+    public User findById(UUID id) {
+        return userRepository.findById(id).orElseThrow();
     }
 
     //유저 삭제
@@ -71,8 +78,17 @@ public class UserService {
     //로그인
     @Transactional
     @PostMapping("users")
-    public Optional<UUID> login(UserEntity userEntity) {
-        return userRepository.findByEnter_key(userEntity.getEnter_key());
+    public Optional<UUID> login(UserDto userDto) {
+        return userRepository.findByEnterKey(userDto.getEnterKey());
+    }
+
+    //개발용
+    @Transactional
+    @GetMapping("users")
+    public List<User> findAll() {
+        List<User> users = new ArrayList<>();
+        userRepository.findAll().forEach(users::add);
+        return users;
     }
 
 
