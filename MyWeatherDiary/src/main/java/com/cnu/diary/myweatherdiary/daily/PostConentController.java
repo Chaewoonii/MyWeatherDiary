@@ -2,7 +2,6 @@ package com.cnu.diary.myweatherdiary.daily;
 
 import com.cnu.diary.myweatherdiary.daily.content.Content;
 import com.cnu.diary.myweatherdiary.daily.content.ContentService;
-import com.cnu.diary.myweatherdiary.daily.content.Prefix;
 import com.cnu.diary.myweatherdiary.daily.post.Post;
 import com.cnu.diary.myweatherdiary.daily.post.PostDto;
 import com.cnu.diary.myweatherdiary.daily.post.PostService;
@@ -50,7 +49,7 @@ public class PostConentController {
                 postContentDto.getEmotion(),
                 postContentDto.getPostDate()));
 
-        contentService.saveContents(postContentDto.getContentDtos(), post);
+        contentService.saveContents(postContentDto.getContents(), post);
         return post;
     }
 
@@ -75,7 +74,7 @@ public class PostConentController {
                 postContentDto.getPostDate()
         ));
 
-        List<Content> contentList = contentService.updateContents(postContentDto.getContentDtos(), post);
+        List<Content> contentList = contentService.updateContents(postContentDto.getContents(), post);
         post.setContents(contentList);
         return post;
     }

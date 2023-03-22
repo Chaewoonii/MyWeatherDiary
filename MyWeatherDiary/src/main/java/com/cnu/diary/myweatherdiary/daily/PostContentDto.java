@@ -8,7 +8,6 @@ import com.cnu.diary.myweatherdiary.daily.post.Post;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -25,11 +24,11 @@ public class PostContentDto {
     private UUID userId;
     private Emotion emotion;
     private LocalDateTime postDate;
-    private List<ContentDto> contentDtos;
+    private List<ContentDto> contents;
 
     public List<Content> getContentList(Post post, Prefix prefix){
         List<Content> contentList = new ArrayList<>();
-        Iterator<ContentDto> dtoIterator = this.contentDtos.iterator();
+        Iterator<ContentDto> dtoIterator = this.contents.iterator();
 
         while (dtoIterator.hasNext()){
             ContentDto contentDto = dtoIterator.next();

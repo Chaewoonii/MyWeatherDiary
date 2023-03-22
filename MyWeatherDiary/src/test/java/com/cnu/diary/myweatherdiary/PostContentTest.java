@@ -61,7 +61,7 @@ class PostContentTest {
         postContentDto.setUserId(user.getId());
         postContentDto.setEmotion(Emotion.HAPPY);
         postContentDto.setPostDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
-        postContentDto.setContentDtos(dtoList);
+        postContentDto.setContents(dtoList);
 
         post = postConentController.addPost(postContentDto);
         log.info("Saved post is:\n{}", post);
@@ -96,7 +96,7 @@ class PostContentTest {
         postContentDto.setUserId(user.getId());
         postContentDto.setEmotion(Emotion.NEUTRAL);
         postContentDto.setPostDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
-        postContentDto.setContentDtos(dtoList);
+        postContentDto.setContents(dtoList);
 
         Post edited = postConentController.editPost(postContentDto);
         log.info("edited -> {}", edited);
