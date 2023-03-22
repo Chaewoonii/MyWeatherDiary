@@ -15,9 +15,9 @@ class AuthorizationKeyCreator {
     private SecureRandom secureRandom;
 
 
-    protected AuthorizationKeyCreator(StringBuffer stringBuffer, SecureRandom secureRandom){
-        this.stringBuffer = stringBuffer;
-        this.secureRandom = secureRandom;
+    protected AuthorizationKeyCreator(){
+        this.stringBuffer = new StringBuffer();
+        this.secureRandom = new SecureRandom();
 
 
     }

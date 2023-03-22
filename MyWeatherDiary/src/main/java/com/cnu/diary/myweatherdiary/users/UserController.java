@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,37 +19,39 @@ public class UserController {
     
     //유저 생성(다이어리 타이틀 받음)
     @PostMapping("/register")
-    public UserEntity register(@RequestBody UserEntity userEntity) {
-        return userService.register(userEntity);
+    public User register(@RequestBody UserDto userDto) {
+        return userService.register(userDto);
     }
 
-    //다이어리 타이틀 수정
-    @PutMapping("/modifyTitle")
-    public UserEntity modifyTitle(@RequestBody UserEntity userEntity){
-        return userService.modifyTitle(userEntity);
+
+    //새로운 키로 변경: userId 필요.
+    @PutMapping("/changeKey")
+    public User changeKey(@RequestBody UserDto userDto){
+        return userService.changeKey(userDto);
     }
 
-    //새로운 키로 변경
-    @PutMapping("/modifyAuthKey")
-    public UserEntity modifyAuthKey(@RequestBody UserEntity userEntity){
-        return userService.saveWithNewKey(userEntity);
+    //유저 정보 수정
+    @PutMapping("/update")
+    public User updateUserInfo(@RequestBody UserDto userDto){
+        return userService.updateUserInfo(userDto);
     }
+
 
     // 유저 삭제
-    @DeleteMapping("/remove/{id}")
-    public void removeUser(@PathVariable("id") UUID id){
-        userService.removeUser(id);
+    @DeleteMapping("/remove")
+    public void removeUser(@RequestBody UserDto userDto){
+        userService.removeUser(userDto.getId());
     }
 
     //로그인
     @PostMapping("/login")
-    public HttpStatus login(@RequestBody UserEntity userEntity, HttpSession session){
-        Optional<UUID> id = userService.login(userEntity);
+    public HttpStatus login(@RequestBody UserDto userDto, HttpSession session){
+        Optional<UUID> id = userService.login(userDto);
         if (id.isEmpty()){
 //            throw new NoSuchElementException(UserController.class.getPackageName());
             return HttpStatus.BAD_REQUEST;
         }else {
-            session.setAttribute(UUID.randomUUID().toString(), userService.findById(id.get()));
+            session.setAttribute(UUID.randomUUID().toString(), userService.findById(id.get())); //DB 두번 조회해야함.
             return HttpStatus.ACCEPTED;
         }
     }

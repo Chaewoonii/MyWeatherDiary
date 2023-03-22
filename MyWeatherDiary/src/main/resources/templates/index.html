@@ -8,26 +8,5 @@
 <p>hello!<br>
 안녕하세요, index 페이지 입니다.</p>
 
-<div class="logo"></div>
-<div class="login">
-    <form th:action="@{/auth/login}" th:object="${userEntity}" method="post">
-        <div class="enterKey">
-            <input type="password" th:field="*{pswd}" placeholder="Enther Your Key">
-        </div>
-        <div>
-            <div>
-                <button type="submit">Login</button>
-            </div>
-            <div>
-                <button type="button" onclick="">Create Diary</button>
-            </div>
-        </div>
-    </form>
-</div>
-
-<!--<a th:href="@{/auth}">auth</a><br>-->
-<!--<a th:href="@{/auth/getAllInfo}">test:getAllPswd</a><br>-->
-
-
 </body>
 </html>
