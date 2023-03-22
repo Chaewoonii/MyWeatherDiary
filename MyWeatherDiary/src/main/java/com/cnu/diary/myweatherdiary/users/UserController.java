@@ -43,7 +43,7 @@ public class UserController {
         userService.removeUser(userDto.getId());
     }
 
-    //로그인
+    //로그인::: ing
     @PostMapping("/login")
     public HttpStatus login(@RequestBody UserDto userDto, HttpSession session){
         Optional<UUID> id = userService.login(userDto);

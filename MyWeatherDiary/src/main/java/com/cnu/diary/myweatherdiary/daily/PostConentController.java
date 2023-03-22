@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+//api는 스프링, 나머지는 프론트.
+//엔진엑스가 앞단에서 다 묶어..: weather.com/api/...
+
 @Slf4j
 @RestController
 @RequestMapping("/diary")
@@ -32,9 +35,9 @@ public class PostConentController {
         modelAndView.addObject(new PostEntity(id));
         modelAndView.setViewName("posts");
         return modelAndView;
-    }
-*/
-    // 같은 다이어리(pw가 같은)의 모든 포스트를 불러옴 ->10개씩 불러오기 수정
+    }*/
+
+    // 같은 다이어리(pw가 같은)의 모든 포스트를 불러옴 -> 10개씩 불러오기 수정
     @GetMapping({"/timeline/{user_id}"})
     public Iterable<Post> getTimelinePost(@PathVariable("user_id") UUID id){
         return postService.getAllPostsById(id);
@@ -59,7 +62,6 @@ public class PostConentController {
         Post post = postService.getPost(postId);
         List<Content> contentList = contentService.findByPostId(post);
         post.setContents(contentList);
-
         return post;
     }
 

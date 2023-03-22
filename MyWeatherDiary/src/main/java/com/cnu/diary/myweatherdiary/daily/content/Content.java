@@ -13,9 +13,10 @@ import java.util.function.Supplier;
 
 @Setter
 @Getter
-@Entity(name = "contents")
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "contents")
 public class Content {
 
     @Id
@@ -24,7 +25,7 @@ public class Content {
     @Column(name = "id", unique = true, nullable = false, columnDefinition = "BINARY(16)")
     private UUID id;
     @Enumerated(EnumType.STRING)
-    private Prefix prefix;
+    private Prefix prefix; //develop/2023-03-22askdjgoq.jpg
     @Column(name = "comment", nullable = true)
     @Lob
     private String comment;

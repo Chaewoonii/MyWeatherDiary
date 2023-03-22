@@ -21,7 +21,7 @@ import java.util.UUID;
 @Setter
 public class PostContentDto {
     private UUID postId;
-    private UUID userId;
+    private UUID userId; //프론트에서 주는게 아니라 session에서 받아오기
     private Emotion emotion;
     private LocalDateTime postDate;
     private List<ContentDto> contents;
