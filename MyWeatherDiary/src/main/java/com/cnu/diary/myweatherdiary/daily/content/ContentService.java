@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-
+import java.util.Base64;
+import java.util.Base64.Encoder;
+import java.util.Base64.Decoder;
 @Service
 public class ContentService {
 
@@ -55,5 +57,23 @@ public class ContentService {
 
     public List<Content> findByPostId(Post post) {
         return contentRepository.findAllByPost(post);
+    }
+
+    @Transactional
+    @PostMapping("contents")
+    public byte[] imgToBase64(ContentDto contentDto) { // encoder
+        Encoder encoder = Base64.getEncoder();
+        byte[] encoderByte = encoder.encode(contentDto.getImg().getBytes());
+
+        return encoderByte;
+    }
+
+
+    @Transactional
+    public byte[] base64ToImg(byte[] encode) { // decoder
+        Decoder decoder = Base64.getDecoder();
+        byte[] decoderByte = decoder.decode(encode);
+
+        return  decoderByte;
     }
 }
