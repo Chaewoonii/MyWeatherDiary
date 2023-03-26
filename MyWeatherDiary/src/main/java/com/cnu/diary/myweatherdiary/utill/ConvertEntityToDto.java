@@ -1,0 +1,25 @@
+package com.cnu.diary.myweatherdiary.utill;
+
+import com.cnu.diary.myweatherdiary.users.User;
+import com.cnu.diary.myweatherdiary.users.UserRequestDto;
+import com.cnu.diary.myweatherdiary.users.UserResponseDto;
+
+import java.util.Optional;
+import java.util.UUID;
+
+public class ConvertEntityToDto {
+
+    public UserResponseDto userToDto(User user){
+        UserResponseDto dto = new UserResponseDto();
+        dto.setId(user.getId());
+        dto.setNickName(user.getNickName());
+        dto.setDiaryTitle(user.getDiaryTitle());
+        dto.setEnterKey(user.getEnterKey());
+        Optional<String> email = Optional.ofNullable(user.getEmail());
+        if (email.isPresent()){
+            dto.setEmail(email);
+        }
+        return dto;
+    }
+
+}

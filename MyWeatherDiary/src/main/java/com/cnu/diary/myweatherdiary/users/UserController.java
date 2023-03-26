@@ -1,66 +1,62 @@
 package com.cnu.diary.myweatherdiary.users;
 //pswd
-import jakarta.servlet.http.HttpSession;
+import com.cnu.diary.myweatherdiary.jwt.JwtAuthentication;
+import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationToken;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
-import java.util.UUID;
 
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/user")
 public class UserController {
+
     @Autowired
-    UserService userService;
+    private final UserService userService;
+
+    @Autowired
+    private final AuthenticationManager authenticationManager;
+
     
     //유저 생성(다이어리 타이틀 받음)
     @PostMapping("/register")
-    public User register(@RequestBody UserDto userDto) {
-        return userService.register(userDto);
+    public UserResponseDto register(@RequestBody UserResponseDto userResponseDto) {
+        return userService.register(userResponseDto);
     }
 
 
     //새로운 키로 변경: userId 필요.
     @PutMapping("/changeKey")
-    public User changeKey(@RequestBody UserDto userDto){
-        return userService.changeKey(userDto);
+    public UserResponseDto changeKey(@RequestBody UserResponseDto userResponseDto){
+        return userService.changeKey(userResponseDto);
     }
 
     //유저 정보 수정
     @PutMapping("/update")
-    public User updateUserInfo(@RequestBody UserDto userDto){
-        return userService.updateUserInfo(userDto);
+    public UserResponseDto updateUserInfo(@RequestBody UserResponseDto userResponseDto){
+        return userService.updateUserInfo(userResponseDto);
     }
 
 
     // 유저 삭제
     @DeleteMapping("/remove")
-    public void removeUser(@RequestBody UserDto userDto){
-        userService.removeUser(userDto.getId());
+    public void removeUser(@RequestBody UserResponseDto userResponseDto){
+        userService.removeUser(userResponseDto.getId());
     }
 
-    //로그인::: ing
-    @PostMapping("/login")
-    public HttpStatus login(@RequestBody UserDto userDto, HttpSession session){
-        Optional<UUID> id = userService.login(userDto);
-        if (id.isEmpty()){
-//            throw new NoSuchElementException(UserController.class.getPackageName());
-            return HttpStatus.BAD_REQUEST;
-        }else {
-            session.setAttribute(UUID.randomUUID().toString(), userService.findById(id.get())); //DB 두번 조회해야함.
-            return HttpStatus.ACCEPTED;
-        }
-    }
+    /**
+     * 사용자 로그인
+     */
+    @PostMapping(path = "/auth/login")
+    public LoginDto login(@RequestBody LoginRequest request) {
+        JwtAuthenticationToken authToken = new JwtAuthenticationToken(request.getPrincipal(), request.getCredentials());
+        Authentication resultToken = authenticationManager.authenticate(authToken);
+        JwtAuthentication authentication = (JwtAuthentication) resultToken.getPrincipal();
 
-    //로그아웃
-    @GetMapping("/logout")
-    public HttpStatus logout(HttpSession session){
-        session.invalidate();
-        return HttpStatus.ACCEPTED;
+        return new LoginDto(authentication.token, authentication.username, Group.USER.toString());
     }
 
     /*

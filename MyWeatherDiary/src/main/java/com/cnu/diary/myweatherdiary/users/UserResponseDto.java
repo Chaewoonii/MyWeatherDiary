@@ -9,15 +9,11 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class UserDto {
-
+@ToString
+public class UserResponseDto {
     private UUID id;
-
     private String enterKey;
-
     private String diaryTitle;
-
     private String nickName;
-
     private Optional<String> email = Optional.empty();
 }

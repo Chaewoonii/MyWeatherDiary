@@ -6,7 +6,7 @@ import com.cnu.diary.myweatherdiary.daily.content.Content;
 import com.cnu.diary.myweatherdiary.daily.content.ContentDto;
 import com.cnu.diary.myweatherdiary.daily.post.*;
 import com.cnu.diary.myweatherdiary.users.User;
-import com.cnu.diary.myweatherdiary.users.UserDto;
+import com.cnu.diary.myweatherdiary.users.UserResponseDto;
 import com.cnu.diary.myweatherdiary.users.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -35,17 +35,17 @@ class PostContentTest {
     @Autowired
     UserService userService;
 
-    User user;
+    UserResponseDto user;
 
     Post post;
 
 
     @BeforeAll
     void setUp(){
-        UserDto userDto = new UserDto();
-        userDto.setDiaryTitle("테스트 일기장 >_<");
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setDiaryTitle("테스트 일기장 >_<");
 
-        this.user = userService.register(userDto);
+        this.user = userService.register(userResponseDto);
     }
 
     @Test

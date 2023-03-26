@@ -6,8 +6,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.UUID;
+
 
 @ToString
 @Entity(name="users")
@@ -33,5 +35,11 @@ public class User {
 
     @Column(name = "email", length = 50)
     private String email;
+
+    //입력받은 비밀번호(credential)와 데이터베이스의 비밀번호를 비교
+    public void checkPassword(PasswordEncoder passwordEncoder, String credentials) {
+        if (!passwordEncoder.matches(credentials, enterKey))
+            throw new IllegalArgumentException("Bad credential");
+    }
 
 }
