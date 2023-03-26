@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-
+import java.util.Base64;
+import java.util.Base64.Encoder;
+import java.util.Base64.Decoder;
 @Service
 public class ContentService {
 
@@ -55,5 +57,40 @@ public class ContentService {
 
     public List<Content> findByPostId(Post post) {
         return contentRepository.findAllByPost(post);
+    }
+
+    @Transactional
+    @PostMapping("contents")
+    public List<byte[]> imgToBase64(List<ContentDto> contentDtos) { // encoder
+        List<byte[]> contentImgToByteList = new ArrayList<>();
+        Iterator<ContentDto> iter = contentDtos.iterator();
+
+        Encoder encoder = Base64.getEncoder();
+        while(iter.hasNext()) {
+            ContentDto contentDto = iter.next();
+            byte[] contentDtoImgByte = contentDto.getImg().getBytes();
+            byte[] encoding = encoder.encode(contentDtoImgByte);
+
+            contentImgToByteList.add(encoding);
+        }
+
+        return contentImgToByteList;
+    }
+
+
+    @Transactional
+    public List<String> base64ToImg(List<byte[]> contentImgToByteList) { // decoder
+        List<String> contentByteToImgList = new ArrayList<>();
+        Iterator<byte[]> iter = contentImgToByteList.iterator();
+
+        Decoder decoder = Base64.getDecoder();
+        while(iter.hasNext()) {
+            byte[] byteImg = iter.next();
+
+            byte[] decoding =  decoder.decode(byteImg);
+            contentByteToImgList.add(new String(decoding));
+        }
+
+        return contentByteToImgList;
     }
 }
