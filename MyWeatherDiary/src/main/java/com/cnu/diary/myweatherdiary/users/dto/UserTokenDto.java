@@ -1,18 +1,15 @@
-package com.cnu.diary.myweatherdiary.users;
+package com.cnu.diary.myweatherdiary.users.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Optional;
-import java.util.UUID;
-
 @ToString
 @Getter
 @Setter
 @AllArgsConstructor
-public class LoginDto {
+public class UserTokenDto {
 
     private final String token;
     private final String username;

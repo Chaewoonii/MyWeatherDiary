@@ -1,19 +1,19 @@
-package com.cnu.diary.myweatherdiary.users;
+package com.cnu.diary.myweatherdiary.users.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
+import org.checkerframework.checker.nullness.Opt;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
-public class UserResponseDto {
+@AllArgsConstructor
+public class UserRequestDto {
+
     private UUID id;
-    private String enterKey;
     private String diaryTitle;
-    private String nickName;
     private Optional<String> email = Optional.empty();
 }

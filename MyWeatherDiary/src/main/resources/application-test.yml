@@ -41,10 +41,14 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
-
 logging:
   level:
     org:
       hibernate:
         type.descriptor.slq: DEBUG
         SQL: DEBUG
+jwt:
+  header: token
+  issuer: prgrms
+  client-secret: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ
+  expiry-seconds: 60

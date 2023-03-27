@@ -1,9 +1,18 @@
 package com.cnu.diary.myweatherdiary.users;
 
+import com.cnu.diary.myweatherdiary.users.domain.User;
+import com.cnu.diary.myweatherdiary.users.domain.UserGroup;
+import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
+import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
+import com.cnu.diary.myweatherdiary.users.utill.AuthorizationKeyCreator;
+import com.cnu.diary.myweatherdiary.users.utill.NickNameCreator;
+import com.cnu.diary.myweatherdiary.utill.ConvertEntityToDto;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,61 +24,49 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserService {
-
-    @Autowired
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-
-    @Autowired
-    public PasswordEncoder passwordEncoder;
-
-    public UserResponseDto userToDto(User user){
-        UserResponseDto dto = new UserResponseDto();
-        dto.setId(user.getId());
-        dto.setNickName(user.getNickName());
-        dto.setDiaryTitle(user.getDiaryTitle());
-        dto.setEnterKey(user.getEnterKey());
-        Optional<String> email = Optional.ofNullable(user.getEmail());
-        if (email.isPresent()){
-            dto.setEmail(email);
-        }
-        return dto;
-    }
+    private final ConvertEntityToDto convertEntityToDto;
 
     //유저 생성(다이어리 키 생성, db 자장)
-    public UserResponseDto register(UserResponseDto userResponseDto){
-        User user = new User();
-//        user.setId(UUID.randomUUID());
-        user.setDiaryTitle(userResponseDto.getDiaryTitle());
-        user.setNickName(new NickNameCreator().getNickName());
+    public UserResponseDto register(UserRequestDto userRequestDto){
+        String key = passwordEncoder.encode(
+                new AuthorizationKeyCreator().getRandomString(20)
+        );
 
-        String key = new AuthorizationKeyCreator().getRandomString(20);
-        user.setEnterKey(key);
+        User user = User.builder()
+                .enterKey(key)
+                .
+                .build();
+
         User saved = userRepository.save(user);
-        return userToDto(user);
+        return convertEntityToDto.userToDto(saved);
     }
 
     //키를 생성해서 저장
     //유저 생성 및 키만 변경 시 사용
     @Transactional
     @PostMapping("users")
-    public UserResponseDto changeKey(UserResponseDto userResponseDto) {
-        User user = userRepository.findById(userResponseDto.getId()).orElseThrow(
+    public UserResponseDto changeKey(UserRequestDto userRequestDto) {
+        User user = userRepository.findById(userRequestDto.getId()).orElseThrow(
                 () -> new NoSuchElementException(User.class.getPackageName())
         );
 
-        String key = new AuthorizationKeyCreator().getRandomString(20);
+        String key = passwordEncoder.encode(
+                new AuthorizationKeyCreator().getRandomString(20)
+        );
 
         user.setEnterKey(key);
         User saved = userRepository.save(user);
-        return userToDto(saved);
+        return convertEntityToDto.userToDto(saved);
     }
 
     //유저 수정
     @Transactional
     @PostMapping("users")
-    public UserResponseDto updateUserInfo(UserResponseDto userResponseDto){
+    public UserResponseDto updateUserInfo(UserRequestDto userRequestDto){
         User user = userRepository.findById(userResponseDto.getId()).orElseThrow(
                 () -> new NoSuchElementException(User.class.getPackageName())
         );
@@ -80,7 +77,7 @@ public class UserService {
         user.setNickName(userResponseDto.getNickName());
 
         User saved = userRepository.save(user);
-        return userToDto(saved);
+        return convertEntityToDto.userToDto(saved);
     }
 
 
@@ -89,7 +86,7 @@ public class UserService {
     @GetMapping("users")
     public UserResponseDto findById(UUID id) {
         User user = userRepository.findById(id).orElseThrow();
-        return userToDto(user);
+        return convertEntityToDto.userToDto(user);
     }
 
     //유저 삭제
@@ -99,44 +96,15 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    //로그인(username과 비밀번호)
-    @Transactional
-    public User login(UUID uuid, String credentials) {
-        checkArgument(isNotEmpty(uuid.toString()), "principal must be provided.");
-        checkArgument(isNotEmpty(credentials), "credentials must be provided.");
-
-        User user = userRepository.findById(uuid)
-                .orElseThrow(() -> new UsernameNotFoundException("Could not found user for " + uuid));
-        user.checkPassword(passwordEncoder, credentials);
-        return user;
-    }
-
     @Transactional
     @GetMapping("users")
     public List<UserResponseDto> findAll() {
         List<UserResponseDto> users = new ArrayList<>();
         Iterable<User> all = userRepository.findAll();
-        all.forEach((u)->users.add(userToDto(u)));
+        all.forEach((u)->users.add(convertEntityToDto.userToDto(u)));
         return users;
     }
 
 
-    /*
-    @Transactional
-    @GetMapping("tbl_pswd")
-    public Iterable<UserEntity> findAll(>){
-        return pswdRepo.findAll();
-    }
 
-    @Transactional
-    @PostMapping("tbl_pswd")
-    public UserEntity getInfo(UUID id) {
-        return pswdRepo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
-    }
-
-    public Long login(UserEntity UserEntity) {
-        Optional<Long> id = Optional.ofNullable(pswdRepo.authKey(UserEntity.getPswd()));
-        return id.orElseThrow(() -> new IllegalArgumentException("Invalid key"));
-    }*/
 }

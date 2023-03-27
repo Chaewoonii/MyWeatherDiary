@@ -1,11 +1,8 @@
-package com.cnu.diary.myweatherdiary.users;
+package com.cnu.diary.myweatherdiary.users.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.Type;
-import org.hibernate.type.SqlTypes;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.UUID;
@@ -14,8 +11,9 @@ import java.util.UUID;
 @ToString
 @Entity(name="users")
 @Getter
-@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
@@ -36,7 +34,11 @@ public class User {
     @Column(name = "email", length = 50)
     private String email;
 
-    //입력받은 비밀번호(credential)와 데이터베이스의 비밀번호를 비교
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "group_id")
+    private UserGroup userGroup;
+
+    //입력받은 비밀번호(credential, enterKey)와 데이터베이스의 비밀번호를 비교
     public void checkPassword(PasswordEncoder passwordEncoder, String credentials) {
         if (!passwordEncoder.matches(credentials, enterKey))
             throw new IllegalArgumentException("Bad credential");

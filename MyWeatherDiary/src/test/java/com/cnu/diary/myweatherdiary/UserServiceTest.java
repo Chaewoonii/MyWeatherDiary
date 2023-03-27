@@ -1,8 +1,7 @@
 package com.cnu.diary.myweatherdiary;
 
 
-import com.cnu.diary.myweatherdiary.users.User;
-import com.cnu.diary.myweatherdiary.users.UserResponseDto;
+import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
 import com.cnu.diary.myweatherdiary.users.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;

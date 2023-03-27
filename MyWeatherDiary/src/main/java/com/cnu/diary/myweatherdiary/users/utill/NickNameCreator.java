@@ -1,4 +1,4 @@
-package com.cnu.diary.myweatherdiary.users;
+package com.cnu.diary.myweatherdiary.users.utill;
 
 import javax.lang.model.type.ArrayType;
 import java.security.SecureRandom;
@@ -17,7 +17,7 @@ public class NickNameCreator {
     private StringBuffer stringBuffer;
     private SecureRandom secureRandom;
 
-    protected NickNameCreator(){
+    public NickNameCreator(){
         this.stringBuffer = new StringBuffer();
         this.secureRandom = new SecureRandom();
     }

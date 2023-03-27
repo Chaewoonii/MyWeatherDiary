@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/diary")
+@RequestMapping("api/v1/diary")
 public class PostConentController {
 
     @Autowired

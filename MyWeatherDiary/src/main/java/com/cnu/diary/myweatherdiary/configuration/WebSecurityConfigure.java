@@ -3,46 +3,61 @@ package com.cnu.diary.myweatherdiary.configuration;
 import com.cnu.diary.myweatherdiary.jwt.Jwt;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationFilter;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationProvider;
-import com.cnu.diary.myweatherdiary.users.UserService;
-import jakarta.servlet.http.HttpServletResponse;
+import com.cnu.diary.myweatherdiary.users.UserDetailService;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
+
+import javax.servlet.http.HttpServletResponse;
 
 
 @Slf4j
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
+@Setter
+public class WebSecurityConfigure {
 
+    private final ApplicationContext applicationContext;
     private final JwtConfigure jwtConfigure;
 
-    public WebSecurityConfigure(JwtConfigure jwtConfigure){this.jwtConfigure = jwtConfigure;}
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception{
-        return super.authenticationManagerBean();
-    }
-
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/templates/**");
+    public WebSecurityConfigure(ApplicationContext applicationContext, JwtConfigure jwtConfigure){
+        this.applicationContext = applicationContext;
+        this.jwtConfigure = jwtConfigure;
     }
 
     @Bean
-    public AccessDeniedHandler accessDeniedHandler(){
+    public JwtConfigure jwtConfigureBean(){
+        return new JwtConfigure();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer(){
+        return (web -> {web.ignoring().requestMatchers("/templates/**");});
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, e) -> {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Object principal = authentication != null ? authentication.getPrincipal() : null;
@@ -56,10 +71,12 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){return new BCryptPasswordEncoder();}
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
-    public Jwt jwt(){
+    public Jwt jwt() {
         return new Jwt(
                 jwtConfigure.getIssuer(),
                 jwtConfigure.getClientSecret(),
@@ -67,21 +84,28 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
         );
     }
 
-    public JwtAuthenticationFilter jwtAuthenticationFilter(){
-        Jwt jwt = getApplicationContext().getBean(Jwt.class);
-        return new JwtAuthenticationFilter(jwtConfigure.getIssuer(), jwt);
+    @Bean
+    public JwtAuthenticationProvider jwtAuthenticationProvider(Jwt jwt, UserDetailService userDetailService) {
+        return new JwtAuthenticationProvider(jwt, userDetailService);
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
 
     @Bean
-    public JwtAuthenticationProvider jwtAuthenticationProvider(UserService userService, Jwt jwt) {
-        return new JwtAuthenticationProvider(jwt, userService);
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        Jwt jwt = applicationContext.getBean(Jwt.class);
+        return new JwtAuthenticationFilter(jwtConfigure.getHeader(), jwt);
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+
+    @Bean
+    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/api/user/auth").hasAnyRole("USER")
+                .requestMatchers("/api/v1/diary", "/api/v1/auth").hasAnyRole("USER")
                 .anyRequest().permitAll()
                 .and()
                 /**
@@ -111,7 +135,11 @@ public class WebSecurityConfigure extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler())
                 .and()
-//                .addFilterAfter(jwtAuthenticationFilter(), SecurityContextPersistenceFilter.class)
+                .addFilterAfter(jwtAuthenticationFilter(), SecurityContextHolderFilter.class)
                 ;
+                return http.build();
     }
+
+
+
 }

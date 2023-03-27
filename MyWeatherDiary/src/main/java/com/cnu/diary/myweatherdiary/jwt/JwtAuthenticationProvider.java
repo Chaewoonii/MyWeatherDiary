@@ -1,8 +1,9 @@
 package com.cnu.diary.myweatherdiary.jwt;
 
-import com.cnu.diary.myweatherdiary.users.User;
-import com.cnu.diary.myweatherdiary.users.UserService;
+import com.cnu.diary.myweatherdiary.users.UserDetailService;
+import com.cnu.diary.myweatherdiary.users.domain.User;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -12,15 +13,17 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.apache.commons.lang3.ClassUtils.isAssignable;
 
 @AllArgsConstructor
 public class JwtAuthenticationProvider implements AuthenticationProvider {
-    private final Jwt jwt;
 
-    private final UserService userService;
+    @Autowired
+    private Jwt jwt;
+
+    @Autowired
+    private UserDetailService userDetailService;
 
 
     @Override
@@ -37,20 +40,13 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         return isAssignable(JwtAuthenticationToken.class, authentication);
     }
 
-    private String getToken(String username, List<GrantedAuthority> authorities) {
-        String[] roles = authorities.stream()
-                .map(GrantedAuthority::getAuthority)
-                .toArray(String[]::new);
-        return jwt.sign(Jwt.Claims.from(username, roles));
-    }
-
     private Authentication processUserAuthentication(String principal, String credentials) {
         try {
-            User user = userService.login(UUID.fromString(principal), credentials);
-            List<GrantedAuthority> authorities = user.getGroup().getAuthorities();
+            User user = userDetailService.login(principal, credentials);
+            List<GrantedAuthority> authorities = user.getUserGroup().getAuthorities();
             String token = getToken(user.getId().toString(), authorities);
             JwtAuthenticationToken authenticated =
-                    new JwtAuthenticationToken(new JwtAuthentication(token, user.getLoginId()), null, authorities);
+                    new JwtAuthenticationToken(new JwtAuthentication(token, user.getEnterKey()), null, authorities);
             authenticated.setDetails(user);
             return authenticated;
         } catch (IllegalArgumentException e) {
@@ -58,5 +54,12 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         } catch (DataAccessException e) {
             throw new AuthenticationServiceException(e.getMessage(), e);
         }
+    }
+
+    private String getToken(String username, List<GrantedAuthority> authorities) {
+        String[] roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .toArray(String[]::new);
+        return jwt.sign(Jwt.Claims.from(username, roles));
     }
 }

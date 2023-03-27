@@ -1,11 +1,9 @@
 package com.cnu.diary.myweatherdiary.utill;
 
-import com.cnu.diary.myweatherdiary.users.User;
-import com.cnu.diary.myweatherdiary.users.UserRequestDto;
-import com.cnu.diary.myweatherdiary.users.UserResponseDto;
+import com.cnu.diary.myweatherdiary.users.domain.User;
+import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public class ConvertEntityToDto {
 

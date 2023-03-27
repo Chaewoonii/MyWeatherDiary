@@ -1,4 +1,4 @@
-package com.cnu.diary.myweatherdiary.users;
+package com.cnu.diary.myweatherdiary.users.utill;
 
 import lombok.Getter;
 
