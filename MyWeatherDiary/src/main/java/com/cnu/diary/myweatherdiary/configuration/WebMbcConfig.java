@@ -1,6 +1,6 @@
 package com.cnu.diary.myweatherdiary.configuration;
 
-import com.cnu.diary.myweatherdiary.utill.ConvertEntityToDto;
+import com.cnu.diary.myweatherdiary.utill.EntityConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -17,8 +17,8 @@ public class WebMbcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public ConvertEntityToDto convertEntityToDto(){
-        return new ConvertEntityToDto();
+    public EntityConverter convertEntityToDto(){
+        return new EntityConverter();
     }
 
 }

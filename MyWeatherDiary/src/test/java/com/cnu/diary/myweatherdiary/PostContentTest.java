@@ -5,6 +5,8 @@ import com.cnu.diary.myweatherdiary.daily.PostContentDto;
 import com.cnu.diary.myweatherdiary.daily.content.Content;
 import com.cnu.diary.myweatherdiary.daily.content.ContentDto;
 import com.cnu.diary.myweatherdiary.daily.post.*;
+import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
+import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
 import com.cnu.diary.myweatherdiary.users.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,10 +43,11 @@ class PostContentTest {
 
     @BeforeAll
     void setUp(){
-        UserResponseDto userResponseDto = new UserResponseDto();
-        userResponseDto.setDiaryTitle("테스트 일기장 >_<");
+        UserRegisterDto userRegisterDto = new UserRegisterDto();
+        userRegisterDto.setDiaryTitle("테스트 일기장 >_<");
+        userRegisterDto.setRole(1L);
 
-        this.user = userService.register(userResponseDto);
+        this.user = userService.register(userRegisterDto);
     }
 
     @Test

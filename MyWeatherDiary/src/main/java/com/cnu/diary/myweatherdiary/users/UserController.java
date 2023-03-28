@@ -3,10 +3,7 @@ package com.cnu.diary.myweatherdiary.users;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthentication;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationToken;
 import com.cnu.diary.myweatherdiary.users.domain.User;
-import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
-import com.cnu.diary.myweatherdiary.users.dto.UserTokenDto;
-import com.cnu.diary.myweatherdiary.users.dto.LoginRequestDto;
-import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
+import com.cnu.diary.myweatherdiary.users.dto.*;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -25,9 +22,9 @@ public class UserController {
 
     
     //유저 생성(다이어리 타이틀 받음)
-    @PostMapping("/register")
-    public UserResponseDto register(@RequestBody UserRequestDto userRequestDto) {
-        return userService.register(userRequestDto);
+    @PostMapping("")
+    public UserResponseDto register(@RequestBody UserRegisterDto userRegisterDto) {
+        return userService.register(userRegisterDto);
     }
 
 
@@ -38,7 +35,7 @@ public class UserController {
     }
 
     //유저 정보 수정
-    @PutMapping("/auth/update")
+    @PutMapping("/auth")
     public UserResponseDto updateUserInfo(@RequestBody UserRequestDto userRequestDto){
         return userService.updateUserInfo(userRequestDto);
     }
@@ -55,7 +52,7 @@ public class UserController {
      */
     @PostMapping(path = "/login")
     public UserTokenDto login(@RequestBody LoginRequestDto request) {
-        JwtAuthenticationToken authToken = new JwtAuthenticationToken(request.getUserId(), request.getEnterKey());
+        JwtAuthenticationToken authToken = new JwtAuthenticationToken(request.getEnterKey());
         Authentication resultToken = authenticationManager.authenticate(authToken);
         JwtAuthenticationToken authenticated = (JwtAuthenticationToken) resultToken;
         JwtAuthentication principal = (JwtAuthentication) authenticated.getPrincipal();

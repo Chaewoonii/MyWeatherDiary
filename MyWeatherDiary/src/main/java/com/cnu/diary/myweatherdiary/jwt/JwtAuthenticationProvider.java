@@ -30,8 +30,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         JwtAuthenticationToken jwtAuthentication = (JwtAuthenticationToken) authentication;
         return processUserAuthentication(
-                String.valueOf(jwtAuthentication.getPrincipal()),
-                jwtAuthentication.getCredentials()
+                String.valueOf(jwtAuthentication.getPrincipal())
         );
     }
 
@@ -40,13 +39,13 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         return isAssignable(JwtAuthenticationToken.class, authentication);
     }
 
-    private Authentication processUserAuthentication(String principal, String credentials) {
+    private Authentication processUserAuthentication(String principal) {
         try {
-            User user = userDetailService.login(principal, credentials);
+            User user = userDetailService.login(principal);
             List<GrantedAuthority> authorities = user.getUserGroup().getAuthorities();
             String token = getToken(user.getId().toString(), authorities);
             JwtAuthenticationToken authenticated =
-                    new JwtAuthenticationToken(new JwtAuthentication(token, user.getEnterKey()), null, authorities);
+                    new JwtAuthenticationToken(new JwtAuthentication(token, user.getEnterKey()), authorities);
             authenticated.setDetails(user);
             return authenticated;
         } catch (IllegalArgumentException e) {

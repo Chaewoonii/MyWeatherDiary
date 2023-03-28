@@ -1,6 +1,8 @@
 package com.cnu.diary.myweatherdiary;
 
 
+import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
+import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
 import com.cnu.diary.myweatherdiary.users.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +32,11 @@ public class UserServiceTest {
     @Order(1)
     @DisplayName("유저를 등록할 수 있다")
     void testRegister(){
-        UserResponseDto userResponseDto = new UserResponseDto();
-        userResponseDto.setDiaryTitle("테스트 일기장 >_<");
+        UserRegisterDto userRegisterDto = new UserRegisterDto();
+        userRegisterDto.setDiaryTitle("테스트 일기장 >_<");
+        userRegisterDto.setRole(1L);
 
-        user = userService.register(userResponseDto);
+        user = userService.register(userRegisterDto);
         UserResponseDto user1 = userService.findById(user.getId());
 
         log.info("registered -> {}", user);
@@ -46,14 +49,14 @@ public class UserServiceTest {
     @Order(2)
     @DisplayName("유저 정보를 수정할 수 있다")
     void testUpdate(){
-        UserResponseDto userResponseDto = new UserResponseDto();
-        userResponseDto.setId(user.getId());
-        userResponseDto.setNickName(user.getNickName());
-        userResponseDto.setDiaryTitle("일기일기!!");
-        userResponseDto.setNickName("채우닝");
-        userResponseDto.setEmail(Optional.of("coco@gmail.com"));
+        UserRequestDto userRequestDto = new UserRequestDto();
+        userRequestDto.setId(user.getId());
+        userRequestDto.setNickName(user.getNickName());
+        userRequestDto.setDiaryTitle("일기일기!!");
+        userRequestDto.setNickName("채우닝");
+        userRequestDto.setEmail(Optional.of("coco@gmail.com"));
 
-        UserResponseDto updatedUser = userService.updateUserInfo(userResponseDto);
+        UserResponseDto updatedUser = userService.updateUserInfo(userRequestDto);
 
         log.info("updated -> {}", updatedUser);
     }

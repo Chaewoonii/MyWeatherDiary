@@ -1,107 +1,121 @@
 package com.cnu.diary.myweatherdiary.users;
 
-import com.cnu.diary.myweatherdiary.users.domain.User;
-import com.cnu.diary.myweatherdiary.users.domain.UserGroup;
+import com.cnu.diary.myweatherdiary.users.domain.*;
+import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
+import com.cnu.diary.myweatherdiary.users.repository.GroupPermissionRepository;
+import com.cnu.diary.myweatherdiary.users.repository.PermissionRepository;
+import com.cnu.diary.myweatherdiary.users.repository.UserGroupRepository;
+import com.cnu.diary.myweatherdiary.users.repository.UserRepository;
 import com.cnu.diary.myweatherdiary.users.utill.AuthorizationKeyCreator;
-import com.cnu.diary.myweatherdiary.users.utill.NickNameCreator;
-import com.cnu.diary.myweatherdiary.utill.ConvertEntityToDto;
+import com.cnu.diary.myweatherdiary.utill.EntityConverter;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+@Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
-    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final ConvertEntityToDto convertEntityToDto;
+    private final UserGroupRepository groupRepository;
+    private final GroupPermissionRepository groupPermissionRepository;
+    private final PermissionRepository permissionRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EntityConverter entityConverter;
+
+
+    public String getKey(int length){
+        return new AuthorizationKeyCreator().getRandomString(length);
+    }
+
+    public UserGroup getUserGroup(Long role){
+        if (role == 1L){
+            Permission permission = new Permission(role, Role.ROLE_USER.toString());
+            UserGroup userGroup = new UserGroup(role, Group.USER_GROUP.toString(), new ArrayList<>());
+            GroupPermission groupPermission = new GroupPermission(role, userGroup, permission);
+            userGroup.getPermissions().add(groupPermission);
+
+            return userGroup;
+        }else {
+            Permission permission1 = new Permission(role, Role.ROLE_USER.toString());
+            Permission permission2 = new Permission(role, Role.ROLE_ADMIN.toString());
+            UserGroup adminGroup = new UserGroup(role, Group.ADMIN_GROUP.toString(), new ArrayList<>());
+            GroupPermission groupPermission1 = new GroupPermission(role, adminGroup, permission1);
+            GroupPermission groupPermission2 = new GroupPermission(role, adminGroup, permission2);
+            adminGroup.getPermissions().add(groupPermission1);
+            adminGroup.getPermissions().add(groupPermission2);
+
+            return adminGroup;
+        }
+
+    }
 
     //유저 생성(다이어리 키 생성, db 자장)
-    public UserResponseDto register(UserRequestDto userRequestDto){
-        String key = passwordEncoder.encode(
-                new AuthorizationKeyCreator().getRandomString(20)
-        );
+    @Transactional
+    public UserResponseDto register(UserRegisterDto userRegisterDto){
+        String key = getKey(20);
 
-        User user = User.builder()
-                .enterKey(key)
-                .
-                .build();
+        UserGroup userGroup = getUserGroup(userRegisterDto.getRole());
 
+        User user = entityConverter.createUser(userRegisterDto, key, userGroup);
         User saved = userRepository.save(user);
-        return convertEntityToDto.userToDto(saved);
+        log.info("saved -> {}", saved);
+        return entityConverter.getUserDto(saved);
     }
 
     //키를 생성해서 저장
     //유저 생성 및 키만 변경 시 사용
     @Transactional
-    @PostMapping("users")
     public UserResponseDto changeKey(UserRequestDto userRequestDto) {
         User user = userRepository.findById(userRequestDto.getId()).orElseThrow(
                 () -> new NoSuchElementException(User.class.getPackageName())
         );
 
-        String key = passwordEncoder.encode(
-                new AuthorizationKeyCreator().getRandomString(20)
-        );
+        User updated = entityConverter.updateUser(user, userRequestDto, getKey(20));
 
-        user.setEnterKey(key);
-        User saved = userRepository.save(user);
-        return convertEntityToDto.userToDto(saved);
+        User saved = userRepository.save(updated);
+        return entityConverter.getUserDto(saved);
     }
 
     //유저 수정
     @Transactional
-    @PostMapping("users")
     public UserResponseDto updateUserInfo(UserRequestDto userRequestDto){
-        User user = userRepository.findById(userResponseDto.getId()).orElseThrow(
+        User user = userRepository.findById(userRequestDto.getId()).orElseThrow(
                 () -> new NoSuchElementException(User.class.getPackageName())
         );
-        user.setDiaryTitle(userResponseDto.getDiaryTitle());
-        if (userResponseDto.getEmail().isPresent()){
-            user.setEmail(user.getEmail());
-        }
-        user.setNickName(userResponseDto.getNickName());
+        User updated = entityConverter.updateUser(user, userRequestDto);
 
-        User saved = userRepository.save(user);
-        return convertEntityToDto.userToDto(saved);
+        User saved = userRepository.save(updated);
+        return entityConverter.getUserDto(saved);
     }
 
 
     //id로 유저 찾기
     @Transactional
-    @GetMapping("users")
     public UserResponseDto findById(UUID id) {
         User user = userRepository.findById(id).orElseThrow();
-        return convertEntityToDto.userToDto(user);
+        return entityConverter.getUserDto(user);
     }
 
     //유저 삭제
     @Transactional
-    @PostMapping("users")
     public void removeUser(UUID id) {
         userRepository.deleteById(id);
     }
 
     @Transactional
-    @GetMapping("users")
     public List<UserResponseDto> findAll() {
         List<UserResponseDto> users = new ArrayList<>();
         Iterable<User> all = userRepository.findAll();
-        all.forEach((u)->users.add(convertEntityToDto.userToDto(u)));
+        all.forEach((u)->users.add(entityConverter.getUserDto(u)));
         return users;
     }
 

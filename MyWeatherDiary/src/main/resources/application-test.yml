@@ -1,27 +1,3 @@
-#spring:
-#  config:
-#    activate:
-#      on-profile: test
-#  datasource:
-#    url: jdbc:h2:~/mwd-application-test
-#    username: test
-#    password:
-#    driver-class-name: org.h2.Driver
-#  h2:
-#    console:
-#      enabled: true
-#  jpa:
-#    generate-ddl: true
-#    database: h2
-#    show-sql: true
-#    open-in-view: false
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.H2Dialect
-#        query.in_clause_parameter_padding: true
-#        hbm2ddl:
-#          auto: create-drop
-
 spring:
   config:
     activate:
@@ -41,14 +17,17 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+  sql:
+    init:
+      schema-locations: classpath:sql/schema.sql
+      data-locations: classpath:sql/data.sql
 logging:
   level:
     org:
       hibernate:
-        type.descriptor.slq: DEBUG
-        SQL: DEBUG
+        org.hibernate.type.descriptor.sql: DEBUG
 jwt:
   header: token
-  issuer: prgrms
+  issuer: developer
   client-secret: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ
   expiry-seconds: 60

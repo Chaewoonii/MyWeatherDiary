@@ -4,9 +4,10 @@ spring:
     url: jdbc:mysql://localhost:3306/diarydb
     username: root
     password: test1234@#
+
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         show_sql: true
@@ -14,12 +15,15 @@ spring:
   sql:
     init:
       schema-locations: classpath:sql/schema.sql
-      data-locations: classpath:sql/data_int.sql
+      data-locations: classpath:sql/data.sql
+      platform: mysql
+      encoding: UTF-8
+      mode: always
 logging:
   level:
     org.hibernate.type.descriptor.sql: DEBUG
 jwt:
   header: token
-  issuer: prgrms
+  issuer: developer
   client-secret: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ
   expiry-seconds: 60

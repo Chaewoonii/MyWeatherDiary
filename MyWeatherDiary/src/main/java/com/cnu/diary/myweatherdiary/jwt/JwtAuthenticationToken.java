@@ -10,24 +10,26 @@ import java.util.Collection;
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     private final Object principal;
-    private String credentials;
 
     //인증 요청시 사용되는 생성자
-    public JwtAuthenticationToken(String principal, String credentials) {
+    public JwtAuthenticationToken(String principal) {
         super(null);
         super.setAuthenticated(false);
 
-        this.principal = principal; //로그인 ID -> user id, uuid
-        this.credentials = credentials; // 로그인 비밀번호 -> enterKey
+        this.principal = principal; //로그인 ID -> user id
     }
 
     //인증 완료시 사용되는 생성자
-    JwtAuthenticationToken(Object principal, String credentials, Collection<? extends GrantedAuthority> authorities) {
+    JwtAuthenticationToken(Object principal, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         super.setAuthenticated(true);
 
         this.principal = principal; // 인증에 사용된 객체
-        this.credentials = credentials; // 비밀번호 딱히 필요 없음 -> null 이 입력될수도
+    }
+
+    @Override
+    public Object getCredentials() {
+        return null;
     }
 
     //토큰이 false이면 IllegalArgumentException이 발생
@@ -41,7 +43,6 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     @Override
     public void eraseCredentials() {
         super.eraseCredentials();
-        credentials = null;
     }
 
 }
