@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 //    @Query("SELECT id, enter_key, diary_title FROM users WHERE enter_key = :key")
 //    Optional<UUID> findByEnter_key(String key);
 
-    @Query("SELECT u from users u where u.enterKey = :enterKey")
+//    @Query("select u from users u join fetch UserGroup g left join fetch GroupPermission gp join fetch Permission where u.enterKey = :enterKey")
     Optional<User> findByEnterKey(String enterKey);
 
 }

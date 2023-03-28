@@ -17,9 +17,6 @@ public class UserController {
 
     private final UserService userService;
 
-    private final AuthenticationManager authenticationManager;
-
-
     
     //유저 생성(다이어리 타이틀 받음)
     @PostMapping("")
@@ -53,11 +50,11 @@ public class UserController {
     @PostMapping(path = "/login")
     public UserTokenDto login(@RequestBody LoginRequestDto request) {
         JwtAuthenticationToken authToken = new JwtAuthenticationToken(request.getEnterKey());
-        Authentication resultToken = authenticationManager.authenticate(authToken);
+        Authentication resultToken = userService.authenticate(authToken);
         JwtAuthenticationToken authenticated = (JwtAuthenticationToken) resultToken;
         JwtAuthentication principal = (JwtAuthentication) authenticated.getPrincipal();
-        User user = (User) resultToken.getDetails();
-        return new UserTokenDto(principal.token, principal.username, user.getUserGroup().getName());
+        LoginResponseDto loginResponseDto = (LoginResponseDto) resultToken.getDetails();
+        return new UserTokenDto(principal.token, principal.username, loginResponseDto.getUserGroup().getName());
 
     }
 

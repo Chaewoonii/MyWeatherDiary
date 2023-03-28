@@ -8,7 +8,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 public class LoginRequestDto {
-    private String userId;
 
     private String enterKey;
 }

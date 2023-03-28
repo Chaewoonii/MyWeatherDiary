@@ -27,7 +27,7 @@ public class UserGroup {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "userGroup")
+    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.PERSIST)
     private List<GroupPermission> permissions;
 
     public void setPermissions(List<GroupPermission> groupPermissions){

@@ -1,5 +1,6 @@
 package com.cnu.diary.myweatherdiary.users;
 
+import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationToken;
 import com.cnu.diary.myweatherdiary.users.domain.*;
 import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
@@ -13,22 +14,23 @@ import com.cnu.diary.myweatherdiary.utill.EntityConverter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final UserGroupRepository groupRepository;
-    private final GroupPermissionRepository groupPermissionRepository;
-    private final PermissionRepository permissionRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
     private final EntityConverter entityConverter;
 
 
@@ -117,6 +119,13 @@ public class UserService {
         Iterable<User> all = userRepository.findAll();
         all.forEach((u)->users.add(entityConverter.getUserDto(u)));
         return users;
+    }
+
+
+    @Transactional
+    public Authentication authenticate(JwtAuthenticationToken authToken) {
+        Authentication resultToken = authenticationManager.authenticate(authToken);
+        return resultToken;
     }
 
 

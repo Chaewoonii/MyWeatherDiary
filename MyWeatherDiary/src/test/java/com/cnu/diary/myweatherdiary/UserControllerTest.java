@@ -6,6 +6,7 @@ import com.cnu.diary.myweatherdiary.users.dto.LoginRequestDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
 import com.cnu.diary.myweatherdiary.users.repository.UserRepository;
+import com.cnu.diary.myweatherdiary.users.utill.AuthorizationKeyCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -50,9 +51,9 @@ public class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-
     UserResponseDto user;
-
+    String key;
+    
     @BeforeEach
     void setUp(){
         //Given
@@ -69,6 +70,8 @@ public class UserControllerTest {
         UserResponseDto user2 = userService.register(userRegisterDto2);
         log.info("registered user -> {}", user);
         log.info("registerd user2 -> {}", user2);
+
+        key = user.getEnterKey();
     }
 
     @AfterEach
@@ -116,7 +119,7 @@ public class UserControllerTest {
 
     @Test
     void testLogin(){
-        LoginRequestDto loginRequestDto = new LoginRequestDto(user.getId().toString(), user.getEnterKey());
+        LoginRequestDto loginRequestDto = new LoginRequestDto(key);
         log.info("after login -> {}", userController.login(loginRequestDto));
     }
 

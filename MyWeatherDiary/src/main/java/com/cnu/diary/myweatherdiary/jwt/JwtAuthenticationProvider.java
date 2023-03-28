@@ -2,6 +2,7 @@ package com.cnu.diary.myweatherdiary.jwt;
 
 import com.cnu.diary.myweatherdiary.users.UserDetailService;
 import com.cnu.diary.myweatherdiary.users.domain.User;
+import com.cnu.diary.myweatherdiary.users.dto.LoginResponseDto;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -41,12 +42,12 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private Authentication processUserAuthentication(String principal) {
         try {
-            User user = userDetailService.login(principal);
-            List<GrantedAuthority> authorities = user.getUserGroup().getAuthorities();
-            String token = getToken(user.getId().toString(), authorities);
+            LoginResponseDto loginResponseDto = userDetailService.login(principal);
+            List<GrantedAuthority> authorities = loginResponseDto.getUserGroup().getAuthorities();
+            String token = getToken(loginResponseDto.getId().toString(), authorities);
             JwtAuthenticationToken authenticated =
-                    new JwtAuthenticationToken(new JwtAuthentication(token, user.getEnterKey()), authorities);
-            authenticated.setDetails(user);
+                    new JwtAuthenticationToken(new JwtAuthentication(token, loginResponseDto.getEnterKey()), authorities);
+            authenticated.setDetails(loginResponseDto);
             return authenticated;
         } catch (IllegalArgumentException e) {
             throw new BadCredentialsException(e.getMessage());

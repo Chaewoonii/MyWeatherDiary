@@ -2,7 +2,9 @@ package com.cnu.diary.myweatherdiary.users;
 
 import com.cnu.diary.myweatherdiary.users.domain.User;
 
+import com.cnu.diary.myweatherdiary.users.dto.LoginResponseDto;
 import com.cnu.diary.myweatherdiary.users.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -41,12 +43,17 @@ public class UserDetailService implements UserDetailsService {
     }
 
     //로그인(username과 비밀번호)
-    public User login(String principal) {
+    @Transactional
+    public LoginResponseDto login(String principal) {
         checkArgument(isNotEmpty(principal), "principal must be provided.");
 
         User user = userRepository.findByEnterKey(principal)
                 .orElseThrow(() -> new UsernameNotFoundException("Could not found user for " + principal));
-        return user;
+        return new LoginResponseDto(
+                user.getId(),
+                user.getEnterKey(),
+                user.getUserGroup(),
+                user.getUserGroup().getPermissions());
     }
 
 
