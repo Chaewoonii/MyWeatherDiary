@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UserRequestDto {
 
-    private UUID id;
+    private UUID id; //없애기
     private String diaryTitle;
     private String nickName;
     private Optional<String> email = Optional.empty();

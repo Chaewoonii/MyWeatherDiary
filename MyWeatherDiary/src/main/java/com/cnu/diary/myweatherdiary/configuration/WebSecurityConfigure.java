@@ -4,20 +4,14 @@ import com.cnu.diary.myweatherdiary.jwt.Jwt;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationFilter;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationProvider;
 import com.cnu.diary.myweatherdiary.users.UserDetailService;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -105,7 +99,7 @@ public class WebSecurityConfigure {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .requestMatchers("/api/v1/diary", "/api/v1/auth").hasAnyRole("USER")
+                .requestMatchers("/api/v1/diary", "/api/v1/**/auth").hasAnyRole("USER")
                 .anyRequest().permitAll()
                 .and()
                 /**

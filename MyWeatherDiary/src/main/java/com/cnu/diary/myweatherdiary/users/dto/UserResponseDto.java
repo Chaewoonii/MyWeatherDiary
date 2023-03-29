@@ -10,8 +10,8 @@ import java.util.UUID;
 @ToString
 @NoArgsConstructor
 public class UserResponseDto {
-    private UUID id;
-    private String enterKey;
+    private UUID id; //x
+    private String enterKey; //x
     private String diaryTitle;
     private String nickName;
     private Optional<String> email = Optional.empty();

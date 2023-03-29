@@ -65,6 +65,12 @@ public class PostConentController {
         return post;
     }
 
+    /**
+     * 유저의 전체 포스트 중에서 writtenDate 전부 가져오기!
+     * 포스트 하나당 컨텐츠 최대 10개임
+     * 포스트 조회 요청 시 latestDate 를 기준으로 최근 5개씩. <- paging????
+     * */
+
     //포스트 수정
     @PutMapping("/post/edit")
     public Post editPost(@RequestBody PostContentDto postContentDto){

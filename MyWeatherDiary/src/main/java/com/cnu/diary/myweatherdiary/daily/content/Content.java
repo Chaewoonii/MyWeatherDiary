@@ -25,7 +25,7 @@ public class Content {
     @Column(name = "id", unique = true, nullable = false, columnDefinition = "BINARY(16)")
     private UUID id;
     @Enumerated(EnumType.STRING)
-    private Prefix prefix; //develop/2023-03-22askdjgoq.jpg
+    private Prefix prefix; //develop/uuid~~~~.jpg
     @Column(name = "comment", nullable = true)
     @Lob
     private String comment;

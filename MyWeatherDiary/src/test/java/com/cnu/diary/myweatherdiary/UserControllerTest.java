@@ -2,9 +2,8 @@ package com.cnu.diary.myweatherdiary;
 
 import com.cnu.diary.myweatherdiary.users.UserController;
 import com.cnu.diary.myweatherdiary.users.UserService;
-import com.cnu.diary.myweatherdiary.users.dto.LoginRequestDto;
-import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
-import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
+import com.cnu.diary.myweatherdiary.users.domain.User;
+import com.cnu.diary.myweatherdiary.users.dto.*;
 import com.cnu.diary.myweatherdiary.users.repository.UserRepository;
 import com.cnu.diary.myweatherdiary.users.utill.AuthorizationKeyCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -109,18 +109,40 @@ public class UserControllerTest {
                         )));
     }
 
+
     @Test
-    void testFind(){
-        log.info("find All -> {}", userService.findAll());
-        log.info("find One -> {}", userService.findById(user.getId()));
-        log.info("find by enterKey -> {}", userRepository.findByEnterKey(user.getEnterKey()));
+    @DisplayName("로그인")
+    void testLogin(){
+        LoginRequestDto loginRequestDto = new LoginRequestDto(key);
+        log.info("after login -> {}", userController.login(loginRequestDto));
+    }
+
+    @Test
+    @DisplayName("유저 정보 조회")
+    void testFindUser(){
+        LoginRequestDto loginRequestDto = new LoginRequestDto(key);
+        UserTokenDto token = userController.login(loginRequestDto);
+
 
     }
 
     @Test
-    void testLogin(){
-        LoginRequestDto loginRequestDto = new LoginRequestDto(key);
-        log.info("after login -> {}", userController.login(loginRequestDto));
+    void testFindByDiaryTitle(){
+        UserRegisterDto userRegisterDto1 = new UserRegisterDto();
+        userRegisterDto1.setDiaryTitle("흑흑어쩌구저쩌구");
+        userRegisterDto1.setRole(1L);
+
+        UserRegisterDto userRegisterDto2 = new UserRegisterDto();
+        userRegisterDto2.setDiaryTitle("흑흑어쩌구저쩌구");
+        userRegisterDto2.setRole(1L);
+
+        UserResponseDto user1 = userService.register(userRegisterDto1);
+        UserResponseDto user2 = userService.register(userRegisterDto2);
+
+        Optional<User> user1optional = userRepository.findByDiaryTitleAndId(user1.getId(), user1.getDiaryTitle());
+        Optional<User> user2optional = userRepository.findByDiaryTitleAndId(user2.getId(), user1.getDiaryTitle());
+        log.info("findByDiaryTitle -> {}", user1optional);
+        log.info("findByDiaryTitle -> {}", user2optional);
     }
 
 }
