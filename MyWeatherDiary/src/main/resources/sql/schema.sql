@@ -34,7 +34,7 @@ CREATE TABLE users
     enter_key   varchar(80) NOT NULL,
     diary_title varchar(20) NOT NULL,
     nick_name   varchar(15),
-    email       varchar(15),
+    user_id       varchar(15),
     group_id    bigint NOT NULL,
     CONSTRAINT unq_enter_key UNIQUE (enter_key),
     CONSTRAINT fk_group_id_for_user FOREIGN KEY (group_id) REFERENCES user_groups (id) ON DELETE RESTRICT ON UPDATE RESTRICT

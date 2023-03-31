@@ -5,9 +5,6 @@ import com.cnu.diary.myweatherdiary.users.domain.*;
 import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
-import com.cnu.diary.myweatherdiary.users.repository.GroupPermissionRepository;
-import com.cnu.diary.myweatherdiary.users.repository.PermissionRepository;
-import com.cnu.diary.myweatherdiary.users.repository.UserGroupRepository;
 import com.cnu.diary.myweatherdiary.users.repository.UserRepository;
 import com.cnu.diary.myweatherdiary.users.utill.AuthorizationKeyCreator;
 import com.cnu.diary.myweatherdiary.utill.EntityConverter;
@@ -16,14 +13,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Slf4j
 @Service
@@ -33,10 +28,8 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final EntityConverter entityConverter;
 
+    private final PasswordEncoder passwordEncoder;
 
-    public String getKey(int length){
-        return new AuthorizationKeyCreator().getRandomString(length);
-    }
 
     public UserGroup getUserGroup(Long role){
         if (role == 1L){
@@ -63,34 +56,39 @@ public class UserService {
     //유저 생성(다이어리 키 생성, db 자장)
     @Transactional
     public UserResponseDto register(UserRegisterDto userRegisterDto){
-        String key = getKey(20);
+        String key = new AuthorizationKeyCreator().getRandomString(20);
 
         UserGroup userGroup = getUserGroup(userRegisterDto.getRole());
 
-        User user = entityConverter.createUser(userRegisterDto, key, userGroup);
+        User user = entityConverter.createUser(
+                userRegisterDto,
+                passwordEncoder.encode(key),
+                userGroup);
         User saved = userRepository.save(user);
         log.info("saved -> {}", saved);
-        return entityConverter.getUserDto(saved);
+        return entityConverter.getUserDto(saved, key);
     }
 
     //키를 생성해서 저장
     //유저 생성 및 키만 변경 시 사용
     @Transactional
-    public UserResponseDto changeKey(UserRequestDto userRequestDto) {
-        User user = userRepository.findById(userRequestDto.getId()).orElseThrow(
+    public UserResponseDto changeKey(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException(User.class.getPackageName())
         );
+        String key = new AuthorizationKeyCreator().getRandomString(20);
 
-        User updated = entityConverter.updateUser(user, userRequestDto, getKey(20));
+        User updated = entityConverter.updateUserKey(user,
+                passwordEncoder.encode(key));
 
         User saved = userRepository.save(updated);
-        return entityConverter.getUserDto(saved);
+        return entityConverter.getUserDto(saved, key);
     }
 
     //유저 수정
     @Transactional
-    public UserResponseDto updateUserInfo(UserRequestDto userRequestDto){
-        User user = userRepository.findById(userRequestDto.getId()).orElseThrow(
+    public UserResponseDto updateUserInfo(UUID id, UserRequestDto userRequestDto){
+        User user = userRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException(User.class.getPackageName())
         );
         User updated = entityConverter.updateUser(user, userRequestDto);

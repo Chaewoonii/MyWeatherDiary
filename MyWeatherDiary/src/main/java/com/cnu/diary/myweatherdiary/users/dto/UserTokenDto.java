@@ -12,7 +12,7 @@ import lombok.ToString;
 public class UserTokenDto {
 
     private final String token;
-    private final String username;
+    private final String email;
     private final String group;
 
 

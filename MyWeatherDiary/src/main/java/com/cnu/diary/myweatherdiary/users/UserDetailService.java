@@ -19,6 +19,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 
+
 @Service
 @RequiredArgsConstructor
 public class UserDetailService implements UserDetailsService {
@@ -44,14 +45,16 @@ public class UserDetailService implements UserDetailsService {
 
     //로그인(username과 비밀번호)
     @Transactional
-    public LoginResponseDto login(String principal) {
+    public LoginResponseDto login(String principal, String credential) {
         checkArgument(isNotEmpty(principal), "principal must be provided.");
 
-        User user = userRepository.findByEnterKey(principal)
+        User user = userRepository.findByUserId(principal)
                 .orElseThrow(() -> new UsernameNotFoundException("Could not found user for " + principal));
+
+        user.checkPassword(passwordEncoder, credential);
+
         return new LoginResponseDto(
                 user.getId(),
-                user.getEnterKey(),
                 user.getUserGroup(),
                 user.getUserGroup().getPermissions());
     }

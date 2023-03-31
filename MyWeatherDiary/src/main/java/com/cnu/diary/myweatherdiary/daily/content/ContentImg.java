@@ -9,8 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ContentImg {
-    @Transactional
-    @PostMapping("contents")
+
     public List<byte[]> imgToBase64(List<ContentDto> contentDtos) { // encoder
         List<byte[]> contentImgToByteList = new ArrayList<>();
         Iterator<ContentDto> iter = contentDtos.iterator();
@@ -27,8 +26,6 @@ public class ContentImg {
         return contentImgToByteList;
     }
 
-
-    @Transactional
     public List<String> base64ToImg(List<byte[]> contentImgToByteList) { // decoder
         List<String> contentByteToImgList = new ArrayList<>();
         Iterator<byte[]> iter = contentImgToByteList.iterator();
@@ -40,7 +37,6 @@ public class ContentImg {
             byte[] decoding = decoder.decode(byteImg);
             contentByteToImgList.add(new String(decoding));
         }
-
         return contentByteToImgList;
     }
 }

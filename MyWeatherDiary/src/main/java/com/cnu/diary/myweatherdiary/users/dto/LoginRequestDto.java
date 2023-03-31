@@ -9,5 +9,7 @@ import lombok.ToString;
 @Getter
 public class LoginRequestDto {
 
+    private String email;
+
     private String enterKey;
 }

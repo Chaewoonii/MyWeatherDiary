@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Optional;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -50,13 +48,12 @@ public class UserServiceTest {
     @DisplayName("유저 정보를 수정할 수 있다")
     void testUpdate(){
         UserRequestDto userRequestDto = new UserRequestDto();
-        userRequestDto.setId(user.getId());
         userRequestDto.setNickName(user.getNickName());
         userRequestDto.setDiaryTitle("일기일기!!");
         userRequestDto.setNickName("채우닝");
-        userRequestDto.setEmail(Optional.of("coco@gmail.com"));
+        userRequestDto.setEmail("coco@gmail.com");
 
-        UserResponseDto updatedUser = userService.updateUserInfo(userRequestDto);
+        UserResponseDto updatedUser = userService.updateUserInfo(user.getId(), userRequestDto);
 
         log.info("updated -> {}", updatedUser);
     }

@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class LoginResponseDto {
     private UUID id;
-    private String enterKey;
     private UserGroup userGroup;
     private List<GroupPermission> groupPermissions;
 

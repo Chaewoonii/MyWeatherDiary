@@ -99,7 +99,7 @@ public class WebSecurityConfigure {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .requestMatchers("/api/v1/diary", "/api/v1/**/auth").hasAnyRole("USER")
+                .requestMatchers("/api/diary", "/api/user/auth").hasAnyRole("USER")
                 .anyRequest().permitAll()
                 .and()
                 /**

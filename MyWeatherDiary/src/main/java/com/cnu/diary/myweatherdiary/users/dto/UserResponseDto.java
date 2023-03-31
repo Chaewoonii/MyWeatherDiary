@@ -2,7 +2,6 @@ package com.cnu.diary.myweatherdiary.users.dto;
 
 import lombok.*;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
@@ -11,8 +10,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UserResponseDto {
     private UUID id; //x
-    private String enterKey; //x
+    private String enterKey;
     private String diaryTitle;
     private String nickName;
-    private Optional<String> email = Optional.empty();
+    private String email;
 }

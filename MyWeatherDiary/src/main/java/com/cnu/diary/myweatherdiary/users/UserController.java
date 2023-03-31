@@ -2,21 +2,24 @@ package com.cnu.diary.myweatherdiary.users;
 //pswd
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthentication;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationToken;
-import com.cnu.diary.myweatherdiary.users.domain.User;
 import com.cnu.diary.myweatherdiary.users.dto.*;
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/v1/user") //버전은 빼기 ->
+@RequestMapping("/api/user") //버전은 빼기 ->
 public class UserController {
 
     private final UserService userService;
+
+    private final UserDetailService userDetailService;
 
     
     //유저 생성(다이어리 타이틀 받음)
@@ -29,29 +32,45 @@ public class UserController {
     //새로운 키로 변경: userId 필요.
     //클라이언트가 보내는 것에 따라서 수정인지 key 변경인지??? <-- DTO 분리
     @PutMapping("/auth/changeKey")
-    public UserResponseDto changeKey(@RequestBody UserRequestDto userRequestDto){
-        return userService.changeKey(userRequestDto);
+    public UserResponseDto changeKey(@RequestBody LoginRequestDto loginRequestDto,
+                                     @AuthenticationPrincipal JwtAuthentication authentication){
+        userDetailService.login(loginRequestDto.getEmail(), loginRequestDto.getEnterKey());
+
+        return userService.changeKey(UUID.fromString(authentication.username));
     }
 
     //유저 정보 수정
     @PutMapping("/auth")
-    public UserResponseDto updateUserInfo(@RequestBody UserRequestDto userRequestDto){
+    public UserResponseDto updateUserInfo(@RequestBody UserRequestDto userRequestDto,
+                                          @AuthenticationPrincipal JwtAuthentication authentication){
 //        @AuthenticationPrincipal JwtAuthentication authentication
 //        authentication.token, authentication.username
 //        username으로 dto 찾아오기 -> 반환.
-        return userService.updateUserInfo(userRequestDto);
+
+
+        return userService.updateUserInfo(UUID.fromString(authentication.username), userRequestDto);
 
     }
 
     //유저 정보 불러오기 -> get, /user/auth request: authentication + loginDto
+    @GetMapping("/auth")
+    public UserResponseDto getUser(
+            @RequestBody LoginRequestDto loginRequestDto,
+            @AuthenticationPrincipal JwtAuthentication authentication){
+        userDetailService.login(loginRequestDto.getEmail(), loginRequestDto.getEnterKey());
+
+        return userService.findById(UUID.fromString(authentication.username));
+    }
+
+
     // 로그인 -> post, /user: request: loginDto
     //로그아웃 -> get, /user/auth request: authentication
 
 
     // 유저 삭제
-    @DeleteMapping("/auth/remove")
-    public void removeUser(@RequestBody UserRequestDto userRequestDto){
-        userService.removeUser(userRequestDto.getId());
+    @DeleteMapping("/auth")
+    public void removeUser(@AuthenticationPrincipal JwtAuthentication authentication){
+        userService.removeUser(UUID.fromString(authentication.username));
     }
 
 
@@ -60,7 +79,7 @@ public class UserController {
     //diaryTitle + id 슈퍼키로 유저 찾기
     @PostMapping(path = "/login")
     public UserTokenDto login(@RequestBody LoginRequestDto request) {
-        JwtAuthenticationToken authToken = new JwtAuthenticationToken(request.getEnterKey());
+        JwtAuthenticationToken authToken = new JwtAuthenticationToken(request.getEmail(), request.getEnterKey());
         Authentication resultToken = userService.authenticate(authToken);
         JwtAuthenticationToken authenticated = (JwtAuthenticationToken) resultToken;
         JwtAuthentication principal = (JwtAuthentication) authenticated.getPrincipal();

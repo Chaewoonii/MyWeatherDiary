@@ -21,4 +21,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query("SELECT u FROM users u WHERE u.id = :id AND u.diaryTitle = :diaryTitle")
     Optional<User> findByDiaryTitleAndId(UUID id, String diaryTitle);
 
+    Optional<User> findByUserId(String userId);
+
 }
