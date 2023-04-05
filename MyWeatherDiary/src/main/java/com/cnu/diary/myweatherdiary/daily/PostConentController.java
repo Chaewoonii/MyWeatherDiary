@@ -1,14 +1,17 @@
 package com.cnu.diary.myweatherdiary.daily;
 
 import com.cnu.diary.myweatherdiary.daily.content.Content;
+import com.cnu.diary.myweatherdiary.daily.content.ContentDto;
 import com.cnu.diary.myweatherdiary.daily.content.ContentService;
 import com.cnu.diary.myweatherdiary.daily.post.Post;
-import com.cnu.diary.myweatherdiary.daily.post.PostDto;
+import com.cnu.diary.myweatherdiary.daily.post.PostRequestDto;
+import com.cnu.diary.myweatherdiary.daily.post.PostResponseDto;
 import com.cnu.diary.myweatherdiary.daily.post.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +20,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("api/diary")
+@RequestMapping("api/v1/diary")
 public class PostConentController {
 
     @Autowired
@@ -26,69 +29,73 @@ public class PostConentController {
     @Autowired
     ContentService contentService;
 
-    /*
-    //로그인 후 마이페이지. id 값이 있어야 함. >> id 없어도 될듯. js에서 들고 있게?
-    @GetMapping("/{pswd_id}")
-    public ModelAndView myDiary(@PathVariable("pswd_id") UUID id){
-        System.out.println("**");
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject(new PostEntity(id));
-        modelAndView.setViewName("posts");
-        return modelAndView;
-    }*/
 
-    // 같은 다이어리(pw가 같은)의 모든 포스트를 불러옴 -> 10개씩 불러오기 수정
-    @GetMapping({"/timeline/{user_id}"})
-    public Iterable<Post> getTimelinePost(@PathVariable("user_id") UUID id){
-        return postService.getAllPostsById(id);
+    /**
+     * 유저의 전체 포스트 중에서 postDate 전부 가져오기! -> 날짜 list
+     *  >> 각 날짜별로 contents 가 몇개인지? -> 날짜(key) : 콘텐츠 갯수(value: int) list
+     * 포스트 하나당 컨텐츠 최대 10개임
+     * 포스트 조회 요청 시 latestDate 를 기준으로 최근 5개씩. <- paging????
+     * */
+
+
+    @GetMapping({"/{user_id}"})
+    public Iterable<PostResponseDto> getTimelinePost(@PathVariable("user_id") UUID id){
+        List<PostResponseDto> posts = postService.getAllPostsById(id);
+        return posts;
     }
 
-    //일기 저장(db insert)
-    @PostMapping("/addPost")
-    public Post addPost(@RequestBody PostContentDto postContentDto){
-        Post post = postService.addPost(new PostDto(
+    @PostMapping("")
+    public PostResponseDto savePost(@RequestBody PostContentDto postContentDto) throws IOException{
+        PostResponseDto postResponseDto = postService.addPost(new PostRequestDto(
                 UUID.randomUUID(),
                 postContentDto.getUserId(),
                 postContentDto.getEmotion(),
                 postContentDto.getPostDate()));
 
-        contentService.saveContents(postContentDto.getContents(), post);
-        return post;
+
+        List<ContentDto> contentDtos = contentService.saveContents(postContentDto.getContents());
+        postResponseDto.setContentDtos(contentDtos);
+        return postResponseDto;
     }
 
-    //하나의 포스트만 가져오기. id값 필요.
-    @GetMapping("/post/{id}")
-    public Post getPost(@PathVariable("id") UUID postId){
-        Post post = postService.getPost(postId);
-        List<Content> contentList = contentService.findByPostId(post);
-        post.setContents(contentList);
-        return post;
+    @PostMapping("/save/local")
+    public PostResponseDto savePostLocal(@RequestBody PostContentDto postContentDto) throws IOException {
+        PostResponseDto postResponseDto = postService.addPost(new PostRequestDto(
+                UUID.randomUUID(),
+                postContentDto.getUserId(),
+                postContentDto.getEmotion(),
+                postContentDto.getPostDate()));
+
+        List<ContentDto> contentDtos = contentService.saveContents(postContentDto.getContents());
+        postResponseDto.setContentDtos(contentDtos);
+        return postResponseDto;
     }
 
-    /**
-     * 유저의 전체 포스트 중에서 writtenDate 전부 가져오기!
-     * 포스트 하나당 컨텐츠 최대 10개임
-     * 포스트 조회 요청 시 latestDate 를 기준으로 최근 5개씩. <- paging????
-     * */
+    @GetMapping("/{id}")
+    public PostResponseDto getPost(@PathVariable("id") UUID postId) throws IOException{
+        PostResponseDto postResponseDto = postService.getPost(postId);
+        List<ContentDto> contentList = contentService.findByPostId(postId);
+        postResponseDto.setContentDtos(contentList);
+        return postResponseDto;
+    }
 
-    //포스트 수정
-    @PutMapping("/post/edit")
-    public Post editPost(@RequestBody PostContentDto postContentDto){
 
-        Post post = postService.updatePost(new PostDto(
+    @PutMapping("")
+    public PostResponseDto editPost(@RequestBody PostContentDto postContentDto) throws IOException {
+
+        PostResponseDto postResponseDto = postService.updatePost(new PostRequestDto(
                 postContentDto.getPostId(),
                 postContentDto.getUserId(),
                 postContentDto.getEmotion(),
                 postContentDto.getPostDate()
         ));
 
-        List<Content> contentList = contentService.updateContents(postContentDto.getContents(), post);
-        post.setContents(contentList);
-        return post;
+        List<ContentDto> contentList = contentService.updateContents(postContentDto.getContents());
+        postResponseDto.setContentDtos(contentList);
+        return postResponseDto;
     }
 
-    //포스트 삭제
-    @DeleteMapping("/remove/{id}")
+    @DeleteMapping("{id}")
     public void removePost(@PathVariable("id") UUID id){
         postService.removePost(id);
     }

@@ -2,6 +2,7 @@ package com.cnu.diary.myweatherdiary.daily;
 
 import com.cnu.diary.myweatherdiary.daily.content.Content;
 import com.cnu.diary.myweatherdiary.daily.content.ContentDto;
+import com.cnu.diary.myweatherdiary.daily.content.ContentImgHandler;
 import com.cnu.diary.myweatherdiary.daily.content.Prefix;
 import com.cnu.diary.myweatherdiary.daily.post.Emotion;
 import com.cnu.diary.myweatherdiary.daily.post.Post;
@@ -26,21 +27,35 @@ public class PostContentDto {
     private LocalDateTime postDate;
     private List<ContentDto> contents;
 
-    public List<Content> getContentList(Post post, Prefix prefix){
+    /*public List<Content> getContentList(Post post, Prefix prefix){
         List<Content> contentList = new ArrayList<>();
         Iterator<ContentDto> dtoIterator = this.contents.iterator();
 
         while (dtoIterator.hasNext()){
-            ContentDto contentDto = dtoIterator.next();
+            ContentDto dto = dtoIterator.next();
 
-            Content content = new Content();
-            content.setComment(contentDto.getComment());
-            content.setPrefix(prefix);
-            content.setImageSavedDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+            Content content = Content.builder()
+                    .comment(dto.getComment())
+                    .prefix(prefix)
+                    .imgName(dto.getImg())
+                    .build();
             post.addContent(content);
             contentList.add(content);
         }
         return contentList;
+    }*/
+
+    public List<byte[]> getImgBytesList(){
+        Iterator<ContentDto> iterator = this.contents.iterator();
+        ContentImgHandler contentImgHandler = new ContentImgHandler();
+
+        List<byte[]> byteImages = new ArrayList<>();
+        while (iterator.hasNext()){
+            String base64ImgString = iterator.next().getImg();
+            byte[] imgBytes = contentImgHandler.getImgBytes(base64ImgString);
+            byteImages.add(imgBytes);
+        }
+        return byteImages;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.cnu.diary.myweatherdiary.daily.post;
 
 import com.cnu.diary.myweatherdiary.daily.content.ContentRepository;
+import com.cnu.diary.myweatherdiary.exception.PostNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,43 +25,64 @@ public class PostService {
     @Autowired
     ContentRepository contentRepository;
 
+    /**
+     * Post entity 생성은 builder 패턴으로 작성
+     * PostDto Return으로 변경
+     * */
+
+    public PostResponseDto convertPostToDto(Post post){
+        PostResponseDto postResponseDto = new PostResponseDto();
+        postResponseDto.setId(post.getId());
+        postResponseDto.setEmotion(post.getEmotion());
+        postResponseDto.setWrittenDate(post.getWrittenDate());
+        return postResponseDto;
+    }
+
     @Transactional
     @PostMapping("posts")
-    public Post addPost(PostDto postDto) {
+    public PostResponseDto addPost(PostRequestDto postRequestDto) {
 
-        Post post = new Post();
-        post.setPostDate(postDto.getPostDate());
-        post.setEmotion(postDto.getEmotion());
-        post.setWrittenDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
-        post.setUserId(postDto.getUserId());
-        postRepository.save(post);
+        Post post = Post.builder()
+                .userId(postRequestDto.getUserId())
+                .postDate(postRequestDto.getPostDate())
+                .emotion(postRequestDto.getEmotion())
+                .writtenDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
+                .build();
 
-        return post;
+        return convertPostToDto(postRepository.save(post));
     }
 
     //포스트, 콘텐츠 수정..
     @Transactional
     @PostMapping("posts")
-    public Post updatePost(PostDto postDto) {
-        Post post = postRepository.findById(postDto.getId()).orElseThrow();
-        post.setPostDate(postDto.getPostDate());
-        post.setEmotion(postDto.getEmotion());
+    public PostResponseDto updatePost(PostRequestDto postRequestDto) {
+        Post post = Post.builder()
+                .id(postRequestDto.getId())
+                .userId(postRequestDto.getUserId())
+                .postDate(postRequestDto.getPostDate())
+                .emotion(postRequestDto.getEmotion())
+                .build();
 
-        return postRepository.save(post);
+        return convertPostToDto(postRepository.save(post));
     }
 
     @Transactional
     @GetMapping("posts")
-    public Post getPost(UUID id) {
-        return postRepository.findById(id).get();
+    public PostResponseDto getPost(UUID id) {
+        PostResponseDto postResponseDto = convertPostToDto(
+                postRepository.findById(id).orElseThrow(PostNotFoundException::new)
+        );
+        return postResponseDto;
     }
 
     @Transactional
     @GetMapping("posts")
-    public List<Post> getAllPostsById(UUID id) {
-        List<Post> posts = new ArrayList<>();
-        postRepository.findAllByUser_id(id).forEach(posts::add);
-        return posts;
+    public List<PostResponseDto> getAllPostsById(UUID id) {
+        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+        postRepository.findAllByUser_id(id).forEach(
+                p -> postResponseDtos.add(convertPostToDto(p))
+        );
+        return postResponseDtos;
     }
 
 

@@ -10,7 +10,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContentDto {
-    private UUID id; //X
+    private UUID id;
     private String comment;
     private String img; // base64
 }

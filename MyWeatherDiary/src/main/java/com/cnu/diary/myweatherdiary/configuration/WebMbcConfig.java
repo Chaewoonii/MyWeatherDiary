@@ -1,5 +1,6 @@
 package com.cnu.diary.myweatherdiary.configuration;
 
+import com.cnu.diary.myweatherdiary.daily.content.ContentImgHandler;
 import com.cnu.diary.myweatherdiary.utill.EntityConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,5 +21,8 @@ public class WebMbcConfig implements WebMvcConfigurer {
     public EntityConverter convertEntityToDto(){
         return new EntityConverter();
     }
+
+    @Bean
+    public ContentImgHandler contentImgHandlerBean(){return new ContentImgHandler(); }
 
 }

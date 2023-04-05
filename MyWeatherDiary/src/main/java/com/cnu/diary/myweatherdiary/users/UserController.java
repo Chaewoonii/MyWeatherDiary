@@ -21,6 +21,12 @@ public class UserController {
 
     private final UserDetailService userDetailService;
 
+    /**
+     * username도 난수로 만들어주기!  -> URL로 접근 64 byte String
+     * username과 password 백엔드에서 만들어서 저장
+     * 사용자는 EnterKey만으로 접근 enterkey에 username, password mapping됨.
+     * */
+
     
     //유저 생성(다이어리 타이틀 받음)
     @PostMapping("")

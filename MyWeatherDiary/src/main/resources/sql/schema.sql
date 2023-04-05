@@ -53,5 +53,5 @@ create table contents(
                          id binary(16) PRIMARY KEY NOT NULL,
                          prefix varchar(20),
                          comment longtext,
-                         img_saved_date datetime NOT NULL
+                         img_name varchar(20) NOT NULL
 );

@@ -10,7 +10,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostDto {
+public class PostRequestDto {
     private UUID id;
     private UUID userId;
     private Emotion emotion;

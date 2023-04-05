@@ -2,61 +2,89 @@ package com.cnu.diary.myweatherdiary.daily.content;
 
 import com.cnu.diary.myweatherdiary.daily.post.Post;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.Base64;
-import java.util.Base64.Encoder;
-import java.util.Base64.Decoder;
+
 @Service
 public class ContentService {
 
     @Autowired
     ContentRepository contentRepository;
 
+    @Autowired
+    ContentImgHandler contentImgHandler;
+
+    public ContentDto convertContentToDto(Content content) throws IOException{
+        ContentDto contentDto = new ContentDto();
+        contentDto.setId(content.getId());
+        contentDto.setComment(content.getComment());
+        contentDto.setImg(
+                contentImgHandler.getBase64ImgFromLocal(content.getImgName())
+        );
+        return contentDto;
+    }
     @Transactional
     @PostMapping("contents")
-    public List<Content> saveContents(List<ContentDto> contentDtos, Post post) {
-        List<Content> contentList = new ArrayList<>();
+    public List<ContentDto> saveContents(List<ContentDto> contentDtos) throws IOException{
+        List<ContentDto> contentRequestDtoList = new ArrayList<>();
         Iterator<ContentDto> iterator = contentDtos.iterator();
 
         while(iterator.hasNext()){
             ContentDto dto = iterator.next();
+            Content content = Content.builder()
+                    .comment(dto.getComment())
+                    .prefix(Prefix.develop)
+                    .imgName(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS).toString())
+                    .build();
 
-            Content content = new Content();
-            content.setComment(dto.getComment());
-            content.setPrefix(Prefix.develop);
-            content.setImageSavedDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
-            post.addContent(content);
-            contentList.add(content);
+            Content saved = contentRepository.save(content);
+            contentRequestDtoList.add(convertContentToDto(saved));
+            contentImgHandler.saveContentsImageLocal(dto.getImg(), saved.getImgName());
         }
 
-        return contentRepository.saveAll(contentList);
+        return contentRequestDtoList;
     }
+
+
 
     @Transactional
     @PostMapping("contents")
-    public List<Content> updateContents(List<ContentDto> contentDtos, Post post){
-        List<Content> contentList = new ArrayList<>();
+    public List<ContentDto> updateContents(List<ContentDto> contentDtos) throws IOException{
+        List<ContentDto> contentList = new ArrayList<>();
         Iterator<ContentDto> iterator = contentDtos.iterator();
 
         while (iterator.hasNext()){
             ContentDto dto = iterator.next();
+            Content content = Content.builder()
+                    .id(dto.getId())
+                    .comment(dto.getComment())
+                    .imgName(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS).toString())
+                    .build();
 
-            Content content = contentRepository.findById(dto.getId()).orElseThrow();
-            content.setComment(dto.getComment());
-            content.setImageSavedDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
-            contentList.add(content);
+            Content saved = contentRepository.save(content);
+            contentList.add(convertContentToDto(saved));
+            contentImgHandler.saveContentsImageLocal(dto.getImg(), saved.getImgName());
         }
-        return contentRepository.saveAll(contentList);
+        return contentList;
     }
 
-    public List<Content> findByPostId(Post post) {
-        return contentRepository.findAllByPost(post);
+    public List<ContentDto> findByPostId(UUID id) throws IOException{
+        List<ContentDto> contentDtos = new ArrayList<>();
+        Iterator<Content> iterator = contentRepository.findAllByPost_Id(id).iterator();
+
+        while (iterator.hasNext()){
+            ContentDto contentDto = convertContentToDto(iterator.next());
+            contentDtos.add(contentDto);
+        }
+        return contentDtos;
     }
+
 
 }
