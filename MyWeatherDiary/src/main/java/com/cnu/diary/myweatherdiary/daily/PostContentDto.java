@@ -51,7 +51,7 @@ public class PostContentDto {
 
         List<byte[]> byteImages = new ArrayList<>();
         while (iterator.hasNext()){
-            String base64ImgString = iterator.next().getImg();
+            String base64ImgString = iterator.next().getImg().toString();
             byte[] imgBytes = contentImgHandler.getImgBytes(base64ImgString);
             byteImages.add(imgBytes);
         }

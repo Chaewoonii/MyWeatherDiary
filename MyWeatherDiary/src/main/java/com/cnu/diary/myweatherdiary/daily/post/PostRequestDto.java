@@ -16,4 +16,9 @@ public class PostRequestDto {
     private Emotion emotion;
     private LocalDateTime postDate;
 
+    public PostRequestDto(UUID userId, Emotion emotion, LocalDateTime postDate) {
+        this.userId = userId;
+        this.emotion = emotion;
+        this.postDate = postDate;
+    }
 }

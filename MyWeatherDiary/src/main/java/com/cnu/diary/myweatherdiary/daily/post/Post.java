@@ -24,7 +24,7 @@ public class Post {
     @Column(name = "id", nullable = false, unique = true, columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @Column(name = "user_id", nullable = false, unique = true, columnDefinition = "BINARY(16)")
+    @Column(name = "user_id", nullable = false, columnDefinition = "BINARY(16)")
     private UUID userId;
 
     @Enumerated(EnumType.ORDINAL)

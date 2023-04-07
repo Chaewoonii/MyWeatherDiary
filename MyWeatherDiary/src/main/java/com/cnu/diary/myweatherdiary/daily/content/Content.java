@@ -29,8 +29,6 @@ public class Content {
     @Column(name = "comment", nullable = true)
     @Lob
     private String comment;
-    @Column(name = "img_name", nullable = false, length = 20)
-    private String imgName;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "post_id", referencedColumnName = "id")

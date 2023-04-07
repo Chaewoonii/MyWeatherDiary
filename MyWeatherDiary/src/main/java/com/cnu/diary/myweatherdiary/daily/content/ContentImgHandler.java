@@ -1,16 +1,19 @@
 package com.cnu.diary.myweatherdiary.daily.content;
 
+import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
 import jakarta.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Iterator;
-import java.util.List;
+import java.nio.file.Paths;
+import java.util.*;
 
 @Slf4j
 public class ContentImgHandler {
+
+    public String getImgPath(String imgName){
+        return getClasspathDir() + "/" + imgName + ".jpg";
+    }
 
     public List<byte[]> imgToBase64(List<ContentDto> contentDtos) { // encoder
         List<byte[]> contentImgToByteList = new ArrayList<>();
@@ -19,7 +22,7 @@ public class ContentImgHandler {
         Base64.Encoder encoder = Base64.getEncoder();
         while (iter.hasNext()) {
             ContentDto contentDto = iter.next();
-            byte[] contentDtoImgByte = contentDto.getImg().getBytes();
+            byte[] contentDtoImgByte = contentDto.getImg().orElseThrow().getBytes();
             byte[] encoding = encoder.encode(contentDtoImgByte);
 
             contentImgToByteList.add(encoding);
@@ -36,20 +39,26 @@ public class ContentImgHandler {
         return DatatypeConverter.parseBase64Binary(base64ImgString);
     }
 
-    public void saveBase64ImgToLocal(byte[] imgBytes, String saveDir) throws IOException {
+    public String saveBase64ImgToLocal(byte[] imgBytes, String saveDir) throws IOException {
         FileOutputStream fos = new FileOutputStream(saveDir);
         fos.write(imgBytes);
         fos.close();
+        return saveDir;
     }
 
 
-    public String getBase64ImgFromLocal(String imgName) throws IOException{
-        Base64.Encoder encoder = Base64.getEncoder();
-        File f = new File(getClasspathDir() + imgName + ".jpeg");
-        byte[] bt = new byte[(int) f.length()];
-        FileInputStream fis = new FileInputStream(f);
-        fis.read(bt);
-        return new String(encoder.encode(bt));
+    public Optional<String> getBase64ImgFromLocal(String imgName){
+        try{
+            Base64.Encoder encoder = Base64.getEncoder();
+            File f = new File(getImgPath(imgName));
+            byte[] bt = new byte[(int) f.length()];
+            FileInputStream fis = new FileInputStream(f);
+            fis.read(bt);
+            return Optional.of(new String(encoder.encode(bt)));
+        }catch (Exception e){
+            new ImgNotFoundException("No such image");
+        }
+        return Optional.empty();
     }
 
     public String getClasspathDir(){
@@ -59,16 +68,29 @@ public class ContentImgHandler {
             contextClassLoader = ClassLoader.getSystemClassLoader();
         }
 
-        String classpath = contextClassLoader.getResource("img").toString();
-        if (classpath.startsWith("file:/")){
+        String classpath = contextClassLoader.getResource("img").getPath();
+        if (classpath.startsWith("file")){
             classpath.replace("file:/","");
         }
 
         return classpath;
     }
 
-    public void saveContentsImageLocal(String base64Img, String imgName) throws IOException {
+    public String saveContentsImageLocal(String base64Img, String imgName) throws IOException {
         byte[] imgBytes = getImgBytes(base64Img);
-        saveBase64ImgToLocal(imgBytes, getClasspathDir() + imgName + ".jpeg");
+        return saveBase64ImgToLocal(imgBytes, getImgPath(imgName));
+    }
+
+    public String deleteImg(String imgName) throws ImgNotFoundException{
+        try{
+            File img = new File(getImgPath(imgName));
+            if (img.exists()){
+                img.delete();
+                return img.getName();
+            }
+        }catch (RuntimeException e){
+            e.printStackTrace();
+        }
+        throw new ImgNotFoundException("Delete Image Failed:: No such Image");
     }
 }

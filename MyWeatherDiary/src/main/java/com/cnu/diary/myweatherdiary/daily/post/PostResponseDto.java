@@ -20,4 +20,6 @@ public class PostResponseDto {
     private LocalDateTime postDate;
     private LocalDateTime writtenDate;
     private List<ContentDto> contentDtos;
+
+
 }

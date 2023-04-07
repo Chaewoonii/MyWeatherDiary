@@ -11,7 +11,6 @@ import java.util.UUID;
 @Repository
 public interface ContentRepository extends JpaRepository<Content, UUID> {
 
-//    @Query("SELECT contents FROM contents WHERE post = :post")
-    @Query("SELECT contents FROM contents WHERE posts.id = :postId")
-    List<Content> findAllByPost_Id(UUID postId);
+    List<Content> findAllByPostId(UUID postId);
+
 }

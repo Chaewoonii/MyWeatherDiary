@@ -1,25 +1,54 @@
 package com.cnu.diary.myweatherdiary.users;
 //pswd
+import com.cnu.diary.myweatherdiary.ApiResponse;
+import com.cnu.diary.myweatherdiary.exception.ContentNotFoundException;
+import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
+import com.cnu.diary.myweatherdiary.exception.PostNotFoundException;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthentication;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationToken;
 import com.cnu.diary.myweatherdiary.users.dto.*;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.UUID;
 
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/user") //버전은 빼기 ->
+@RequestMapping("/api/v1/diary")
 public class UserController {
 
     private final UserService userService;
 
     private final UserDetailService userDetailService;
+
+    @ExceptionHandler
+    private ApiResponse<String> exceptionHandle(Exception exception){
+        return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage());
+    }
+
+    @ExceptionHandler(ImgNotFoundException.class)
+    private ApiResponse<String> imgNotFoundException(ImgNotFoundException exception){
+        return ApiResponse.fail(HttpStatus.NOT_FOUND.value(), exception.getMessage());
+    }
+    @ExceptionHandler(ContentNotFoundException.class)
+    private ApiResponse<String> contentNotFoundException(ContentNotFoundException exception){
+        return ApiResponse.fail(HttpStatus.NOT_FOUND.value(), exception.getMessage());
+    }
+    @ExceptionHandler(PostNotFoundException.class)
+    private ApiResponse<String> postNotFoundExceptionHandle(PostNotFoundException exception){
+        return ApiResponse.fail(HttpStatus.NOT_FOUND.value(), exception.getMessage());
+    }
+
+    @ExceptionHandler(IOException.class)
+    private ApiResponse<String> ioExceptionHandle(IOException exception){
+        return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage());
+    }
 
     /**
      * username도 난수로 만들어주기!  -> URL로 접근 64 byte String
@@ -28,7 +57,7 @@ public class UserController {
      * */
 
     
-    //유저 생성(다이어리 타이틀 받음)
+
     @PostMapping("")
     public UserResponseDto register(@RequestBody UserRegisterDto userRegisterDto) {
         return userService.register(userRegisterDto);
@@ -45,7 +74,7 @@ public class UserController {
         return userService.changeKey(UUID.fromString(authentication.username));
     }
 
-    //유저 정보 수정
+
     @PutMapping("/auth")
     public UserResponseDto updateUserInfo(@RequestBody UserRequestDto userRequestDto,
                                           @AuthenticationPrincipal JwtAuthentication authentication){

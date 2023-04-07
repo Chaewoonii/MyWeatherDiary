@@ -1,14 +1,21 @@
 package com.cnu.diary.myweatherdiary.daily;
 
-import com.cnu.diary.myweatherdiary.daily.content.Content;
+import com.cnu.diary.myweatherdiary.ApiResponse;
 import com.cnu.diary.myweatherdiary.daily.content.ContentDto;
 import com.cnu.diary.myweatherdiary.daily.content.ContentService;
 import com.cnu.diary.myweatherdiary.daily.post.Post;
 import com.cnu.diary.myweatherdiary.daily.post.PostRequestDto;
 import com.cnu.diary.myweatherdiary.daily.post.PostResponseDto;
 import com.cnu.diary.myweatherdiary.daily.post.PostService;
+import com.cnu.diary.myweatherdiary.exception.ContentNotFoundException;
+import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
+import com.cnu.diary.myweatherdiary.exception.PostNotFoundException;
+import jakarta.persistence.ElementCollection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -20,7 +27,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("api/v1/diary")
+@RequestMapping("api/v1/post")
 public class PostConentController {
 
     @Autowired
@@ -28,6 +35,7 @@ public class PostConentController {
 
     @Autowired
     ContentService contentService;
+
 
 
     /**
@@ -38,50 +46,44 @@ public class PostConentController {
      * */
 
 
-    @GetMapping({"/{user_id}"})
-    public Iterable<PostResponseDto> getTimelinePost(@PathVariable("user_id") UUID id){
+    @GetMapping({"/{userId}"})
+    public ApiResponse<Iterable<PostResponseDto>> getAllPost(@PathVariable("userId") UUID id) throws PostNotFoundException{
         List<PostResponseDto> posts = postService.getAllPostsById(id);
-        return posts;
+        return ApiResponse.ok(posts);
+    }
+
+    @GetMapping({"/timeline/{userId}"})
+    public ApiResponse<Iterable<PostResponseDto>> getTimelinePost(@PathVariable("userId") UUID id, Pageable pageable) throws PostNotFoundException{
+        List<PostResponseDto> posts = postService.getTimelinePost(id, pageable);
+        return ApiResponse.ok(posts);
     }
 
     @PostMapping("")
-    public PostResponseDto savePost(@RequestBody PostContentDto postContentDto) throws IOException{
+    public ApiResponse<PostResponseDto> savePost(@RequestBody PostContentDto postContentDto) throws IOException {
         PostResponseDto postResponseDto = postService.addPost(new PostRequestDto(
-                UUID.randomUUID(),
                 postContentDto.getUserId(),
                 postContentDto.getEmotion(),
                 postContentDto.getPostDate()));
 
+        Post post = postService.findPostById(postResponseDto.getId());
 
-        List<ContentDto> contentDtos = contentService.saveContents(postContentDto.getContents());
+        List<ContentDto> contentDtos = contentService.saveContents(postContentDto.getContents(), post);
         postResponseDto.setContentDtos(contentDtos);
-        return postResponseDto;
+        return ApiResponse.ok(postResponseDto);
     }
 
-    @PostMapping("/save/local")
-    public PostResponseDto savePostLocal(@RequestBody PostContentDto postContentDto) throws IOException {
-        PostResponseDto postResponseDto = postService.addPost(new PostRequestDto(
-                UUID.randomUUID(),
-                postContentDto.getUserId(),
-                postContentDto.getEmotion(),
-                postContentDto.getPostDate()));
 
-        List<ContentDto> contentDtos = contentService.saveContents(postContentDto.getContents());
-        postResponseDto.setContentDtos(contentDtos);
-        return postResponseDto;
-    }
-
-    @GetMapping("/{id}")
-    public PostResponseDto getPost(@PathVariable("id") UUID postId) throws IOException{
+    @GetMapping("/{postId}")
+    public ApiResponse<PostResponseDto> findPostByPostId(@PathVariable("postId") UUID postId) throws PostNotFoundException{
         PostResponseDto postResponseDto = postService.getPost(postId);
         List<ContentDto> contentList = contentService.findByPostId(postId);
         postResponseDto.setContentDtos(contentList);
-        return postResponseDto;
+        return ApiResponse.ok(postResponseDto);
     }
 
 
     @PutMapping("")
-    public PostResponseDto editPost(@RequestBody PostContentDto postContentDto) throws IOException {
+    public ApiResponse<PostResponseDto> editPost(@RequestBody PostContentDto postContentDto) throws PostNotFoundException, IOException {
 
         PostResponseDto postResponseDto = postService.updatePost(new PostRequestDto(
                 postContentDto.getPostId(),
@@ -90,13 +92,23 @@ public class PostConentController {
                 postContentDto.getPostDate()
         ));
 
-        List<ContentDto> contentList = contentService.updateContents(postContentDto.getContents());
+        Post post = postService.findPostById(postResponseDto.getId());
+
+        List<ContentDto> contentList = contentService.updateContents(postContentDto.getContents(), post);
         postResponseDto.setContentDtos(contentList);
-        return postResponseDto;
+        return ApiResponse.ok(postResponseDto);
     }
 
-    @DeleteMapping("{id}")
-    public void removePost(@PathVariable("id") UUID id){
-        postService.removePost(id);
+    @DeleteMapping("{postId}")
+    public ApiResponse<String> removePost(@PathVariable("postId") UUID postId) throws PostNotFoundException{
+        postService.removePost(postId);
+        contentService.deleteAllContentsByPostId(postId);
+        return ApiResponse.ok("Delete Success");
+    }
+
+    @DeleteMapping("/content/{contentsId}")
+    public ApiResponse<String> removeContent(@PathVariable("contentsId") UUID contentsId) throws ImgNotFoundException {
+        contentService.deleteContents(contentsId);
+        return ApiResponse.ok("Delete Success");
     }
 }

@@ -2,12 +2,15 @@ package com.cnu.diary.myweatherdiary.daily.post;
 
 import com.cnu.diary.myweatherdiary.daily.content.ContentRepository;
 import com.cnu.diary.myweatherdiary.exception.PostNotFoundException;
+import com.cnu.diary.myweatherdiary.users.domain.User;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -77,6 +80,14 @@ public class PostService {
 
     @Transactional
     @GetMapping("posts")
+    public Post findPostById(UUID id){
+        return postRepository.findById(id).orElseThrow(
+                () -> new PostNotFoundException("No such post: " + id.toString())
+        );
+    }
+
+    @Transactional
+    @GetMapping("posts")
     public List<PostResponseDto> getAllPostsById(UUID id) {
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
         postRepository.findAllByUser_id(id).forEach(
@@ -90,5 +101,13 @@ public class PostService {
     @GetMapping("posts")
     public void removePost(UUID id){
         postRepository.deleteById(id);
+    }
+
+    public List<PostResponseDto> getTimelinePost(UUID id, Pageable pageable) {
+        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+        postRepository.findAllByUserIdOrderByPostDateDesc(id, pageable).forEach(
+                p -> postResponseDtos.add(convertPostToDto(p))
+        );
+        return postResponseDtos;
     }
 }
