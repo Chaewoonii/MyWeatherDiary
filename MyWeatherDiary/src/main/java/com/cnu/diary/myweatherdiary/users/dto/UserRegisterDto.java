@@ -7,6 +7,5 @@ import lombok.Setter;
 @Setter
 public class UserRegisterDto {
     private String diaryTitle;
-    private String email;
     private Long role;
 }

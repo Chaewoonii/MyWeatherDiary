@@ -37,10 +37,10 @@ public class PostService {
 
     @Transactional
     @PostMapping("posts")
-    public PostResponseDto addPost(PostRequestDto postRequestDto) {
+    public PostResponseDto addPost(String id, PostRequestDto postRequestDto) {
 
         Post post = Post.builder()
-                .userId(postRequestDto.getUserId())
+                .userId(UUID.fromString(id))
                 .postDate(postRequestDto.getPostDate())
                 .emotion(postRequestDto.getEmotion())
                 .writtenDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
@@ -51,10 +51,10 @@ public class PostService {
 
     @Transactional
     @PostMapping("posts")
-    public PostResponseDto updatePost(PostRequestDto postRequestDto) {
+    public PostResponseDto updatePost(String id, PostRequestDto postRequestDto) {
         Post post = Post.builder()
                 .id(postRequestDto.getId())
-                .userId(postRequestDto.getUserId())
+                .userId(UUID.fromString(id))
                 .postDate(postRequestDto.getPostDate())
                 .emotion(postRequestDto.getEmotion())
                 .build();
@@ -81,9 +81,9 @@ public class PostService {
 
     @Transactional
     @GetMapping("posts")
-    public List<PostResponseDto> getAllPostsById(UUID id) {
+    public List<PostResponseDto> getAllPostsByUserId(String id) {
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        postRepository.findAllByUser_id(id).forEach(
+        postRepository.findAllByUserId(UUID.fromString(id)).forEach(
                 p -> postResponseDtos.add(convertPostToDto(p))
         );
         return postResponseDtos;
@@ -95,9 +95,9 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    public List<PostResponseDto> getTimelinePost(UUID id, Pageable pageable) {
+    public List<PostResponseDto> getTimelinePost(String id, Pageable pageable) {
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        postRepository.findAllByUserIdOrderByPostDateDesc(id, pageable).forEach(
+        postRepository.findAllByUserIdOrderByPostDateDesc(UUID.fromString(id), pageable).forEach(
                 p -> postResponseDtos.add(convertPostToDto(p))
         );
         return postResponseDtos;

@@ -45,9 +45,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         try {
             LoginResponseDto loginResponseDto = userDetailService.login(principal, credential);
             List<GrantedAuthority> authorities = loginResponseDto.getUserGroup().getAuthorities();
-            String token = getToken(loginResponseDto.getId().toString(), authorities);
+            String token = getToken(loginResponseDto.getUsername().toString(), authorities);
             JwtAuthenticationToken authenticated =
-                    new JwtAuthenticationToken(new JwtAuthentication(token, loginResponseDto.getId().toString()), null, authorities);
+                    new JwtAuthenticationToken(new JwtAuthentication(token, loginResponseDto.getUsername().toString()), null, authorities);
             authenticated.setDetails(loginResponseDto);
             return authenticated;
         } catch (IllegalArgumentException e) {

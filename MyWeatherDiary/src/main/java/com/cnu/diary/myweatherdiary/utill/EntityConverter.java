@@ -11,30 +11,28 @@ public class EntityConverter {
 
     public UserResponseDto getUserDto(User user, String key){
         UserResponseDto dto = new UserResponseDto();
-        dto.setId(user.getId());
         dto.setNickName(user.getNickName());
         dto.setDiaryTitle(user.getDiaryTitle());
         dto.setEnterKey(key);
-        dto.setEmail(user.getUserId());
+        dto.setUsername(user.getUsername());
         return dto;
     }
 
     public UserResponseDto getUserDto(User user){
         UserResponseDto dto = new UserResponseDto();
-        dto.setId(user.getId());
         dto.setNickName(user.getNickName());
         dto.setDiaryTitle(user.getDiaryTitle());
-        dto.setEmail(user.getUserId());
+        dto.setUsername(user.getUsername());
         return dto;
     }
 
-    public User createUser(UserRegisterDto userRegisterDto, String key, UserGroup userGroup){
+    public User createUser(UserRegisterDto userRegisterDto, String username, String key, UserGroup userGroup){
             User user = User.builder()
                     .enterKey(key)
                     .diaryTitle(userRegisterDto.getDiaryTitle())
                     .nickName(new NickNameCreator().getNickName())
                     .userGroup(userGroup)
-                    .userId(userRegisterDto.getEmail())
+                    .username(username)
                     .build();
             return user;
     }
@@ -45,7 +43,6 @@ public class EntityConverter {
                     .diaryTitle(userRequestDto.getDiaryTitle())
                     .nickName(userRequestDto.getNickName())
                     .userGroup(userInRepo.getUserGroup())
-                    .userId(userRequestDto.getEmail())
                     .build();
             return user;
     }
@@ -57,7 +54,6 @@ public class EntityConverter {
                     .diaryTitle(userInRepo.getDiaryTitle())
                     .nickName(userInRepo.getNickName())
                     .userGroup(userInRepo.getUserGroup())
-                    .userId(userInRepo.getUserId())
                     .build();
             return user;
     }

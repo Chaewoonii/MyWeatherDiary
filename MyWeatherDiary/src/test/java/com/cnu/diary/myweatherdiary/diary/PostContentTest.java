@@ -1,15 +1,16 @@
 package com.cnu.diary.myweatherdiary.diary;
 
-import com.cnu.diary.myweatherdiary.diary.PostConentController;
-import com.cnu.diary.myweatherdiary.diary.PostContentDto;
 import com.cnu.diary.myweatherdiary.diary.content.ContentDto;
 import com.cnu.diary.myweatherdiary.diary.content.ContentImgHandler;
 import com.cnu.diary.myweatherdiary.diary.post.Emotion;
 import com.cnu.diary.myweatherdiary.diary.post.PostResponseDto;
 import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
+import com.cnu.diary.myweatherdiary.jwt.JwtAuthentication;
+import com.cnu.diary.myweatherdiary.users.UserController;
+import com.cnu.diary.myweatherdiary.users.dto.LoginRequestDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
-import com.cnu.diary.myweatherdiary.users.UserService;
+import com.cnu.diary.myweatherdiary.users.dto.UserTokenDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +33,19 @@ class PostContentTest {
 
 
     @Autowired
-    PostConentController postConentController;
+    DiaryController diaryController;
 
     @Autowired
     ContentImgHandler contentImgHandler;
 
     @Autowired
-    UserService userService;
+    UserController userController;
 
     UserResponseDto user;
 
     PostResponseDto post;
+
+    JwtAuthentication authentication;
 
 
     @BeforeAll
@@ -51,7 +54,10 @@ class PostContentTest {
         userRegisterDto.setDiaryTitle("테스트 일기장 >_<");
         userRegisterDto.setRole(1L);
 
-        user = userService.register(userRegisterDto);
+        user = userController.register(userRegisterDto).getData();
+        LoginRequestDto request = new LoginRequestDto(user.getUsername(), user.getEnterKey());
+        UserTokenDto token = userController.login(request).getData();
+        authentication = new JwtAuthentication(token.getToken(), token.getUsername());
 
         Optional<String> testImg = contentImgHandler.getBase64ImgFromLocal("testImg");
         Optional<String> testImg2 = contentImgHandler.getBase64ImgFromLocal("testImg2");
@@ -63,12 +69,11 @@ class PostContentTest {
         List<ContentDto> dtoList = List.of(dto1, dto2, dto3);
 
         PostContentDto postContentDto = new PostContentDto();
-        postContentDto.setUserId(user.getId());
         postContentDto.setEmotion(Emotion.HAPPY);
         postContentDto.setPostDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
         postContentDto.setContents(dtoList);
 
-        post = postConentController.savePost(postContentDto).getData();
+        post = diaryController.addPost(postContentDto, authentication).getData();
         log.info("Saved post is:\n{}", post.getId());
     }
 
@@ -86,12 +91,11 @@ class PostContentTest {
         List<ContentDto> dtoList = List.of(dto1, dto2, dto3);
 
         PostContentDto postContentDto = new PostContentDto();
-        postContentDto.setUserId(user.getId());
         postContentDto.setEmotion(Emotion.HAPPY);
         postContentDto.setPostDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
         postContentDto.setContents(dtoList);
 
-        PostResponseDto postResponseDto = postConentController.savePost(postContentDto).getData();
+        PostResponseDto postResponseDto = diaryController.addPost(postContentDto, authentication).getData();
         log.info("Saved post is:\n{}", postResponseDto.getId());
     }
 
@@ -99,11 +103,11 @@ class PostContentTest {
     @Order(2)
     @DisplayName("userId로 포스트와 콘텐츠 정보를 불러올 수 있다")
     void testSelect() {
-        PostResponseDto post1 = postConentController.findPostByPostId(post.getId()).getData();
+        PostResponseDto post1 = diaryController.findPostByPostId(post.getId()).getData();
         log.info("found -> {}", post1);
 
         Pageable page = PageRequest.of(0, 5);
-        Iterable<PostResponseDto> timelinePost = postConentController.getTimelinePost(user.getId(), page).getData();
+        Iterable<PostResponseDto> timelinePost = diaryController.getTimelinePost(page, authentication).getData();
         log.info("page -> {}", timelinePost);
     }
 
@@ -111,7 +115,7 @@ class PostContentTest {
     @Order(3)
     @DisplayName("포스트와 콘텐츠 내용을 수정할 수 있다")
     void testUpdate() throws IOException {
-        PostResponseDto post1 = postConentController.findPostByPostId(post.getId()).getData();
+        PostResponseDto post1 = diaryController.findPostByPostId(post.getId()).getData();
         Iterator<ContentDto> contents = post1.getContentDtos().iterator();
 
         Optional<String> testImg3 = contentImgHandler.getBase64ImgFromLocal("testImg3");
@@ -129,12 +133,11 @@ class PostContentTest {
 
         PostContentDto postContentDto = new PostContentDto();
         postContentDto.setPostId(post1.getId());
-        postContentDto.setUserId(user.getId());
         postContentDto.setEmotion(Emotion.NEUTRAL);
         postContentDto.setPostDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
         postContentDto.setContents(dtoList);
 
-        PostResponseDto edited = postConentController.editPost(postContentDto).getData();
+        PostResponseDto edited = diaryController.editPost(postContentDto, authentication).getData();
         log.info("edited -> {}", edited.getId());
     }
 
@@ -144,14 +147,14 @@ class PostContentTest {
     @Order(4)
     @DisplayName("콘텐츠를 삭제할 수 있다")
     void testDeleteContents() throws ImgNotFoundException{
-        postConentController.removeContent(post.getContentDtos().get(0).getId());
+        diaryController.removeContent(post.getContentDtos().get(0).getId());
     }
 
     @Test
     @Order(5)
     @DisplayName("포스트가 삭제되면 콘텐츠도 삭제된다")
     void testDeletePost(){
-        postConentController.removePost(post.getId());
+        diaryController.removePost(post.getId());
     }
 
 

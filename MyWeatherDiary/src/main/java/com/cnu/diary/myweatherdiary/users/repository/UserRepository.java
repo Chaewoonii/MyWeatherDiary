@@ -10,17 +10,7 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
+    Optional<User> findByUsername(String username);
 
-//    @Query("SELECT id, enter_key, diary_title FROM users WHERE enter_key = :key")
-//    Optional<UUID> findByEnter_key(String key);
-
-//    @Query("select u from users u join fetch UserGroup g left join fetch GroupPermission gp join fetch Permission where u.enterKey = :enterKey")
-    Optional<User> findByEnterKey(String enterKey);
-
-
-    @Query("SELECT u FROM users u WHERE u.id = :id AND u.diaryTitle = :diaryTitle")
-    Optional<User> findByDiaryTitleAndId(UUID id, String diaryTitle);
-
-    Optional<User> findByUserId(String userId);
-
+    void deleteByUsername(String username);
 }

@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface PostRepository extends JpaRepository<Post, UUID>{
 
     @Query("select id, emotion, postDate, writtenDate, contents from posts where userId = :userId")
-    Iterable<Post> findAllByUser_id(UUID userId);
+    Iterable<Post> findAllByUserId(UUID userId);
 
     Page<Post> findAllByUserIdOrderByPostDateDesc(UUID userId, Pageable pageable);
 

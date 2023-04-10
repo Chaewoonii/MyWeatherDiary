@@ -1,6 +1,8 @@
 package com.cnu.diary.myweatherdiary.user;
 
 
+import com.cnu.diary.myweatherdiary.users.UsernameService;
+import com.cnu.diary.myweatherdiary.users.domain.MappedKey;
 import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
@@ -19,10 +21,13 @@ import static org.hamcrest.Matchers.*;
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UserServiceTest {
+public class UserServiceTest{
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    UsernameService usernameService;
 
     UserResponseDto user;
 
@@ -33,9 +38,9 @@ public class UserServiceTest {
         UserRegisterDto userRegisterDto = new UserRegisterDto();
         userRegisterDto.setDiaryTitle("테스트 일기장 >_<");
         userRegisterDto.setRole(1L);
-
-        user = userService.register(userRegisterDto);
-        UserResponseDto user1 = userService.findById(user.getId());
+        MappedKey entity = usernameService.register();
+        user = userService.register(entity, userRegisterDto);
+        UserResponseDto user1 = userService.findByUsername(user.getUsername());
 
         log.info("registered -> {}", user);
         log.info("found -> {}", user1);
@@ -53,7 +58,7 @@ public class UserServiceTest {
         userRequestDto.setNickName("채우닝");
         userRequestDto.setEmail("coco@gmail.com");
 
-        UserResponseDto updatedUser = userService.updateUserInfo(user.getId(), userRequestDto);
+        UserResponseDto updatedUser = userService.updateUserInfo(user.getUsername(), userRequestDto);
 
         log.info("updated -> {}", updatedUser);
     }
@@ -62,7 +67,7 @@ public class UserServiceTest {
     @Order(3)
     @DisplayName("유저 정보를 삭제할 수 있다")
     void testDelete(){
-        userService.removeUser(user.getId());
+        userService.removeUserByUsername(user.getUsername());
         assertThat(userService.findAll().isEmpty(), is(true));
     }
 }

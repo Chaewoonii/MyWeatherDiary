@@ -12,12 +12,11 @@ import java.util.UUID;
 @NoArgsConstructor
 public class PostRequestDto {
     private UUID id;
-    private UUID userId;
+
     private Emotion emotion;
     private LocalDateTime postDate;
 
-    public PostRequestDto(UUID userId, Emotion emotion, LocalDateTime postDate) {
-        this.userId = userId;
+    public PostRequestDto(Emotion emotion, LocalDateTime postDate) {
         this.emotion = emotion;
         this.postDate = postDate;
     }

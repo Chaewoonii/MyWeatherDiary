@@ -9,9 +9,8 @@ import java.util.UUID;
 @ToString
 @NoArgsConstructor
 public class UserResponseDto {
-    private UUID id; //x
     private String enterKey;
     private String diaryTitle;
     private String nickName;
-    private String email;
+    private String username;
 }

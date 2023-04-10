@@ -31,8 +31,8 @@ public class User {
     @Column(name = "nick_name", length = 15)
     private String nickName;
 
-    @Column(name = "user_id", length = 50)
-    private String userId;
+    @Column(name = "username", length = 50)
+    private String username;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "group_id")

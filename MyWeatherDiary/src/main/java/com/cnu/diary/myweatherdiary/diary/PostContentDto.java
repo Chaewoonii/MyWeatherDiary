@@ -17,29 +17,10 @@ import java.util.UUID;
 @Getter
 @Setter
 public class PostContentDto {
-    private UUID postId; // X
-    private UUID userId; //프론트에서 주는게 아니라 session에서 받아오기
+    private UUID postId;
     private Emotion emotion;
     private LocalDateTime postDate;
     private List<ContentDto> contents;
-
-    /*public List<Content> getContentList(Post post, Prefix prefix){
-        List<Content> contentList = new ArrayList<>();
-        Iterator<ContentDto> dtoIterator = this.contents.iterator();
-
-        while (dtoIterator.hasNext()){
-            ContentDto dto = dtoIterator.next();
-
-            Content content = Content.builder()
-                    .comment(dto.getComment())
-                    .prefix(prefix)
-                    .imgName(dto.getImg())
-                    .build();
-            post.addContent(content);
-            contentList.add(content);
-        }
-        return contentList;
-    }*/
 
     public List<byte[]> getImgBytesList(){
         Iterator<ContentDto> iterator = this.contents.iterator();

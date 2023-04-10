@@ -18,8 +18,8 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         super(null);
         super.setAuthenticated(false);
 
-        this.principal = principal; //로그인 ID -> user id
-        this.credentials = credentials; //패스워드
+        this.principal = principal;
+        this.credentials = credentials;
     }
 
     //인증 완료시 사용되는 생성자
@@ -27,12 +27,10 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         super(authorities);
         super.setAuthenticated(true);
 
-        this.principal = principal; // 인증에 사용된 객체
+        this.principal = principal;
         this.credentials = credentials;
     }
 
-
-    //토큰이 false이면 IllegalArgumentException이 발생
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
         if (isAuthenticated) {
             throw new IllegalArgumentException("Cannot set this token to trusted - use constructor which takes a GrantedAuthority list instead");

@@ -1,5 +1,6 @@
 package com.cnu.diary.myweatherdiary.users;
 
+import com.cnu.diary.myweatherdiary.exception.UserNotFouneException;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationToken;
 import com.cnu.diary.myweatherdiary.users.domain.*;
 import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
@@ -53,27 +54,24 @@ public class UserService {
 
     }
 
-    //유저 생성(다이어리 키 생성, db 자장)
     @Transactional
-    public UserResponseDto register(UserRegisterDto userRegisterDto){
-        String key = new AuthorizationKeyCreator().getRandomString(20);
-
+    public UserResponseDto register(MappedKey mappedKeyEntity, UserRegisterDto userRegisterDto){
         UserGroup userGroup = getUserGroup(userRegisterDto.getRole());
 
         User user = entityConverter.createUser(
                 userRegisterDto,
-                passwordEncoder.encode(key),
+                mappedKeyEntity.getUsername(),
+                passwordEncoder.encode(mappedKeyEntity.getEnterKey()),
                 userGroup);
+
         User saved = userRepository.save(user);
         log.info("saved -> {}", saved);
-        return entityConverter.getUserDto(saved, key);
+        return entityConverter.getUserDto(saved, mappedKeyEntity.getEnterKey());
     }
 
-    //키를 생성해서 저장
-    //유저 생성 및 키만 변경 시 사용
     @Transactional
-    public UserResponseDto changeKey(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(
+    public UserResponseDto changeKey(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new NoSuchElementException(User.class.getPackageName())
         );
         String key = new AuthorizationKeyCreator().getRandomString(20);
@@ -85,10 +83,9 @@ public class UserService {
         return entityConverter.getUserDto(saved, key);
     }
 
-    //유저 수정
     @Transactional
-    public UserResponseDto updateUserInfo(UUID id, UserRequestDto userRequestDto){
-        User user = userRepository.findById(id).orElseThrow(
+    public UserResponseDto updateUserInfo(String username, UserRequestDto userRequestDto){
+        User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new NoSuchElementException(User.class.getPackageName())
         );
         User updated = entityConverter.updateUser(user, userRequestDto);
@@ -97,18 +94,28 @@ public class UserService {
         return entityConverter.getUserDto(saved);
     }
 
-
-    //id로 유저 찾기
     @Transactional
     public UserResponseDto findById(UUID id) {
         User user = userRepository.findById(id).orElseThrow();
         return entityConverter.getUserDto(user);
     }
 
-    //유저 삭제
+    public UserResponseDto findByUsername(String username) {
+        return entityConverter.getUserDto(
+                userRepository.findByUsername(username).orElseThrow(
+                        () -> new UserNotFouneException("Cannot found username <" + username + ">")
+                )
+        );
+    }
+
     @Transactional
     public void removeUser(UUID id) {
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void removeUserByUsername(String username){
+        userRepository.deleteByUsername(username);
     }
 
     @Transactional
@@ -119,13 +126,11 @@ public class UserService {
         return users;
     }
 
-
     @Transactional
     public Authentication authenticate(JwtAuthenticationToken authToken) {
         Authentication resultToken = authenticationManager.authenticate(authToken);
         return resultToken;
     }
-
 
 
 }
