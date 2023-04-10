@@ -106,7 +106,7 @@ public class UserControllerTest {
 
 
         //When
-        mockMvc.perform(post("/api/user")
+        mockMvc.perform(post("/api/v1/user")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(userRegisterDto)))
                 .andExpect(status().isOk())
@@ -132,7 +132,7 @@ public class UserControllerTest {
         LoginRequestDto loginRequestDto = new LoginRequestDto(email, key);
 //        log.info("after login -> {}", userController.login(loginRequestDto));
 
-        mockMvc.perform(post("/api/user/login")
+        mockMvc.perform(post("/api/v1/user/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequestDto)))
                 .andExpect(status().isOk())
@@ -159,7 +159,7 @@ public class UserControllerTest {
         UserResponseDto user = userController.getUser(loginRequestDto, authentication);
         log.info("found user -> {}", user);
 
-        mockMvc.perform(get("/api/user/auth")
+        mockMvc.perform(get("/api/v1/user/auth")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequestDto)))
                 .andExpect(status().isOk())

@@ -33,6 +33,8 @@ public class PostConentController {
     ContentService contentService;
 
     /**
+     * 해당 년도의 전체 포스트 불러오기
+     * "2023-04-10" : 4
      * 유저의 전체 포스트 중에서 postDate 전부 가져오기! -> 날짜 list
      *  >> 각 날짜별로 contents 가 몇개인지? -> 날짜(key) : 콘텐츠 갯수(value: int) list
      * 포스트 하나당 컨텐츠 최대 10개임 (O)
