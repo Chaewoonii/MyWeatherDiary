@@ -30,7 +30,6 @@ public class ContentImgHandler {
         return contentImgToByteList;
     }
 
-
     public byte[] getImgBytes(String base64ImgString){
         if (base64ImgString.startsWith("data:image/jpeg;base64")){
             base64ImgString = base64ImgString.replace("data:image/jpeg;base64,", "");
@@ -44,7 +43,6 @@ public class ContentImgHandler {
         fos.close();
         return saveDir;
     }
-
 
     public Optional<String> getBase64ImgFromLocal(String imgName){
         try{

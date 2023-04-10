@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/v1/diary")
+@RequestMapping("/api/v1/user")
 public class UserController {
 
     private final UserService userService;
@@ -55,8 +55,6 @@ public class UserController {
      * username과 password 백엔드에서 만들어서 저장
      * 사용자는 EnterKey만으로 접근 enterkey에 username, password mapping됨.
      * */
-
-    
 
     @PostMapping("")
     public UserResponseDto register(@RequestBody UserRegisterDto userRegisterDto) {
