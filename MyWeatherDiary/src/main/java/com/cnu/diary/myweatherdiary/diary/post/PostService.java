@@ -1,8 +1,7 @@
-package com.cnu.diary.myweatherdiary.daily.post;
+package com.cnu.diary.myweatherdiary.diary.post;
 
-import com.cnu.diary.myweatherdiary.daily.content.ContentRepository;
+import com.cnu.diary.myweatherdiary.diary.content.ContentRepository;
 import com.cnu.diary.myweatherdiary.exception.PostNotFoundException;
-import com.cnu.diary.myweatherdiary.users.domain.User;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +27,6 @@ public class PostService {
     @Autowired
     ContentRepository contentRepository;
 
-    /**
-     * Post entity 생성은 builder 패턴으로 작성
-     * PostDto Return으로 변경
-     * */
-
     public PostResponseDto convertPostToDto(Post post){
         PostResponseDto postResponseDto = new PostResponseDto();
         postResponseDto.setId(post.getId());
@@ -55,7 +49,6 @@ public class PostService {
         return convertPostToDto(postRepository.save(post));
     }
 
-    //포스트, 콘텐츠 수정..
     @Transactional
     @PostMapping("posts")
     public PostResponseDto updatePost(PostRequestDto postRequestDto) {
@@ -82,7 +75,7 @@ public class PostService {
     @GetMapping("posts")
     public Post findPostById(UUID id){
         return postRepository.findById(id).orElseThrow(
-                () -> new PostNotFoundException("No such post: " + id.toString())
+                () -> new PostNotFoundException("No such post: " + id)
         );
     }
 
@@ -95,7 +88,6 @@ public class PostService {
         );
         return postResponseDtos;
     }
-
 
     @Transactional
     @GetMapping("posts")

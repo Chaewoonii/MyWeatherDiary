@@ -1,11 +1,10 @@
-package com.cnu.diary.myweatherdiary.daily.content;
+package com.cnu.diary.myweatherdiary.diary.content;
 
 import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
 import jakarta.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Slf4j

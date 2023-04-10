@@ -1,4 +1,4 @@
-package com.cnu.diary.myweatherdiary.daily.content;
+package com.cnu.diary.myweatherdiary.diary.content;
 
 import jakarta.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;

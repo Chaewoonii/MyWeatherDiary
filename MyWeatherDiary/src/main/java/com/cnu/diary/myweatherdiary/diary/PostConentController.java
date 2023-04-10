@@ -1,21 +1,17 @@
-package com.cnu.diary.myweatherdiary.daily;
+package com.cnu.diary.myweatherdiary.diary;
 
 import com.cnu.diary.myweatherdiary.ApiResponse;
-import com.cnu.diary.myweatherdiary.daily.content.ContentDto;
-import com.cnu.diary.myweatherdiary.daily.content.ContentService;
-import com.cnu.diary.myweatherdiary.daily.post.Post;
-import com.cnu.diary.myweatherdiary.daily.post.PostRequestDto;
-import com.cnu.diary.myweatherdiary.daily.post.PostResponseDto;
-import com.cnu.diary.myweatherdiary.daily.post.PostService;
-import com.cnu.diary.myweatherdiary.exception.ContentNotFoundException;
+import com.cnu.diary.myweatherdiary.diary.content.ContentDto;
+import com.cnu.diary.myweatherdiary.diary.content.ContentService;
+import com.cnu.diary.myweatherdiary.diary.post.Post;
+import com.cnu.diary.myweatherdiary.diary.post.PostRequestDto;
+import com.cnu.diary.myweatherdiary.diary.post.PostResponseDto;
+import com.cnu.diary.myweatherdiary.diary.post.PostService;
 import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
 import com.cnu.diary.myweatherdiary.exception.PostNotFoundException;
-import jakarta.persistence.ElementCollection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -27,7 +23,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("api/v1/post")
+@RequestMapping("api/v1/diary")
 public class PostConentController {
 
     @Autowired
@@ -36,15 +32,12 @@ public class PostConentController {
     @Autowired
     ContentService contentService;
 
-
-
     /**
      * 유저의 전체 포스트 중에서 postDate 전부 가져오기! -> 날짜 list
      *  >> 각 날짜별로 contents 가 몇개인지? -> 날짜(key) : 콘텐츠 갯수(value: int) list
-     * 포스트 하나당 컨텐츠 최대 10개임
-     * 포스트 조회 요청 시 latestDate 를 기준으로 최근 5개씩. <- paging????
+     * 포스트 하나당 컨텐츠 최대 10개임 (O)
+     * 포스트 조회 요청 시 latestDate 를 기준으로 최근 5개씩. <- paging???? (O)
      * */
-
 
     @GetMapping({"/{userId}"})
     public ApiResponse<Iterable<PostResponseDto>> getAllPost(@PathVariable("userId") UUID id) throws PostNotFoundException{
@@ -72,7 +65,6 @@ public class PostConentController {
         return ApiResponse.ok(postResponseDto);
     }
 
-
     @GetMapping("/{postId}")
     public ApiResponse<PostResponseDto> findPostByPostId(@PathVariable("postId") UUID postId) throws PostNotFoundException{
         PostResponseDto postResponseDto = postService.getPost(postId);
@@ -80,7 +72,6 @@ public class PostConentController {
         postResponseDto.setContentDtos(contentList);
         return ApiResponse.ok(postResponseDto);
     }
-
 
     @PutMapping("")
     public ApiResponse<PostResponseDto> editPost(@RequestBody PostContentDto postContentDto) throws PostNotFoundException, IOException {

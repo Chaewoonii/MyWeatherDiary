@@ -1,6 +1,6 @@
 package com.cnu.diary.myweatherdiary.configuration;
 
-import com.cnu.diary.myweatherdiary.daily.content.ContentImgHandler;
+import com.cnu.diary.myweatherdiary.diary.content.ContentImgHandler;
 import com.cnu.diary.myweatherdiary.utill.EntityConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

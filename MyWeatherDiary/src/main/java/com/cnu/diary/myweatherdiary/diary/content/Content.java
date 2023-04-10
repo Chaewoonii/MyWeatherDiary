@@ -1,14 +1,12 @@
-package com.cnu.diary.myweatherdiary.daily.content;
+package com.cnu.diary.myweatherdiary.diary.content;
 
-import com.cnu.diary.myweatherdiary.daily.post.Post;
+import com.cnu.diary.myweatherdiary.diary.post.Post;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 
 @Builder

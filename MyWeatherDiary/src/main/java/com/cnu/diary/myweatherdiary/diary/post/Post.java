@@ -1,6 +1,6 @@
-package com.cnu.diary.myweatherdiary.daily.post;
+package com.cnu.diary.myweatherdiary.diary.post;
 
-import com.cnu.diary.myweatherdiary.daily.content.Content;
+import com.cnu.diary.myweatherdiary.diary.content.Content;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;

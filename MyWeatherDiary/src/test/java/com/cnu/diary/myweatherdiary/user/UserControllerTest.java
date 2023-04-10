@@ -1,4 +1,4 @@
-package com.cnu.diary.myweatherdiary;
+package com.cnu.diary.myweatherdiary.user;
 
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthentication;
 import com.cnu.diary.myweatherdiary.users.UserController;

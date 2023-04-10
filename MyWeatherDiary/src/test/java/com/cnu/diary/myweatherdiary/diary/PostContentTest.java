@@ -1,10 +1,11 @@
-package com.cnu.diary.myweatherdiary;
+package com.cnu.diary.myweatherdiary.diary;
 
-import com.cnu.diary.myweatherdiary.daily.PostConentController;
-import com.cnu.diary.myweatherdiary.daily.PostContentDto;
-import com.cnu.diary.myweatherdiary.daily.content.ContentDto;
-import com.cnu.diary.myweatherdiary.daily.content.ContentImgHandler;
-import com.cnu.diary.myweatherdiary.daily.post.*;
+import com.cnu.diary.myweatherdiary.diary.PostConentController;
+import com.cnu.diary.myweatherdiary.diary.PostContentDto;
+import com.cnu.diary.myweatherdiary.diary.content.ContentDto;
+import com.cnu.diary.myweatherdiary.diary.content.ContentImgHandler;
+import com.cnu.diary.myweatherdiary.diary.post.Emotion;
+import com.cnu.diary.myweatherdiary.diary.post.PostResponseDto;
 import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
 import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
@@ -102,7 +102,7 @@ class PostContentTest {
         PostResponseDto post1 = postConentController.findPostByPostId(post.getId()).getData();
         log.info("found -> {}", post1);
 
-        Pageable page = PageRequest.of(0, 1);
+        Pageable page = PageRequest.of(0, 5);
         Iterable<PostResponseDto> timelinePost = postConentController.getTimelinePost(user.getId(), page).getData();
         log.info("page -> {}", timelinePost);
     }

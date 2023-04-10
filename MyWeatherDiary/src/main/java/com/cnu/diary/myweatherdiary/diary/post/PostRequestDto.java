@@ -1,4 +1,4 @@
-package com.cnu.diary.myweatherdiary.daily.post;
+package com.cnu.diary.myweatherdiary.diary.post;
 
 import lombok.*;
 

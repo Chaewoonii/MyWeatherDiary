@@ -1,17 +1,13 @@
-package com.cnu.diary.myweatherdiary.daily;
+package com.cnu.diary.myweatherdiary.diary;
 
-import com.cnu.diary.myweatherdiary.daily.content.Content;
-import com.cnu.diary.myweatherdiary.daily.content.ContentDto;
-import com.cnu.diary.myweatherdiary.daily.content.ContentImgHandler;
-import com.cnu.diary.myweatherdiary.daily.content.Prefix;
-import com.cnu.diary.myweatherdiary.daily.post.Emotion;
-import com.cnu.diary.myweatherdiary.daily.post.Post;
+import com.cnu.diary.myweatherdiary.diary.content.ContentDto;
+import com.cnu.diary.myweatherdiary.diary.content.ContentImgHandler;
+import com.cnu.diary.myweatherdiary.diary.post.Emotion;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

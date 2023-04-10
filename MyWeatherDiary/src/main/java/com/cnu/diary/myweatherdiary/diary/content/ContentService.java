@@ -1,17 +1,14 @@
-package com.cnu.diary.myweatherdiary.daily.content;
+package com.cnu.diary.myweatherdiary.diary.content;
 
-import com.cnu.diary.myweatherdiary.daily.post.Post;
+import com.cnu.diary.myweatherdiary.diary.post.Post;
 import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Slf4j

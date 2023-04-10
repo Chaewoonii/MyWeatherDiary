@@ -1,6 +1,6 @@
-package com.cnu.diary.myweatherdiary.daily.post;
+package com.cnu.diary.myweatherdiary.diary.post;
 
-import com.cnu.diary.myweatherdiary.daily.content.ContentDto;
+import com.cnu.diary.myweatherdiary.diary.content.ContentDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
