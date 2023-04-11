@@ -170,7 +170,7 @@ public class UserControllerTest {
 //        UserResponseDto user = userController.getUser(authentication).getData();
 //        log.info("found user -> {}", user);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         mockMvc.perform(get("/api/v1/user/auth")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -199,7 +199,6 @@ public class UserControllerTest {
         UserRequestDto userRequestDto = new UserRequestDto();
         userRequestDto.setNickName("충남대 귀요미");
         userRequestDto.setDiaryTitle("충대 일기");
-        userRequestDto.setEmail("cnu123");
 
         userController.updateUserInfo(userRequestDto, authentication);
     }

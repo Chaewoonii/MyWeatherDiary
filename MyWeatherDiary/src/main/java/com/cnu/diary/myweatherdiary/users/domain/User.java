@@ -38,7 +38,7 @@ public class User{
     private String username;
 
     @ManyToOne
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "group_id", referencedColumnName = "id")
     private UserGroup userGroup;
 
 

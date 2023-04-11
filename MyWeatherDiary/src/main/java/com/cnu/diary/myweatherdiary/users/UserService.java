@@ -3,7 +3,6 @@ package com.cnu.diary.myweatherdiary.users;
 import com.cnu.diary.myweatherdiary.exception.UserNotFouneException;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationToken;
 import com.cnu.diary.myweatherdiary.users.domain.*;
-import com.cnu.diary.myweatherdiary.users.dto.LoginResponseDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
@@ -17,14 +16,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Slf4j
 @Service
@@ -40,14 +37,13 @@ public class UserService {
 
 
     public UserGroup getUserGroup(Long role){
+        List<GroupPermission> groupPermissions = new ArrayList<>();
         UserGroup userGroup = userGroupRepository.findById(role).orElse(
                 UserGroup.builder()
                         .name(Group.USER_GROUP.toString())
-                        .permissions(new ArrayList<>())
+                        .groupPermissions(groupPermissions)
                         .build()
         );
-
-        List<GroupPermission> groupPermissions = new ArrayList<>();
 
         if (role == 1L){
             Permission permission = permissionRepository.findById(role).orElse(
@@ -77,7 +73,7 @@ public class UserService {
                 groupPermissions.add(groupPermission);
             }
         }
-        userGroup.setPermissions(groupPermissions);
+        userGroup.setGroupPermissions(groupPermissions);
         return userGroup;
     }
 

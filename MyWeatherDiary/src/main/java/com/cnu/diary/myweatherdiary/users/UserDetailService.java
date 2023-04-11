@@ -4,7 +4,6 @@ import com.cnu.diary.myweatherdiary.users.domain.User;
 
 import com.cnu.diary.myweatherdiary.users.dto.LoginResponseDto;
 import com.cnu.diary.myweatherdiary.users.repository.UserRepository;
-import com.cnu.diary.myweatherdiary.users.repository.MappedKeyRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -59,7 +57,7 @@ public class UserDetailService implements UserDetailsService {
         return new LoginResponseDto(
                 user.getUsername(),
                 user.getUserGroup(),
-                user.getUserGroup().getPermissions());
+                user.getUserGroup().getGroupPermissions());
     }
 
 

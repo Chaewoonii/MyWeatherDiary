@@ -17,12 +17,12 @@ public class GroupPermission {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "group_id")
+    @ManyToOne
+    @JoinColumn(name = "group_id", referencedColumnName = "id")
     private UserGroup userGroup;
 
-    @ManyToOne(optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "permission_id")
+    @ManyToOne
+    @JoinColumn(name = "permission_id", referencedColumnName = "id")
     private Permission permission;
 
     public void addPermission(Permission permission){
