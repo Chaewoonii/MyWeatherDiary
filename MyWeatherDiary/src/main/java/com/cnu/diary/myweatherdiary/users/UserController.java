@@ -10,8 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 
 @RestController
 @AllArgsConstructor
@@ -21,8 +19,7 @@ public class UserController {
     private final UserService userService;
 
     private final UserDetailService userDetailService;
-
-    private final UsernameService usernameService;
+    private final MappedKeyService mappedKeyService;
 
     /**
      * username도 난수로 만들어주기!  -> URL로 접근 64 byte String
@@ -34,7 +31,7 @@ public class UserController {
 
     @PostMapping("")
     public ApiResponse<UserResponseDto> register(@RequestBody UserRegisterDto userRegisterDto) {
-        MappedKey entity = usernameService.register();
+        MappedKey entity = mappedKeyService.register();
         UserResponseDto registered = userService.register(entity, userRegisterDto);
         return ApiResponse.ok(registered);
     }
@@ -42,23 +39,20 @@ public class UserController {
     @PutMapping("/auth/changeKey")
     public ApiResponse<UserResponseDto> changeKey(@RequestBody LoginRequestDto loginRequestDto,
                                      @AuthenticationPrincipal JwtAuthentication authentication){
-        userDetailService.login(loginRequestDto.getUsername(), loginRequestDto.getEnterKey());
+        this.login(loginRequestDto);
         UserResponseDto userResponseDto = userService.changeKey(authentication.username);
         return ApiResponse.ok(userResponseDto);
     }
 
     @PutMapping("/auth")
     public ApiResponse<UserResponseDto> updateUserInfo(@RequestBody UserRequestDto userRequestDto,
-                                          @AuthenticationPrincipal JwtAuthentication authentication){
+                                                       @AuthenticationPrincipal JwtAuthentication authentication){
         UserResponseDto userResponseDto = userService.updateUserInfo(authentication.username, userRequestDto);
         return ApiResponse.ok(userResponseDto);
     }
 
     @GetMapping("/auth")
-    public ApiResponse<UserResponseDto> getUser(
-            @RequestBody LoginRequestDto loginRequestDto,
-            @AuthenticationPrincipal JwtAuthentication authentication){
-        userDetailService.login(loginRequestDto.getUsername(), loginRequestDto.getEnterKey());
+    public ApiResponse<UserResponseDto> getUser(@AuthenticationPrincipal JwtAuthentication authentication){
         UserResponseDto found = userService.findByUsername(authentication.username);
         return ApiResponse.ok(found);
     }
@@ -70,7 +64,7 @@ public class UserController {
 
     @PostMapping(path = "/login")
     public ApiResponse<UserTokenDto> login(@RequestBody LoginRequestDto request) {
-        String username = usernameService.findByEnterKey(request.getEnterKey());
+        String username = mappedKeyService.findByEnterKey(request.getEnterKey());
         JwtAuthenticationToken authToken = new JwtAuthenticationToken(username, request.getEnterKey());
         Authentication resultToken = userService.authenticate(authToken);
         JwtAuthenticationToken authenticated = (JwtAuthenticationToken) resultToken;

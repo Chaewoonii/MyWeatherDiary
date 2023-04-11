@@ -2,6 +2,7 @@ package com.cnu.diary.myweatherdiary.user;
 
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthentication;
 import com.cnu.diary.myweatherdiary.users.UserController;
+import com.cnu.diary.myweatherdiary.users.UserDetailService;
 import com.cnu.diary.myweatherdiary.users.UserService;
 import com.cnu.diary.myweatherdiary.users.dto.*;
 import com.cnu.diary.myweatherdiary.users.repository.UserRepository;
@@ -12,15 +13,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContext;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import java.util.Collections;
+import java.util.HashMap;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -48,7 +64,10 @@ public class UserControllerTest {
     private UserController userController;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserDetailService userDetailService;
+
+    @Autowired
+    private WebApplicationContext context;
 
     UserResponseDto user;
 
@@ -57,20 +76,18 @@ public class UserControllerTest {
     
     @BeforeEach
     void setUp(){
-        //Given
+
         UserRegisterDto userRegisterDto = new UserRegisterDto();
         userRegisterDto.setDiaryTitle("test-diary");
         userRegisterDto.setRole(1L);
+        user = userController.register(userRegisterDto).getData();
+        log.info("registered user -> {}", user);
 
-        UserRegisterDto userRegisterDto2 = new UserRegisterDto();
+        /*UserRegisterDto userRegisterDto2 = new UserRegisterDto();
         userRegisterDto2.setDiaryTitle("admin-diary");
         userRegisterDto2.setRole(2L);
-
-        //When
-        user = userController.register(userRegisterDto).getData();
         UserResponseDto user2 = userController.register(userRegisterDto2).getData();
-        log.info("registered user -> {}", user);
-        log.info("registered user2 -> {}", user2);
+        log.info("registered user2 -> {}", user2);*/
 
         username = user.getUsername();
         key = user.getEnterKey();
@@ -79,7 +96,7 @@ public class UserControllerTest {
 
     @AfterEach
     void tearDown(){
-        LoginRequestDto loginRequestDto = new LoginRequestDto(username, key);
+        LoginRequestDto loginRequestDto = new LoginRequestDto(key);
         UserTokenDto token = userController.login(loginRequestDto).getData();
         JwtAuthentication authentication = new JwtAuthentication(token.getToken(), token.getUsername());
 
@@ -114,14 +131,15 @@ public class UserControllerTest {
                                 fieldWithPath("data.nickName").description("nickName"),
                                 fieldWithPath("data.username").description("username"),
                                 fieldWithPath("serverDateTime").description("serverDateTime")
-                        )));
+                        )))
+                .andDo(print());
     }
 
 
     @Test
     @DisplayName("로그인")
     void testLogin() throws Exception {
-        LoginRequestDto loginRequestDto = new LoginRequestDto(username, key);
+        LoginRequestDto loginRequestDto = new LoginRequestDto(key);
 
         mockMvc.perform(post("/api/v1/user/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -129,7 +147,6 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andDo(document("user-login",
                         requestFields(
-                                fieldWithPath("username").description("User ID"),
                                 fieldWithPath("enterKey").description("Enter key")
                         ),
                         responseFields(
@@ -139,40 +156,43 @@ public class UserControllerTest {
                                 fieldWithPath("data.username").description("username"),
                                 fieldWithPath("data.group").description("group"),
                                 fieldWithPath("serverDateTime").description("serverDateTime")
-                        )));
+                        )))
+                .andDo(print());
 
     }
 
     @Test
     @DisplayName("유저 정보 조회")
-    @WithMockUser("testId")
     void testFindUser() throws Exception{
-        LoginRequestDto loginRequestDto = new LoginRequestDto(username, key);
+        LoginRequestDto loginRequestDto = new LoginRequestDto(key);
         UserTokenDto token = userController.login(loginRequestDto).getData();
-        JwtAuthentication authentication = new JwtAuthentication(token.getToken(), token.getUsername());
-        UserResponseDto user = userController.getUser(loginRequestDto, authentication).getData();
-        log.info("found user -> {}", user);
+//        JwtAuthentication authentication = new JwtAuthentication(token.getToken(), token.getUsername());
+//        UserResponseDto user = userController.getUser(authentication).getData();
+//        log.info("found user -> {}", user);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         mockMvc.perform(get("/api/v1/user/auth")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequestDto)))
+                        .header("token", token.getToken()))
                 .andExpect(status().isOk())
                 .andDo(document("user-get",
-                        requestFields(
-                                fieldWithPath("email").description("User ID"),
-                                fieldWithPath("enterKey").description("Enter key")
-                        ),
                         responseFields(
                                 fieldWithPath("statusCode").description("Http status code"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("data"),
+                                fieldWithPath("data.enterKey").description("enterKey"),
+                                fieldWithPath("data.diaryTitle").description("diaryTitle"),
+                                fieldWithPath("data.nickName").description("nickName"),
+                                fieldWithPath("data.username").description("username"),
                                 fieldWithPath("serverDateTime").description("serverDateTime")
-                        )));
+                        )))
+                .andDo(print());
     }
 
     @Test
     @DisplayName("유저 정보 수정")
     void testUpdateUser(){
-        LoginRequestDto loginRequestDto = new LoginRequestDto(username, key);
+        LoginRequestDto loginRequestDto = new LoginRequestDto(key);
         UserTokenDto token = userController.login(loginRequestDto).getData();
         JwtAuthentication authentication = new JwtAuthentication(token.getToken(), token.getUsername());
 
@@ -194,7 +214,7 @@ public class UserControllerTest {
         UserResponseDto user1 = userController.register(userRegisterDto).getData();
         log.info("registered user -> {}", user1);
 
-        LoginRequestDto loginRequestDto = new LoginRequestDto(user1.getUsername(), user1.getEnterKey());
+        LoginRequestDto loginRequestDto = new LoginRequestDto(user1.getEnterKey());
         UserTokenDto token = userController.login(loginRequestDto).getData();
         JwtAuthentication authentication = new JwtAuthentication(token.getToken(), token.getUsername());
 

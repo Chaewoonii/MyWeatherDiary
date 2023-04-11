@@ -3,8 +3,11 @@ package com.cnu.diary.myweatherdiary.users.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Collection;
 import java.util.UUID;
 
 
@@ -14,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User{
 
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -34,13 +37,10 @@ public class User {
     @Column(name = "username", length = 50)
     private String username;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "group_id")
     private UserGroup userGroup;
 
-    public void addUserGroup(UserGroup userGroup){
-        this.userGroup = userGroup;
-    }
 
     //입력받은 비밀번호(credential, enterKey)와 데이터베이스의 비밀번호를 비교
     public void checkPassword(PasswordEncoder passwordEncoder, String credentials) {

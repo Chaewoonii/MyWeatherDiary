@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UsernameRepository extends JpaRepository<MappedKey, String> {
+public interface MappedKeyRepository extends JpaRepository<MappedKey, String> {
     Optional<MappedKey> findByEnterKey(String enterKey);
 
     @Override

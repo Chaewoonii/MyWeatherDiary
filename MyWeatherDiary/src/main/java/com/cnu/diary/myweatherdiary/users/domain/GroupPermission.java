@@ -2,10 +2,10 @@ package com.cnu.diary.myweatherdiary.users.domain;
 
 import com.cnu.diary.myweatherdiary.users.repository.PermissionRepository;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+
+@Builder
 @Getter
 @Entity
 @Table(name = "group_permission")
@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GroupPermission {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Long id;
 

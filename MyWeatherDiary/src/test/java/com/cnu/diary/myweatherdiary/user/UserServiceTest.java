@@ -1,7 +1,7 @@
 package com.cnu.diary.myweatherdiary.user;
 
 
-import com.cnu.diary.myweatherdiary.users.UsernameService;
+import com.cnu.diary.myweatherdiary.users.MappedKeyService;
 import com.cnu.diary.myweatherdiary.users.domain.MappedKey;
 import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
@@ -27,7 +27,7 @@ public class UserServiceTest{
     UserService userService;
 
     @Autowired
-    UsernameService usernameService;
+    MappedKeyService mappedKeyService;
 
     UserResponseDto user;
 
@@ -38,7 +38,7 @@ public class UserServiceTest{
         UserRegisterDto userRegisterDto = new UserRegisterDto();
         userRegisterDto.setDiaryTitle("테스트 일기장 >_<");
         userRegisterDto.setRole(1L);
-        MappedKey entity = usernameService.register();
+        MappedKey entity = mappedKeyService.register();
         user = userService.register(entity, userRegisterDto);
         UserResponseDto user1 = userService.findByUsername(user.getUsername());
 

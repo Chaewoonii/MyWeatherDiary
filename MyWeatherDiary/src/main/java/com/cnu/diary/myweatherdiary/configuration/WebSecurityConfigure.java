@@ -3,7 +3,10 @@ package com.cnu.diary.myweatherdiary.configuration;
 import com.cnu.diary.myweatherdiary.jwt.Jwt;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationFilter;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationProvider;
+import com.cnu.diary.myweatherdiary.jwt.JwtSecurityContextRepository;
 import com.cnu.diary.myweatherdiary.users.UserDetailService;
+import com.cnu.diary.myweatherdiary.users.domain.Group;
+import com.cnu.diary.myweatherdiary.users.domain.Role;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 @Configuration
 @EnableWebSecurity
 @Setter
-public class WebSecurityConfigure {
+public class WebSecurityConfigure{
 
     private final ApplicationContext applicationContext;
     private final JwtConfigure jwtConfigure;
@@ -95,41 +99,48 @@ public class WebSecurityConfigure {
         return new JwtAuthenticationFilter(jwtConfigure.getHeader(), jwt);
     }
 
+    public SecurityContextRepository securityContextRepository(){
+        Jwt jwt = applicationContext.getBean(Jwt.class);
+        return new JwtSecurityContextRepository(jwtConfigure.getHeader(), jwt);
+    }
+
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .requestMatchers("/api/diary", "/api/user/auth").hasAnyRole("USER")
-                .anyRequest().permitAll()
-                .and()
+                .requestMatchers("/api/v1/diary", "/api/v1/user/auth").hasAnyRole("USER", "ADMIN")
+                    .anyRequest().permitAll()
+                    .and()
                 /**
                  * formLogin, csrf, headers, http-basic, rememberMe, logout filter 비활성화
                  */
                 .formLogin()
-                .disable()
+                    .disable()
                 .csrf()
-                .disable()
+                    .disable()
                 .headers()
-                .disable()
+                    .disable()
                 .httpBasic()
-                .disable()
+                    .disable()
                 .rememberMe()
-                .disable()
+                    .disable()
                 .logout()
-                .disable()
+                    .disable()
                 /**
                  * Session 사용하지 않음
                  */
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
                 /**
                  * 예외처리 핸들러
                  */
                 .exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler())
-                .and()
-                .addFilterAfter(jwtAuthenticationFilter(), SecurityContextHolderFilter.class)
+                    .accessDeniedHandler(accessDeniedHandler())
+                    .and()
+                .securityContext()
+                    .securityContextRepository(securityContextRepository())
+                    .and()
                 ;
                 return http.build();
     }

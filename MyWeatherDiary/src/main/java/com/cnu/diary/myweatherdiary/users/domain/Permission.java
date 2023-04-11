@@ -1,12 +1,11 @@
 package com.cnu.diary.myweatherdiary.users.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
-@ToString
+import java.util.List;
+
+
 @Builder
 @Getter
 @Entity
@@ -15,9 +14,13 @@ import lombok.*;
 @AllArgsConstructor
 public class Permission {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Long id;
 
     @Column(name = "name")
     private String name;
+
+    @OneToMany(mappedBy = "permission")
+    private List<GroupPermission> groupPermission;
 }

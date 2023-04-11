@@ -31,8 +31,8 @@ public class EntityConverter {
                     .enterKey(key)
                     .diaryTitle(userRegisterDto.getDiaryTitle())
                     .nickName(new NickNameCreator().getNickName())
-                    .userGroup(userGroup)
                     .username(username)
+                    .userGroup(userGroup)
                     .build();
             return user;
     }

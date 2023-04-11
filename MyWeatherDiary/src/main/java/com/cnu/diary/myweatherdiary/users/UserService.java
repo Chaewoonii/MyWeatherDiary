@@ -3,9 +3,12 @@ package com.cnu.diary.myweatherdiary.users;
 import com.cnu.diary.myweatherdiary.exception.UserNotFouneException;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthenticationToken;
 import com.cnu.diary.myweatherdiary.users.domain.*;
+import com.cnu.diary.myweatherdiary.users.dto.LoginResponseDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
+import com.cnu.diary.myweatherdiary.users.repository.PermissionRepository;
+import com.cnu.diary.myweatherdiary.users.repository.UserGroupRepository;
 import com.cnu.diary.myweatherdiary.users.repository.UserRepository;
 import com.cnu.diary.myweatherdiary.users.utill.AuthorizationKeyCreator;
 import com.cnu.diary.myweatherdiary.utill.EntityConverter;
@@ -14,18 +17,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final UserGroupRepository userGroupRepository;
+    private final PermissionRepository permissionRepository;
     private final AuthenticationManager authenticationManager;
     private final EntityConverter entityConverter;
 
@@ -33,25 +40,45 @@ public class UserService {
 
 
     public UserGroup getUserGroup(Long role){
+        UserGroup userGroup = userGroupRepository.findById(role).orElse(
+                UserGroup.builder()
+                        .name(Group.USER_GROUP.toString())
+                        .permissions(new ArrayList<>())
+                        .build()
+        );
+
+        List<GroupPermission> groupPermissions = new ArrayList<>();
+
         if (role == 1L){
-            Permission permission = new Permission(role, Role.ROLE_USER.toString());
-            UserGroup userGroup = new UserGroup(role, Group.USER_GROUP.toString(), new ArrayList<>());
-            GroupPermission groupPermission = new GroupPermission(role, userGroup, permission);
-            userGroup.getPermissions().add(groupPermission);
+            Permission permission = permissionRepository.findById(role).orElse(
+                    Permission.builder()
+                            .name(Role.ROLE_USER.toString())
+                            .build()
+            );
 
-            return userGroup;
+            GroupPermission groupPermission = GroupPermission.builder()
+                    .userGroup(userGroup)
+                    .build();
+            groupPermission.addPermission(permission);
+
+            groupPermissions.add(groupPermission);
         }else {
-            Permission permission1 = new Permission(role, Role.ROLE_USER.toString());
-            Permission permission2 = new Permission(role, Role.ROLE_ADMIN.toString());
-            UserGroup adminGroup = new UserGroup(role, Group.ADMIN_GROUP.toString(), new ArrayList<>());
-            GroupPermission groupPermission1 = new GroupPermission(role, adminGroup, permission1);
-            GroupPermission groupPermission2 = new GroupPermission(role, adminGroup, permission2);
-            adminGroup.getPermissions().add(groupPermission1);
-            adminGroup.getPermissions().add(groupPermission2);
+            Long i = 1L;
+            while (i <= role){
+                Permission permission = permissionRepository.findById(i++).orElse(
+                        Permission.builder()
+                                .name(Role.ROLE_USER.toString())
+                                .build()
+                );
+                GroupPermission groupPermission = GroupPermission.builder()
+                                .userGroup(userGroup).build();
+                groupPermission.addPermission(permission);
 
-            return adminGroup;
+                groupPermissions.add(groupPermission);
+            }
         }
-
+        userGroup.setPermissions(groupPermissions);
+        return userGroup;
     }
 
     @Transactional
@@ -100,6 +127,7 @@ public class UserService {
         return entityConverter.getUserDto(user);
     }
 
+    @Transactional
     public UserResponseDto findByUsername(String username) {
         return entityConverter.getUserDto(
                 userRepository.findByUsername(username).orElseThrow(
@@ -131,6 +159,7 @@ public class UserService {
         Authentication resultToken = authenticationManager.authenticate(authToken);
         return resultToken;
     }
+
 
 
 }

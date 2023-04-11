@@ -31,6 +31,7 @@ CREATE TABLE group_permission
 CREATE TABLE users
 (
     id          binary(16) PRIMARY KEY NOT NULL,
+    username    varchar(50) NOT NULL,
     enter_key   varchar(80) NOT NULL,
     diary_title varchar(20) NOT NULL,
     nick_name   varchar(15),
@@ -54,4 +55,9 @@ create table contents(
                          prefix varchar(20),
                          comment longtext,
                          img_name varchar(20) NOT NULL
+);
+
+create table mapped_keys(
+    username varchar(10) PRIMARY KEY NOT NULL,
+    enter_key varchar(20) NOT NULL
 );

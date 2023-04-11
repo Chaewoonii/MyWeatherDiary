@@ -1,10 +1,7 @@
 package com.cnu.diary.myweatherdiary.users.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -13,6 +10,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+@ToString
+@Builder
 @Getter
 @Entity
 @Table(name = "user_groups")
@@ -21,13 +20,14 @@ import java.util.stream.Collectors;
 public class UserGroup {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column
     private Long id;
 
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "userGroup")
     private List<GroupPermission> permissions;
 
     public void setPermissions(List<GroupPermission> groupPermissions){

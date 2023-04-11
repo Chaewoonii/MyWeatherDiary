@@ -55,7 +55,7 @@ class PostContentTest {
         userRegisterDto.setRole(1L);
 
         user = userController.register(userRegisterDto).getData();
-        LoginRequestDto request = new LoginRequestDto(user.getUsername(), user.getEnterKey());
+        LoginRequestDto request = new LoginRequestDto(user.getEnterKey());
         UserTokenDto token = userController.login(request).getData();
         authentication = new JwtAuthentication(token.getToken(), token.getUsername());
 

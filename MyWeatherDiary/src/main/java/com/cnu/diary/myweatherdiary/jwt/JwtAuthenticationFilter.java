@@ -71,7 +71,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         chain.doFilter(request, response);
     }
 
-    private String getToken(HttpServletRequest request) {
+    public String getToken(HttpServletRequest request) {
         String token = request.getHeader(headerKey);
         if (isNotEmpty(token)) {
             log.debug("Jwt authorization api detected: {}", token);

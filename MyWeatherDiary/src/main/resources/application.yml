@@ -18,7 +18,6 @@ spring:
       data-locations: classpath:sql/data.sql
       platform: mysql
       encoding: UTF-8
-      mode: always
 logging:
   level:
     org.hibernate.type.descriptor.sql: DEBUG
