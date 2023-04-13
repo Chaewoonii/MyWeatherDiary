@@ -48,7 +48,6 @@ public class UserDetailService implements UserDetailsService {
     public LoginResponseDto login(String principal, String credential) {
         checkArgument(isNotEmpty(principal), "principal must be provided.");
 
-
         User user = userRepository.findByUsername(principal)
                 .orElseThrow(() -> new UsernameNotFoundException("Could not found user for " + principal));
 

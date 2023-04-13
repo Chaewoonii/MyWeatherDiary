@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("api/v1/diary")
+@RequestMapping("/diary")
 public class DiaryController {
 
     @Autowired
@@ -52,7 +52,7 @@ public class DiaryController {
         Post post = postService.findPostById(postResponseDto.getId());
 
         List<ContentDto> contentDtos = contentService.saveContents(postContentDto.getContents(), post);
-        postResponseDto.setContentDtos(contentDtos);
+        postResponseDto.setContents(contentDtos);
         return ApiResponse.ok(postResponseDto);
     }
 
@@ -67,7 +67,7 @@ public class DiaryController {
                                                                   @AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException{
         List<PostResponseDto> posts = postService.getTimelinePost(authentication.username, pageable);
         posts.forEach(
-                p -> p.setContentDtos(contentService.findByPostId(p.getId()))
+                p -> p.setContents(contentService.findByPostId(p.getId()))
         );
         return ApiResponse.ok(posts);
     }
@@ -76,7 +76,7 @@ public class DiaryController {
     public ApiResponse<PostResponseDto> findPostByPostId(@PathVariable("postId") UUID postId) throws PostNotFoundException{
         PostResponseDto postResponseDto = postService.getPost(postId);
         List<ContentDto> contentList = contentService.findByPostId(postId);
-        postResponseDto.setContentDtos(contentList);
+        postResponseDto.setContents(contentList);
         return ApiResponse.ok(postResponseDto);
     }
 
@@ -94,14 +94,14 @@ public class DiaryController {
         Post post = postService.findPostById(postResponseDto.getId());
 
         List<ContentDto> contentList = contentService.updateContents(postContentDto.getContents(), post);
-        postResponseDto.setContentDtos(contentList);
+        postResponseDto.setContents(contentList);
         return ApiResponse.ok(postResponseDto);
     }
 
     @DeleteMapping("{postId}")
     public ApiResponse<String> removePost(@PathVariable("postId") UUID postId) throws PostNotFoundException{
-        postService.removePost(postId);
         contentService.deleteAllContentsByPostId(postId);
+        postService.removePost(postId);
         return ApiResponse.ok("Delete Success");
     }
 

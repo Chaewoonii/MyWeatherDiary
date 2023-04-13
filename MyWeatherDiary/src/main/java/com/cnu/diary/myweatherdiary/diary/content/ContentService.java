@@ -25,7 +25,6 @@ public class ContentService {
     @Autowired
     private EntityConverter entityConverter;
 
-
     @Transactional
     @PostMapping("contents")
     public List<ContentDto> saveContents(List<ContentDto> contentDtos, Post post) throws IOException {
@@ -53,12 +52,10 @@ public class ContentService {
         return contentRequestDtoList;
     }
 
-
-
     @Transactional
     @PostMapping("contents")
     public List<ContentDto> updateContents(List<ContentDto> contentDtos, Post post) throws IOException{
-        deleteAllContentsByPostId(post.getId()); //콘텐츠 다 삭제하고 다시 저장.
+        deleteAllImgByPostId(post.getId()); //콘텐츠 다 삭제하고 다시 저장.
         List<ContentDto> contentList = new ArrayList<>();
         Iterator<ContentDto> iterator = contentDtos.iterator();
 
@@ -99,11 +96,29 @@ public class ContentService {
         contentImgHandler.deleteImg(id.toString());
     }
 
-
     public void deleteAllContentsByPostId(UUID postId) {
         Iterator<Content> contents = contentRepository.findAllByPostId(postId).iterator();
         while (contents.hasNext()){
-            deleteContents(contents.next().getId());
+            try {
+                deleteContents(contents.next().getId());
+            }catch (ImgNotFoundException e){
+                e.getMessage();
+            }
         }
     }
+
+    public void deleteAllImgByPostId(UUID postId){
+        Iterator<Content> contents = contentRepository.findAllByPostId(postId).iterator();
+        while (contents.hasNext()){
+            String id = contents.next().getId().toString();
+            try {
+                String deleted = contentImgHandler.deleteImg(id);
+                log.info("deleted Img -> name: {}", deleted);
+            }catch (ImgNotFoundException e){
+                e.getMessage();
+                log.warn("delete image failed -> name: {}", id);
+            }
+        }
+    }
+
 }

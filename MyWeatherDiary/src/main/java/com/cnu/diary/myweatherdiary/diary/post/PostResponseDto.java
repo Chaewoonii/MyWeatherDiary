@@ -19,7 +19,7 @@ public class PostResponseDto {
     private Emotion emotion;
     private LocalDateTime postDate;
     private LocalDateTime writtenDate;
-    private List<ContentDto> contentDtos;
+    private List<ContentDto> contents;
 
 
 }

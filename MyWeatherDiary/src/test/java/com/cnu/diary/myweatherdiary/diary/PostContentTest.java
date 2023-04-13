@@ -62,7 +62,6 @@ class PostContentTest {
         Optional<String> testImg = contentImgHandler.getBase64ImgFromLocal("testImg");
         Optional<String> testImg2 = contentImgHandler.getBase64ImgFromLocal("testImg2");
 
-
         ContentDto dto1 = new ContentDto("오늘 날씨가 좋다", testImg);
         ContentDto dto2 = new ContentDto( "졸려죽음~~", Optional.empty());
         ContentDto dto3 = new ContentDto( "밥이 맛있네", testImg2);
@@ -83,7 +82,6 @@ class PostContentTest {
     void testAddPost() throws IOException {
         Optional<String> testImg = contentImgHandler.getBase64ImgFromLocal("testImg");
         Optional<String> testImg2 = contentImgHandler.getBase64ImgFromLocal("testImg2");
-
 
         ContentDto dto1 = new ContentDto("어쩌구 저쩌구", testImg);
         ContentDto dto2 = new ContentDto( "허리아픔", Optional.empty());
@@ -116,7 +114,7 @@ class PostContentTest {
     @DisplayName("포스트와 콘텐츠 내용을 수정할 수 있다")
     void testUpdate() throws IOException {
         PostResponseDto post1 = diaryController.findPostByPostId(post.getId()).getData();
-        Iterator<ContentDto> contents = post1.getContentDtos().iterator();
+        Iterator<ContentDto> contents = post1.getContents().iterator();
 
         Optional<String> testImg3 = contentImgHandler.getBase64ImgFromLocal("testImg3");
         List<Optional<String>> images = List.of(testImg3, Optional.empty(), Optional.empty());
@@ -147,7 +145,7 @@ class PostContentTest {
     @Order(4)
     @DisplayName("콘텐츠를 삭제할 수 있다")
     void testDeleteContents() throws ImgNotFoundException{
-        diaryController.removeContent(post.getContentDtos().get(0).getId());
+        diaryController.removeContent(post.getContents().get(0).getId());
     }
 
     @Test

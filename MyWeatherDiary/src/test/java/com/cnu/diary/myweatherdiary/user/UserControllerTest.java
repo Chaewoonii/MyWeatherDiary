@@ -63,12 +63,6 @@ public class UserControllerTest {
     @Autowired
     private UserController userController;
 
-    @Autowired
-    private UserDetailService userDetailService;
-
-    @Autowired
-    private WebApplicationContext context;
-
     UserResponseDto user;
 
     String username;
@@ -76,7 +70,6 @@ public class UserControllerTest {
     
     @BeforeEach
     void setUp(){
-
         UserRegisterDto userRegisterDto = new UserRegisterDto();
         userRegisterDto.setDiaryTitle("test-diary");
         userRegisterDto.setRole(1L);
@@ -91,7 +84,6 @@ public class UserControllerTest {
 
         username = user.getUsername();
         key = user.getEnterKey();
-
     }
 
     @AfterEach
@@ -104,7 +96,6 @@ public class UserControllerTest {
         log.info("after delete -> {}", userService.findAll());
     }
 
-
     @Test
     @DisplayName("유저 등록")
     void testRegister() throws Exception{
@@ -114,7 +105,7 @@ public class UserControllerTest {
         userRegisterDto.setRole(1L);
 
         //When
-        mockMvc.perform(post("/api/v1/user")
+        mockMvc.perform(post("/user")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(userRegisterDto)))
                 .andExpect(status().isOk())
@@ -135,13 +126,12 @@ public class UserControllerTest {
                 .andDo(print());
     }
 
-
     @Test
     @DisplayName("로그인")
     void testLogin() throws Exception {
         LoginRequestDto loginRequestDto = new LoginRequestDto(key);
 
-        mockMvc.perform(post("/api/v1/user/login")
+        mockMvc.perform(post("/user/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequestDto)))
                 .andExpect(status().isOk())
@@ -167,7 +157,7 @@ public class UserControllerTest {
         LoginRequestDto loginRequestDto = new LoginRequestDto(key);
         UserTokenDto token = userController.login(loginRequestDto).getData();
 
-        mockMvc.perform(get("/api/v1/user/auth")
+        mockMvc.perform(get("/user/auth")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, token.getToken()))
                 .andExpect(status().isOk())
@@ -194,7 +184,7 @@ public class UserControllerTest {
         userRequestDto.setNickName("충남대 귀요미");
         userRequestDto.setDiaryTitle("충대 일기");
 
-        mockMvc.perform(put("/api/v1/user/auth")
+        mockMvc.perform(put("/user/auth")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, token.getToken())
                         .content(objectMapper.writeValueAsString(userRequestDto)))
@@ -229,13 +219,12 @@ public class UserControllerTest {
         LoginRequestDto loginRequestDto = new LoginRequestDto(user1.getEnterKey());
         UserTokenDto token = userController.login(loginRequestDto).getData();
 
-        mockMvc.perform(delete("/api/v1/user/auth")
+        mockMvc.perform(delete("/user/auth")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, token.getToken()))
                 .andExpect(status().isOk()).andDo(document("user-delete")).andDo(print());
 
         log.info("after delete -> {}", userService.findAll());
     }
-
 
 }

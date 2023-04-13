@@ -72,7 +72,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     }
 
     public String getToken(HttpServletRequest request) {
-        String token = request.getHeader(headerKey);
+        String token = request.getHeader(headerKey).replace("Bearer ", "");
         if (isNotEmpty(token)) {
             log.debug("Jwt authorization api detected: {}", token);
             try {

@@ -51,7 +51,7 @@ public class WebSecurityConfigure{
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
-        return (web -> {web.ignoring().requestMatchers("/templates/**");});
+        return (web -> {web.ignoring().requestMatchers("/docs/**");});
     }
 
     @Bean
@@ -108,7 +108,7 @@ public class WebSecurityConfigure{
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .requestMatchers("/api/v1/diary", "/api/v1/user/auth").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/diary", "/user/auth").hasAnyRole("USER", "ADMIN")
                     .anyRequest().permitAll()
                     .and()
                 /**

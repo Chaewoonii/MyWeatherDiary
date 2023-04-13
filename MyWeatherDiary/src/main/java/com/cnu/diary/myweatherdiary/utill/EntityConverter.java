@@ -86,7 +86,7 @@ public class EntityConverter {
             post.getContents().forEach(
                     c -> contentDtos.add(convertContentToDto(c))
             );
-            postResponseDto.setContentDtos(contentDtos);
+            postResponseDto.setContents(contentDtos);
         }
         return postResponseDto;
     }
