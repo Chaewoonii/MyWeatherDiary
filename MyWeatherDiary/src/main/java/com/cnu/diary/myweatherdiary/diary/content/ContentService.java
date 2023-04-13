@@ -2,6 +2,7 @@ package com.cnu.diary.myweatherdiary.diary.content;
 
 import com.cnu.diary.myweatherdiary.diary.post.Post;
 import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
+import com.cnu.diary.myweatherdiary.utill.EntityConverter;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,20 +17,15 @@ import java.util.*;
 public class ContentService {
 
     @Autowired
-    ContentRepository contentRepository;
+    private ContentRepository contentRepository;
 
     @Autowired
-    ContentImgHandler contentImgHandler;
+    private ContentImgHandler contentImgHandler;
 
-    public ContentDto convertContentToDto(Content content){
-        ContentDto contentDto = new ContentDto();
-        contentDto.setId(content.getId());
-        contentDto.setComment(content.getComment());
-        contentDto.setImg(
-                contentImgHandler.getBase64ImgFromLocal(content.getId().toString())
-        );
-        return contentDto;
-    }
+    @Autowired
+    private EntityConverter entityConverter;
+
+
     @Transactional
     @PostMapping("contents")
     public List<ContentDto> saveContents(List<ContentDto> contentDtos, Post post) throws IOException {
@@ -51,7 +47,7 @@ public class ContentService {
                         saved.getId().toString());
             }
 
-            contentRequestDtoList.add(convertContentToDto(saved));
+            contentRequestDtoList.add(entityConverter.convertContentToDto(saved));
         }
 
         return contentRequestDtoList;
@@ -62,6 +58,7 @@ public class ContentService {
     @Transactional
     @PostMapping("contents")
     public List<ContentDto> updateContents(List<ContentDto> contentDtos, Post post) throws IOException{
+        deleteAllContentsByPostId(post.getId()); //콘텐츠 다 삭제하고 다시 저장.
         List<ContentDto> contentList = new ArrayList<>();
         Iterator<ContentDto> iterator = contentDtos.iterator();
 
@@ -79,12 +76,10 @@ public class ContentService {
                         dto.getImg().orElseThrow(ImgNotFoundException::new),
                         saved.getId().toString());
                 log.info("save success: {}", savedImg);
-            }else{
-                String deletedImg = contentImgHandler.deleteImg(saved.getId().toString());
-                log.info("deleted Image: {}", deletedImg);
             }
-            contentList.add(convertContentToDto(saved));
+            contentList.add(entityConverter.convertContentToDto(saved));
         }
+
         return contentList;
     }
 
@@ -93,7 +88,7 @@ public class ContentService {
         Iterator<Content> iterator = contentRepository.findAllByPostId(id).iterator();
 
         while (iterator.hasNext()){
-            ContentDto contentDto = convertContentToDto(iterator.next());
+            ContentDto contentDto = entityConverter.convertContentToDto(iterator.next());
             contentDtos.add(contentDto);
         }
         return contentDtos;

@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
 
 //    @Query("select u from users u join fetch u.userGroup g left join fetch g.permissions gp join fetch gp.permission where u.username = :username")
-    @Query("SELECT u from users u join u.userGroup ug join ug.groupPermissions gp join gp.permission where u.username = :username")
+//    @Query("SELECT u from users u join u.userGroup ug join ug.groupPermissions gp join gp.permission where u.username = :username")
     Optional<User> findByUsername(String username);
 
     void deleteByUsername(String username);

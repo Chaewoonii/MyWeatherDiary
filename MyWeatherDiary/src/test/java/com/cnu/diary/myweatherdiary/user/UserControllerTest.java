@@ -6,6 +6,7 @@ import com.cnu.diary.myweatherdiary.users.UserDetailService;
 import com.cnu.diary.myweatherdiary.users.UserService;
 import com.cnu.diary.myweatherdiary.users.dto.*;
 import com.cnu.diary.myweatherdiary.users.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -37,8 +38,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -166,15 +166,10 @@ public class UserControllerTest {
     void testFindUser() throws Exception{
         LoginRequestDto loginRequestDto = new LoginRequestDto(key);
         UserTokenDto token = userController.login(loginRequestDto).getData();
-//        JwtAuthentication authentication = new JwtAuthentication(token.getToken(), token.getUsername());
-//        UserResponseDto user = userController.getUser(authentication).getData();
-//        log.info("found user -> {}", user);
-
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         mockMvc.perform(get("/api/v1/user/auth")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("token", token.getToken()))
+                        .header(HttpHeaders.AUTHORIZATION, token.getToken()))
                 .andExpect(status().isOk())
                 .andDo(document("user-get",
                         responseFields(
@@ -191,21 +186,39 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("유저 정보 수정")
-    void testUpdateUser(){
+    void testUpdateUser() throws Exception {
         LoginRequestDto loginRequestDto = new LoginRequestDto(key);
         UserTokenDto token = userController.login(loginRequestDto).getData();
-        JwtAuthentication authentication = new JwtAuthentication(token.getToken(), token.getUsername());
 
         UserRequestDto userRequestDto = new UserRequestDto();
         userRequestDto.setNickName("충남대 귀요미");
         userRequestDto.setDiaryTitle("충대 일기");
 
-        userController.updateUserInfo(userRequestDto, authentication);
+        mockMvc.perform(put("/api/v1/user/auth")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, token.getToken())
+                        .content(objectMapper.writeValueAsString(userRequestDto)))
+                .andExpect(status().isOk())
+                .andDo(document("user-update",
+                        requestFields(
+                                fieldWithPath("diaryTitle").description("DiaryTitle is essentially required"),
+                                fieldWithPath("nickName").description("Set user nick name")
+                        ),
+                        responseFields(
+                                fieldWithPath("statusCode").description("Http status code"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("data"),
+                                fieldWithPath("data.enterKey").description("enterKey"),
+                                fieldWithPath("data.diaryTitle").description("diaryTitle"),
+                                fieldWithPath("data.nickName").description("nickName"),
+                                fieldWithPath("data.username").description("username"),
+                                fieldWithPath("serverDateTime").description("serverDateTime")
+                        )))
+                .andDo(print());
     }
 
     @Test
     @DisplayName("유저 정보 삭제")
-    void testDeleteUesr(){
+    void testDeleteUesr() throws Exception {
         UserRegisterDto userRegisterDto = new UserRegisterDto();
         userRegisterDto.setDiaryTitle("test-diary");
         userRegisterDto.setRole(1L);
@@ -215,9 +228,12 @@ public class UserControllerTest {
 
         LoginRequestDto loginRequestDto = new LoginRequestDto(user1.getEnterKey());
         UserTokenDto token = userController.login(loginRequestDto).getData();
-        JwtAuthentication authentication = new JwtAuthentication(token.getToken(), token.getUsername());
 
-        userController.removeUser(authentication);
+        mockMvc.perform(delete("/api/v1/user/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, token.getToken()))
+                .andExpect(status().isOk()).andDo(document("user-delete")).andDo(print());
+
         log.info("after delete -> {}", userService.findAll());
     }
 

@@ -37,6 +37,10 @@ public class User{
     @Column(name = "username", length = 50)
     private String username;
 
+/*    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "role", length = 10)
+    private Role role;*/
+
     @ManyToOne
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     private UserGroup userGroup;

@@ -24,8 +24,8 @@ public class Post {
     @Column(name = "id", nullable = false, unique = true, columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @Column(name = "user_id", nullable = false, columnDefinition = "BINARY(16)")
-    private UUID userId;
+    @Column(name = "user_id", nullable = false, length = 20)
+    private String username;
 
     @Enumerated(EnumType.ORDINAL)
     private Emotion emotion;
@@ -38,7 +38,12 @@ public class Post {
 
 
     // post(1) : contents(N).
-    @OneToMany(mappedBy = "post", cascade = {CascadeType.ALL})
+    @OneToMany
+    @JoinTable(
+            name = "post_contents",
+            joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "content_id", referencedColumnName = "id")
+    )
     private List<Content> contents = new ArrayList<>();
 
 

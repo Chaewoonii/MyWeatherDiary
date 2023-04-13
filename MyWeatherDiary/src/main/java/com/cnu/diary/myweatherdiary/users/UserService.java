@@ -6,6 +6,7 @@ import com.cnu.diary.myweatherdiary.users.domain.*;
 import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
+import com.cnu.diary.myweatherdiary.users.repository.GroupPermissionRepository;
 import com.cnu.diary.myweatherdiary.users.repository.PermissionRepository;
 import com.cnu.diary.myweatherdiary.users.repository.UserGroupRepository;
 import com.cnu.diary.myweatherdiary.users.repository.UserRepository;
@@ -30,6 +31,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
     private final PermissionRepository permissionRepository;
+    private final GroupPermissionRepository groupPermissionRepository;
     private final AuthenticationManager authenticationManager;
     private final EntityConverter entityConverter;
 
@@ -51,29 +53,33 @@ public class UserService {
                             .name(Role.ROLE_USER.toString())
                             .build()
             );
+            permissionRepository.save(permission);
 
             GroupPermission groupPermission = GroupPermission.builder()
                     .userGroup(userGroup)
                     .build();
             groupPermission.addPermission(permission);
-
             groupPermissions.add(groupPermission);
+            groupPermissionRepository.save(groupPermission);
         }else {
             Long i = 1L;
             while (i <= role){
                 Permission permission = permissionRepository.findById(i++).orElse(
                         Permission.builder()
-                                .name(Role.ROLE_USER.toString())
+                                .name(Role.ROLE_USER.name())
                                 .build()
                 );
+                permissionRepository.save(permission);
+
                 GroupPermission groupPermission = GroupPermission.builder()
                                 .userGroup(userGroup).build();
                 groupPermission.addPermission(permission);
-
                 groupPermissions.add(groupPermission);
+                groupPermissionRepository.save(groupPermission);
             }
         }
         userGroup.setGroupPermissions(groupPermissions);
+        userGroupRepository.save(userGroup);
         return userGroup;
     }
 
@@ -111,9 +117,10 @@ public class UserService {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new NoSuchElementException(User.class.getPackageName())
         );
-        User updated = entityConverter.updateUser(user, userRequestDto);
 
+        User updated = entityConverter.updateUser(user, userRequestDto);
         User saved = userRepository.save(updated);
+
         return entityConverter.getUserDto(saved);
     }
 

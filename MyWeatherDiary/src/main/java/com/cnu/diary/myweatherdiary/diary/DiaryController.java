@@ -66,6 +66,9 @@ public class DiaryController {
     public ApiResponse<Iterable<PostResponseDto>> getTimelinePost(Pageable pageable,
                                                                   @AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException{
         List<PostResponseDto> posts = postService.getTimelinePost(authentication.username, pageable);
+        posts.forEach(
+                p -> p.setContentDtos(contentService.findByPostId(p.getId()))
+        );
         return ApiResponse.ok(posts);
     }
 
@@ -102,8 +105,8 @@ public class DiaryController {
         return ApiResponse.ok("Delete Success");
     }
 
-    @DeleteMapping("/content/{contentsId}")
-    public ApiResponse<String> removeContent(@PathVariable("contentsId") UUID contentsId) throws ImgNotFoundException {
+    @DeleteMapping("/content/{contentId}")
+    public ApiResponse<String> removeContent(@PathVariable("contentId") UUID contentsId) throws ImgNotFoundException {
         contentService.deleteContents(contentsId);
         return ApiResponse.ok("Delete Success");
     }

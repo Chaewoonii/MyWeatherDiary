@@ -12,24 +12,24 @@ spring:
       enabled: true
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
         show_sql: true
-  sql:
-    init:
-      schema-locations: classpath:sql/schema.sql
-      data-locations: classpath:sql/data.sql
-      platform: mysql
-      encoding: UTF-8
+#  sql:
+#    init:
+#      schema-locations: classpath:sql/schema.sql
+#      data-locations: classpath:sql/data.sql
+#      platform: mysql
+#      encoding: UTF-8
 logging:
   level:
     org:
       hibernate:
         org.hibernate.type.descriptor.sql: DEBUG
 jwt:
-  header: token
+  header: Authorization
   issuer: developer
   client-secret: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ
   expiry-seconds: 60

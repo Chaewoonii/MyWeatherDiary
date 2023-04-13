@@ -25,3 +25,31 @@ include::{snippets}/user-login/request-fields.adoc[]
 .Resoponse
 include::{snippets}/user-login/http-response.adoc[]
 include::{snippets}/user-login/response-fields.adoc[]
+
+=== 유저 조회
+==== /api/users/login
+.Request
+include::{snippets}/user-get/http-request.adoc[]
+include::{snippets}/user-get/request-fields.adoc[]
+
+.Resoponse
+include::{snippets}/user-get/http-response.adoc[]
+include::{snippets}/user-get/response-fields.adoc[]
+
+=== 유저 수정
+==== /api/users/login
+.Request
+include::{snippets}/user-update/http-request.adoc[]
+include::{snippets}/user-update/request-fields.adoc[]
+
+.Resoponse
+include::{snippets}/user-update/http-response.adoc[]
+include::{snippets}/user-update/response-fields.adoc[]
+
+=== 유저 삭제
+==== /api/users/login
+.Request
+include::{snippets}/user-delete/http-request.adoc[]
+
+.Resoponse
+include::{snippets}/user-delete/http-response.adoc[]
