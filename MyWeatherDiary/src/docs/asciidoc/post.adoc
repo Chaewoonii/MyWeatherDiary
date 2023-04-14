@@ -1,0 +1,72 @@
+:hardbreaks:
+ifndef::snippets[]
+:snippets: ../../../target/generated-snippets
+endif::[]
+
+== Diary:: Post
+
+=== 게시물 생성
+==== /diary
+.Request
+include::{snippets}/post-insert/http-request.adoc[]
+include::{snippets}/post-insert/request-fields.adoc[]
+
+.Resoponse
+include::{snippets}/post-insert/http-response.adoc[]
+include::{snippets}/post-insert/response-fields.adoc[]
+
+
+=== 게시물 조회: 단건 조회
+==== /diary/{postId}
+.Request
+include::{snippets}/post-get/http-request.adoc[]
+
+.Resoponse
+include::{snippets}/post-get/http-response.adoc[]
+include::{snippets}/post-get/response-fields.adoc[]
+
+=== 게시물 조회: 페이징(param 없음)
+==== /diary
+.Request
+include::{snippets}/post-getPage_NoParam/http-request.adoc[]
+
+.Resoponse
+include::{snippets}/post-getPage_NoParam/http-response.adoc[]
+include::{snippets}/post-getPage_NoParam/response-fields.adoc[]
+
+=== 게시물 조회: 페이징
+==== /diary
+.Request
+include::{snippets}/post-getPage_Param/http-request.adoc[]
+
+.Resoponse
+include::{snippets}/post-getPage_Param/http-response.adoc[]
+include::{snippets}/post-getPage_Param/response-fields.adoc[]
+
+=== 게시물 수정
+==== /diary
+.Request
+include::{snippets}/post-edit/http-request.adoc[]
+include::{snippets}/post-edit/request-fields.adoc[]
+
+.Resoponse
+include::{snippets}/post-edit/http-response.adoc[]
+include::{snippets}/post-edit/response-fields.adoc[]
+
+=== 게시물 삭제
+==== /diary/{postId}
+.Request
+include::{snippets}/post-delete/http-request.adoc[]
+
+.Response
+include::{snippets}/post-delete/http-response.adoc[]
+include::{snippets}/post-delete/response-fields.adoc[]
+
+=== 게시물 내 콘텐츠 삭제
+==== /diary/{contentId}
+.Request
+include::{snippets}/post-delete_content/http-request.adoc[]
+
+.Response
+include::{snippets}/post-delete_content/http-response.adoc[]
+include::{snippets}/post-delete_content/response-fields.adoc[]

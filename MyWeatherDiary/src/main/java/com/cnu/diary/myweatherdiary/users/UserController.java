@@ -18,7 +18,6 @@ public class UserController {
 
     private final UserService userService;
 
-    private final UserDetailService userDetailService;
     private final MappedKeyService mappedKeyService;
 
     /**

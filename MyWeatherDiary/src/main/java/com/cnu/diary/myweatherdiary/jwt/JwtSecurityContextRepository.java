@@ -75,6 +75,7 @@ public class JwtSecurityContextRepository implements SecurityContextRepository {
     private String getToken(HttpServletRequest request){
         String token = request.getHeader(headerKey);
         if (isNotEmpty(token)){
+            token = token.replace("Bearer ", "");
             log.debug("Jwt authorization api detected: {}", token);
             try{
                 return URLDecoder.decode(token, "UTF-8");

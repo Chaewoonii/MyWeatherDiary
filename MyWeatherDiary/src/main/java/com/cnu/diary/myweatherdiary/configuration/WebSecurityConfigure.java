@@ -24,7 +24,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.context.SecurityContextHolderFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
 
 import javax.servlet.http.HttpServletResponse;
@@ -51,7 +51,7 @@ public class WebSecurityConfigure{
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
-        return (web -> {web.ignoring().requestMatchers("/docs/**");});
+        return (web -> {web.ignoring().requestMatchers("/docs/**", "/login", "/logout");});
     }
 
     @Bean
@@ -92,23 +92,20 @@ public class WebSecurityConfigure{
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        Jwt jwt = applicationContext.getBean(Jwt.class);
-        return new JwtAuthenticationFilter(jwtConfigure.getHeader(), jwt);
+        return new JwtAuthenticationFilter(jwtConfigure.getHeader(), jwt());
     }
 
     public SecurityContextRepository securityContextRepository(){
-        Jwt jwt = applicationContext.getBean(Jwt.class);
-        return new JwtSecurityContextRepository(jwtConfigure.getHeader(), jwt);
+        return new JwtSecurityContextRepository(jwtConfigure.getHeader(), jwt());
     }
 
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .requestMatchers("/diary", "/user/auth").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/diary/**", "/auth/**").hasAnyRole("USER", "ADMIN")
                     .anyRequest().permitAll()
                     .and()
                 /**
@@ -141,6 +138,7 @@ public class WebSecurityConfigure{
                 .securityContext()
                     .securityContextRepository(securityContextRepository())
                     .and()
+//                .addFilterAfter(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 ;
                 return http.build();
     }

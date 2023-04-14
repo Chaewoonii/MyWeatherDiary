@@ -67,6 +67,8 @@ public class UserControllerTest {
 
     String username;
     String key;
+
+    String token;
     
     @BeforeEach
     void setUp(){
@@ -84,6 +86,10 @@ public class UserControllerTest {
 
         username = user.getUsername();
         key = user.getEnterKey();
+
+        LoginRequestDto loginRequestDto = new LoginRequestDto(key);
+        UserTokenDto userTokenDto = userController.login(loginRequestDto).getData();
+        token = "Bearer " + userTokenDto.getToken();
     }
 
     @AfterEach
@@ -155,11 +161,11 @@ public class UserControllerTest {
     @DisplayName("유저 정보 조회")
     void testFindUser() throws Exception{
         LoginRequestDto loginRequestDto = new LoginRequestDto(key);
-        UserTokenDto token = userController.login(loginRequestDto).getData();
+        String afterLoginToken = "Bearer " + userController.login(loginRequestDto).getData().getToken();
 
         mockMvc.perform(get("/user/auth")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, token.getToken()))
+                        .header(HttpHeaders.AUTHORIZATION, afterLoginToken))
                 .andExpect(status().isOk())
                 .andDo(document("user-get",
                         responseFields(
@@ -178,7 +184,7 @@ public class UserControllerTest {
     @DisplayName("유저 정보 수정")
     void testUpdateUser() throws Exception {
         LoginRequestDto loginRequestDto = new LoginRequestDto(key);
-        UserTokenDto token = userController.login(loginRequestDto).getData();
+        String afterLoginToken = "Bearer " + userController.login(loginRequestDto).getData().getToken();
 
         UserRequestDto userRequestDto = new UserRequestDto();
         userRequestDto.setNickName("충남대 귀요미");
@@ -186,7 +192,7 @@ public class UserControllerTest {
 
         mockMvc.perform(put("/user/auth")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, token.getToken())
+                        .header(HttpHeaders.AUTHORIZATION, afterLoginToken)
                         .content(objectMapper.writeValueAsString(userRequestDto)))
                 .andExpect(status().isOk())
                 .andDo(document("user-update",
@@ -217,11 +223,12 @@ public class UserControllerTest {
         log.info("registered user -> {}", user1);
 
         LoginRequestDto loginRequestDto = new LoginRequestDto(user1.getEnterKey());
-        UserTokenDto token = userController.login(loginRequestDto).getData();
+        UserTokenDto userTokenDto = userController.login(loginRequestDto).getData();
+        String token = "Bearer " + userTokenDto.getToken();
 
         mockMvc.perform(delete("/user/auth")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, token.getToken()))
+                .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().isOk()).andDo(document("user-delete")).andDo(print());
 
         log.info("after delete -> {}", userService.findAll());

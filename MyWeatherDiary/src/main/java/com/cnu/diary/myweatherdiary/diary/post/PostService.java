@@ -31,9 +31,6 @@ public class PostService {
     private PostRepository postRepository;
 
     @Autowired
-    private ContentRepository contentRepository;
-
-    @Autowired
     private EntityConverter entityConverter;
 
 

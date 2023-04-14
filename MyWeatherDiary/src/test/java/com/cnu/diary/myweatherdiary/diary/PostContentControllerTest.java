@@ -25,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -34,7 +35,7 @@ import java.util.Optional;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -77,7 +78,7 @@ class PostContentControllerTest {
         user = userController.register(userRegisterDto).getData();
         LoginRequestDto request = new LoginRequestDto(user.getEnterKey());
         UserTokenDto userTokenDto = userController.login(request).getData();
-        token = userTokenDto.getToken();
+        token = "Bearer " + userTokenDto.getToken();
         JwtAuthentication authentication = new JwtAuthentication(token, userTokenDto.getUsername());
 
         Optional<String> testImg = contentImgHandler.getBase64ImgFromLocal("testImg");
@@ -114,30 +115,182 @@ class PostContentControllerTest {
         postContentDto.setContents(dtoList);
 
         mockMvc.perform(post("/diary")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(postContentDto))
-                    .header(HttpHeaders.AUTHORIZATION, token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postContentDto))
+                        .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().isOk())
                 .andDo(document("post-insert",
                         requestFields(
                                 fieldWithPath("postId").type(JsonFieldType.NULL).description("null"),
                                 fieldWithPath("emotion").description("emotion"),
                                 fieldWithPath("postDate").description("post Date"),
-                                fieldWithPath("contents[]").type(JsonFieldType.OBJECT).description("contents"),
+                                fieldWithPath("contents[]").type(JsonFieldType.ARRAY).description("contents"),
                                 fieldWithPath("contents[].id").type(JsonFieldType.NULL).description("null or number, reapplied after saving"),
                                 fieldWithPath("contents[].comment").description("comment"),
-                                fieldWithPath("contents[].img").description("img").ignored()
+                                fieldWithPath("contents[].img").description("img").optional(),
+                                fieldWithPath("imgBytesList[]").type(JsonFieldType.ARRAY).description("??")
                         ),
                         responseFields(
-                                fieldWithPath("id").description("postId"),
-                                fieldWithPath("emotion").description("emotion"),
-                                fieldWithPath("postDate").description("post date"),
-                                fieldWithPath("writtenDate").description("written date"),
-                                fieldWithPath("contents[]").type(JsonFieldType.OBJECT).description("contents"),
-                                fieldWithPath("contents[].id").description("null or number, reapplied after saving"),
-                                fieldWithPath("contents[].comment").description("comment"),
-                                fieldWithPath("contents[].img").description("img").ignored()
-                        )))
+                                fieldWithPath("statusCode").description("Http Status Code"),
+                                fieldWithPath("data").description("response data"),
+                                fieldWithPath("data.id").description("postId"),
+                                fieldWithPath("data.emotion").description("emotion"),
+                                fieldWithPath("data.postDate").description("post date"),
+                                fieldWithPath("data.writtenDate").description("written date"),
+                                fieldWithPath("data.contents[]").type(JsonFieldType.ARRAY).description("contents"),
+                                fieldWithPath("data.contents[].id").description("null or number, reapplied after saving"),
+                                fieldWithPath("data.contents[].comment").description("comment"),
+                                fieldWithPath("data.contents[].img").description("img").optional(),
+                                fieldWithPath("serverDateTime").description("response date time")
+
+                        )));
+    }
+
+    @Test
+    @DisplayName("포스트 조회::단건")
+    void testGetPost() throws Exception{
+        mockMvc.perform(get("/diary/{postId}", post.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk())
+                .andDo(document("post-get",
+                        responseFields(
+                                fieldWithPath("statusCode").description("Http Status Code"),
+                                fieldWithPath("data").description("response data"),
+                                fieldWithPath("data.id").description("postId"),
+                                fieldWithPath("data.emotion").description("emotion"),
+                                fieldWithPath("data.postDate").description("post date"),
+                                fieldWithPath("data.writtenDate").description("written date"),
+                                fieldWithPath("data.contents[]").type(JsonFieldType.ARRAY).description("contents"),
+                                fieldWithPath("data.contents[].id").description("null or number, reapplied after saving"),
+                                fieldWithPath("data.contents[].comment").description("comment"),
+                                fieldWithPath("data.contents[].img").description("img").optional(),
+                                fieldWithPath("serverDateTime").description("response date time")
+                        )
+                ))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("포스트 조회: 페이징: param 없이 요청 시 0부터 5개 반환")
+    void testGetPostPaging() throws Exception{
+        mockMvc.perform(get("/diary")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk())
+                .andDo(document("post-getPage_NoParam",
+                        responseFields(
+                                fieldWithPath("statusCode").description("Http Status Code"),
+                                fieldWithPath("data[]").type(JsonFieldType.ARRAY).description("response data"),
+                                fieldWithPath("data[].id").description("postId"),
+                                fieldWithPath("data[].emotion").description("emotion"),
+                                fieldWithPath("data[].postDate").description("post date"),
+                                fieldWithPath("data[].writtenDate").description("written date"),
+                                fieldWithPath("data[].contents[]").type(JsonFieldType.ARRAY).description("contents"),
+                                fieldWithPath("data[].contents[].id").description("null or number, reapplied after saving"),
+                                fieldWithPath("data[].contents[].comment").description("comment"),
+                                fieldWithPath("data[].contents[].img").description("img").optional(),
+                                fieldWithPath("serverDateTime").description("response date time")
+                        )));
+    }
+
+    @Test
+    @DisplayName("포스트 조회: 페이징: param")
+    void testGetPostPagingParam() throws Exception{
+        mockMvc.perform(get("/diary")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .param("page","0")
+                        .param("size", "5"))
+                .andExpect(status().isOk())
+                .andDo(document("post-getPage_Param",
+                        responseFields(
+                                fieldWithPath("statusCode").description("Http Status Code"),
+                                fieldWithPath("data[]").type(JsonFieldType.ARRAY).description("response data"),
+                                fieldWithPath("data[].id").description("postId"),
+                                fieldWithPath("data[].emotion").description("emotion"),
+                                fieldWithPath("data[].postDate").description("post date"),
+                                fieldWithPath("data[].writtenDate").description("written date"),
+                                fieldWithPath("data[].contents[]").type(JsonFieldType.ARRAY).description("contents"),
+                                fieldWithPath("data[].contents[].id").description("null or number, reapplied after saving"),
+                                fieldWithPath("data[].contents[].comment").description("comment"),
+                                fieldWithPath("data[].contents[].img").description("img").optional(),
+                                fieldWithPath("serverDateTime").description("response date time")
+                        )));
+    }
+
+    @Test
+    @DisplayName("포스트 수정")
+    void testEditPost() throws Exception{
+        Optional<String> testImg = contentImgHandler.getBase64ImgFromLocal("testImg");
+        Optional<String> testImg3 = contentImgHandler.getBase64ImgFromLocal("testImg3");
+
+        ContentDto dto1 = new ContentDto("이것은", testImg);
+        ContentDto dto2 = new ContentDto( "테스트", Optional.empty());
+        ContentDto dto3 = new ContentDto( "수정입니다", testImg3);
+        List<ContentDto> dtoList = List.of(dto1, dto2, dto3);
+
+        PostContentDto postContentDto = new PostContentDto();
+        postContentDto.setEmotion(Emotion.HAPPY);
+        postContentDto.setPostDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+        postContentDto.setContents(dtoList);
+
+        mockMvc.perform(put("/diary")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .content(objectMapper.writeValueAsString(postContentDto)))
+                .andExpect(status().isOk())
+                .andDo(document("post-edit",
+                        requestFields(
+                                fieldWithPath("postId").type(JsonFieldType.NULL).description("null"),
+                                fieldWithPath("emotion").description("emotion"),
+                                fieldWithPath("postDate").description("post Date"),
+                                fieldWithPath("contents[]").type(JsonFieldType.ARRAY).description("contents"),
+                                fieldWithPath("contents[].id").type(JsonFieldType.NULL).description("null or number, reapplied after saving"),
+                                fieldWithPath("contents[].comment").description("comment"),
+                                fieldWithPath("contents[].img").description("img").optional(),
+                                fieldWithPath("imgBytesList[]").type(JsonFieldType.ARRAY).description("??")
+                        ),
+                        responseFields(
+                                fieldWithPath("statusCode").description("Http Status Code"),
+                                fieldWithPath("data").description("response data"),
+                                fieldWithPath("data.id").description("postId"),
+                                fieldWithPath("data.emotion").description("emotion"),
+                                fieldWithPath("data.postDate").description("post date"),
+                                fieldWithPath("data.writtenDate").description("written date"),
+                                fieldWithPath("data.contents[]").type(JsonFieldType.ARRAY).description("contents"),
+                                fieldWithPath("data.contents[].id").description("null or number, reapplied after saving"),
+                                fieldWithPath("data.contents[].comment").description("comment"),
+                                fieldWithPath("data.contents[].img").description("img").optional(),
+                                fieldWithPath("serverDateTime").description("response date time")
+                        )));
+    }
+
+    @Test
+    @DisplayName("포스트 삭제")
+    void testDeletePost() throws Exception{
+        mockMvc.perform(delete("/diary/{postId}", post.getId())
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk())
+                .andDo(document("post-delete",
+                        responseFields(
+                                fieldWithPath("statusCode").description("Http Status Code"),
+                                fieldWithPath("data").description("response message"),
+                                fieldWithPath("serverDateTime").description("response date time")
+                        )));
+    }
+
+    @Test
+    @DisplayName("콘텐츠 삭제")
+    void testDeleteContent() throws Exception{
+        mockMvc.perform(delete("/diary/content/{contentId}", post.getContents().get(0).getId())
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk())
+                .andDo(document("post-delete_content",
+                        responseFields(
+                                fieldWithPath("statusCode").description("Http Status Code"),
+                                fieldWithPath("data").description("response message"),
+                                fieldWithPath("serverDateTime").description("response date time")
+                        )));
     }
 }

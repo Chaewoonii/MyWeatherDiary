@@ -11,8 +11,11 @@ import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
 import com.cnu.diary.myweatherdiary.exception.PostNotFoundException;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthentication;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.UnitsTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,7 +66,7 @@ public class DiaryController {
     }
 
     @GetMapping({""})
-    public ApiResponse<Iterable<PostResponseDto>> getTimelinePost(Pageable pageable,
+    public ApiResponse<List<PostResponseDto>> getTimelinePost(@PageableDefault(size = 5, sort = "postDate", direction = Sort.Direction.DESC) Pageable pageable,
                                                                   @AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException{
         List<PostResponseDto> posts = postService.getTimelinePost(authentication.username, pageable);
         posts.forEach(
@@ -98,7 +101,7 @@ public class DiaryController {
         return ApiResponse.ok(postResponseDto);
     }
 
-    @DeleteMapping("{postId}")
+    @DeleteMapping("/{postId}")
     public ApiResponse<String> removePost(@PathVariable("postId") UUID postId) throws PostNotFoundException{
         contentService.deleteAllContentsByPostId(postId);
         postService.removePost(postId);
