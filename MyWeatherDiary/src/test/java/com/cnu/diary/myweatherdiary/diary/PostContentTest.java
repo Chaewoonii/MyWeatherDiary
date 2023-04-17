@@ -145,15 +145,14 @@ class PostContentTest {
     @Order(4)
     @DisplayName("콘텐츠를 삭제할 수 있다")
     void testDeleteContents() throws ImgNotFoundException{
-        diaryController.removeContent(post.getContents().get(0).getId());
+        diaryController.removeContent(post.getContents().get(0).getId(), authentication);
     }
 
     @Test
     @Order(5)
     @DisplayName("포스트가 삭제되면 콘텐츠도 삭제된다")
     void testDeletePost(){
-        diaryController.removePost(post.getId());
+        diaryController.removePost(post.getId(), authentication);
     }
-
 
 }

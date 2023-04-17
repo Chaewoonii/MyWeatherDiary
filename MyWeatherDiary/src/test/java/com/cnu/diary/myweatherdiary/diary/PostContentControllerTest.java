@@ -231,6 +231,7 @@ class PostContentControllerTest {
         List<ContentDto> dtoList = List.of(dto1, dto2, dto3);
 
         PostContentDto postContentDto = new PostContentDto();
+        postContentDto.setPostId(post.getId());
         postContentDto.setEmotion(Emotion.HAPPY);
         postContentDto.setPostDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
         postContentDto.setContents(dtoList);
@@ -242,7 +243,7 @@ class PostContentControllerTest {
                 .andExpect(status().isOk())
                 .andDo(document("post-edit",
                         requestFields(
-                                fieldWithPath("postId").type(JsonFieldType.NULL).description("null"),
+                                fieldWithPath("postId").description("postId"),
                                 fieldWithPath("emotion").description("emotion"),
                                 fieldWithPath("postDate").description("post Date"),
                                 fieldWithPath("contents[]").type(JsonFieldType.ARRAY).description("contents"),

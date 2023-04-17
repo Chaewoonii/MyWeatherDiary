@@ -6,6 +6,7 @@ import com.cnu.diary.myweatherdiary.diary.post.Emotion;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ import java.util.UUID;
 public class PostContentDto {
     private UUID postId;
     private Emotion emotion;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime postDate;
     private List<ContentDto> contents;
 

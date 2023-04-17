@@ -57,8 +57,9 @@ public class UserController {
     }
 
     @DeleteMapping("/auth")
-    public void removeUser(@AuthenticationPrincipal JwtAuthentication authentication){
+    public ApiResponse<String> removeUser(@AuthenticationPrincipal JwtAuthentication authentication){
         userService.removeUserByUsername(authentication.username);
+        return ApiResponse.ok("username <"+authentication.username+"> Delete Success ");
     }
 
     @PostMapping(path = "/login")

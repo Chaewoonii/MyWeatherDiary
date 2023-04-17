@@ -11,7 +11,6 @@ import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
 import com.cnu.diary.myweatherdiary.exception.PostNotFoundException;
 import com.cnu.diary.myweatherdiary.jwt.JwtAuthentication;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.UnitsTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -61,7 +60,7 @@ public class DiaryController {
 
     @GetMapping({"/posts"})
     public ApiResponse<Iterable<PostResponseDto>> getAllPost(@AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException{
-        List<PostResponseDto> posts = postService.getAllPostsByUserId(authentication.username);
+        List<PostResponseDto> posts = postService.getAllPostsByUsername(authentication.username);
         return ApiResponse.ok(posts);
     }
 
@@ -87,7 +86,7 @@ public class DiaryController {
     public ApiResponse<PostResponseDto> editPost(@RequestBody PostContentDto postContentDto,
                                                  @AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException, IOException {
 
-        PostResponseDto postResponseDto = postService.updatePost(authentication.username,
+        PostResponseDto postResponseDto = postService.updatePost(
                 new PostRequestDto(
                 postContentDto.getPostId(),
                 postContentDto.getEmotion(),
@@ -102,14 +101,17 @@ public class DiaryController {
     }
 
     @DeleteMapping("/{postId}")
-    public ApiResponse<String> removePost(@PathVariable("postId") UUID postId) throws PostNotFoundException{
+    public ApiResponse<String> removePost(@PathVariable("postId") UUID postId,
+                                          @AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException{
         contentService.deleteAllContentsByPostId(postId);
         postService.removePost(postId);
         return ApiResponse.ok("Delete Success");
     }
 
     @DeleteMapping("/content/{contentId}")
-    public ApiResponse<String> removeContent(@PathVariable("contentId") UUID contentsId) throws ImgNotFoundException {
+    public ApiResponse<String> removeContent(@PathVariable("contentId") UUID contentsId,
+                                             @AuthenticationPrincipal JwtAuthentication authentication) throws ImgNotFoundException {
+        log.info(authentication.username);
         contentService.deleteContents(contentsId);
         return ApiResponse.ok("Delete Success");
     }

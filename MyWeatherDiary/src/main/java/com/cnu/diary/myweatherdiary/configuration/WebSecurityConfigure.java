@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -94,18 +95,20 @@ public class WebSecurityConfigure{
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtConfigure.getHeader(), jwt());
+        Jwt jwt = applicationContext.getBean(Jwt.class);
+        return new JwtAuthenticationFilter(jwtConfigure.getHeader(), jwt);
     }
 
     public SecurityContextRepository securityContextRepository(){
-        return new JwtSecurityContextRepository(jwtConfigure.getHeader(), jwt());
+        Jwt jwt = applicationContext.getBean(Jwt.class);
+        return new JwtSecurityContextRepository(jwtConfigure.getHeader(), jwt);
     }
 
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .requestMatchers("/diary/**", "/auth/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/diary/**", "/content/**","/auth/**").hasAnyRole("USER", "ADMIN")
                     .anyRequest().permitAll()
                     .and()
                 /**
