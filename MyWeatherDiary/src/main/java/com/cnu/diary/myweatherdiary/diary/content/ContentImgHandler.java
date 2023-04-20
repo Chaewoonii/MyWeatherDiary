@@ -30,7 +30,7 @@ public class ContentImgHandler {
         return contentImgToByteList;
     }
 
-    public byte[] getImgBytes(String base64ImgString){
+    public static byte[] getImgBytesFromString(String base64ImgString){
         if (base64ImgString.startsWith("data:image/jpeg;base64")){
             base64ImgString = base64ImgString.replace("data:image/jpeg;base64,", "");
         }
@@ -74,7 +74,7 @@ public class ContentImgHandler {
     }
 
     public String saveContentsImageLocal(String base64Img, String imgName) throws IOException {
-        byte[] imgBytes = getImgBytes(base64Img);
+        byte[] imgBytes = getImgBytesFromString(base64Img);
         return saveBase64ImgToLocal(imgBytes, getImgPath(imgName));
     }
 

@@ -14,7 +14,7 @@ import java.util.*;
 
 @Slf4j
 @Service
-public class ContentService {
+public class ContentLocalService {
 
     @Autowired
     private ContentRepository contentRepository;
@@ -46,13 +46,13 @@ public class ContentService {
                         saved.getId().toString());
             }
 
-            contentRequestDtoList.add(entityConverter.convertContentToDto(saved));
-        }
+            contentRequestDtoList.add(entityConverter.convertContentToDtoLocal(saved));
+}
 
         return contentRequestDtoList;
     }
 
-    @Transactional
+@Transactional
     @PostMapping("contents")
     public List<ContentDto> updateContents(List<ContentDto> contentDtos, Post post) throws IOException{
         deleteAllImgByPostId(post.getId()); //콘텐츠 다 삭제하고 다시 저장.
@@ -74,7 +74,7 @@ public class ContentService {
                         saved.getId().toString());
                 log.info("save success: {}", savedImg);
             }
-            contentList.add(entityConverter.convertContentToDto(saved));
+            contentList.add(entityConverter.convertContentToDtoLocal(saved));
         }
 
         return contentList;
@@ -85,7 +85,7 @@ public class ContentService {
         Iterator<Content> iterator = contentRepository.findAllByPostId(id).iterator();
 
         while (iterator.hasNext()){
-            ContentDto contentDto = entityConverter.convertContentToDto(iterator.next());
+            ContentDto contentDto = entityConverter.convertContentToDtoLocal(iterator.next());
             contentDtos.add(contentDto);
         }
         return contentDtos;

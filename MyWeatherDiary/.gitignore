@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+application.yml
+application-test.yml
+aws.yml
+data.sql
+schema.sql
+ddl.sql

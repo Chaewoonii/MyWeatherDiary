@@ -2,7 +2,8 @@ package com.cnu.diary.myweatherdiary.diary;
 
 import com.cnu.diary.myweatherdiary.ApiResponse;
 import com.cnu.diary.myweatherdiary.diary.content.ContentDto;
-import com.cnu.diary.myweatherdiary.diary.content.ContentService;
+import com.cnu.diary.myweatherdiary.diary.content.ContentLocalService;
+import com.cnu.diary.myweatherdiary.diary.content.ContentS3Service;
 import com.cnu.diary.myweatherdiary.diary.post.Post;
 import com.cnu.diary.myweatherdiary.diary.post.PostRequestDto;
 import com.cnu.diary.myweatherdiary.diary.post.PostResponseDto;
@@ -31,10 +32,10 @@ import java.util.UUID;
 public class DiaryController {
 
     @Autowired
-    PostService postService;
+    private PostService postService;
 
     @Autowired
-    ContentService contentService;
+    private ContentS3Service contentService;
 
     /**
      * 해당 년도의 전체 포스트 불러오기

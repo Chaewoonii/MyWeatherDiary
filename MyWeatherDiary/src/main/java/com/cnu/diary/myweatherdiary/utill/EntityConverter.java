@@ -11,6 +11,7 @@ import com.cnu.diary.myweatherdiary.users.dto.UserRegisterDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserRequestDto;
 import com.cnu.diary.myweatherdiary.users.dto.UserResponseDto;
 import com.cnu.diary.myweatherdiary.users.utill.NickNameCreator;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -84,7 +85,7 @@ public class EntityConverter {
         if (Optional.ofNullable(post.getContents()).isPresent()){
             List<ContentDto> contentDtos = new ArrayList<>();
             post.getContents().forEach(
-                    c -> contentDtos.add(convertContentToDto(c))
+                    c -> contentDtos.add(convertContentToDtoLocal(c))
             );
             postResponseDto.setContents(contentDtos);
         }
@@ -92,14 +93,20 @@ public class EntityConverter {
     }
 
     /*diary - contents*/
-    public ContentDto convertContentToDto(Content content){
+    public ContentDto convertContentToDtoLocal(Content content){
         ContentDto contentDto = new ContentDto();
-        contentDto.setId(content.getId());
-        contentDto.setComment(content.getComment());
+        BeanUtils.copyProperties(content, contentDto, "img");
         contentDto.setImg(
                 contentImgHandler.getBase64ImgFromLocal(content.getId().toString())
         );
         return contentDto;
     }
+
+    public ContentDto convertContentToDtoWithOutImg(Content content){
+        ContentDto contentDto = new ContentDto();
+        BeanUtils.copyProperties(content, contentDto, "img");
+        return contentDto;
+    }
+
 
 }

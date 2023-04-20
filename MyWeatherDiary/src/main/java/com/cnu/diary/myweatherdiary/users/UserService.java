@@ -53,14 +53,15 @@ public class UserService {
                             .name(Role.ROLE_USER.toString())
                             .build()
             );
-            permissionRepository.save(permission);
+//            permissionRepository.save(permission);
 
             GroupPermission groupPermission = GroupPermission.builder()
                     .userGroup(userGroup)
                     .build();
             groupPermission.addPermission(permission);
             groupPermissions.add(groupPermission);
-            groupPermissionRepository.save(groupPermission);
+            log.info(groupPermission.toString());
+//            groupPermissionRepository.save(groupPermission);
         }else {
             Long i = 1L;
             while (i <= role){
@@ -69,13 +70,13 @@ public class UserService {
                                 .name(Role.ROLE_USER.name())
                                 .build()
                 );
-                permissionRepository.save(permission);
+//                permissionRepository.save(permission);
 
                 GroupPermission groupPermission = GroupPermission.builder()
                                 .userGroup(userGroup).build();
                 groupPermission.addPermission(permission);
                 groupPermissions.add(groupPermission);
-                groupPermissionRepository.save(groupPermission);
+//                groupPermissionRepository.save(groupPermission);
             }
         }
         userGroup.setGroupPermissions(groupPermissions);
