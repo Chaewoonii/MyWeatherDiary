@@ -108,17 +108,6 @@ public class WebSecurityConfigure{
         return new JwtSecurityContextRepository(jwtConfigure.getHeader(), jwt);
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "*"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST", "DELETE", "PUT", "*"));
-        // you can configure many allowed CORS headers
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -156,8 +145,6 @@ public class WebSecurityConfigure{
                 .securityContext()
                     .securityContextRepository(securityContextRepository())
                     .and()
-                .cors()
-                .and()
 //                .addFilterAfter(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 ;
                 return http.build();
