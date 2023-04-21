@@ -33,7 +33,7 @@ public class PostService {
     public PostResponseDto addPost(String username, PostRequestDto postRequestDto) {
 
         Post post = Post.builder()
-                .username(username)
+                .userName(username)
                 .postDate(postRequestDto.getPostDate())
                 .emotion(postRequestDto.getEmotion())
                 .writtenDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
@@ -54,7 +54,7 @@ public class PostService {
                         .postDate(postRequestDto.getPostDate())
                         .emotion(postRequestDto.getEmotion())
                         .writtenDate(found.getWrittenDate())
-                        .username(found.getUsername())
+                        .userName(found.getUserName())
                         .build()
         );
 
@@ -91,7 +91,7 @@ public class PostService {
     @Transactional
     public List<PostResponseDto> getTimelinePost(String username, Pageable pageable) {
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        postRepository.findAllByUsernameOrderByPostDateDesc(username, pageable).forEach(
+        postRepository.findAllByUserNameOrderByPostDateDesc(username, pageable).forEach(
                 p -> postResponseDtos.add(entityConverter.convertPostToDto(p))
         );
         return postResponseDtos;
