@@ -27,8 +27,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 
 @Slf4j
@@ -104,6 +108,17 @@ public class WebSecurityConfigure{
         return new JwtSecurityContextRepository(jwtConfigure.getHeader(), jwt);
     }
 
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "*"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST", "DELETE", "PUT", "*"));
+        // you can configure many allowed CORS headers
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -141,6 +156,8 @@ public class WebSecurityConfigure{
                 .securityContext()
                     .securityContextRepository(securityContextRepository())
                     .and()
+                .cors()
+                .and()
 //                .addFilterAfter(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 ;
                 return http.build();
