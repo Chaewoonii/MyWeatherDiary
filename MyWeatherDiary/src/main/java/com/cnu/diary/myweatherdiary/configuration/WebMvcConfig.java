@@ -20,7 +20,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS")
                 //.allowedHeaders("*")
                 .allowCredentials(true)
-                .maxAge(1);
+                .maxAge(3000);
     }
 
     @Override
