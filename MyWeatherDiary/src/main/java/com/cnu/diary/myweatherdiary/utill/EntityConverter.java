@@ -74,21 +74,28 @@ public class EntityConverter {
     }
 
 
-    /*diary - post*/
-    public PostResponseDto convertPostToDto(Post post){
+    /*BeanUtils 로 변경하기..*/
+/*    public PostResponseDto convertPostToDto(Post post){
         PostResponseDto postResponseDto = new PostResponseDto();
         postResponseDto.setId(post.getId());
         postResponseDto.setEmotion(post.getEmotion());
         postResponseDto.setWrittenDate(post.getWrittenDate());
         postResponseDto.setPostDate(post.getPostDate());
 
+        //안쓰인다.
         if (Optional.ofNullable(post.getContents()).isPresent()){
             List<ContentDto> contentDtos = new ArrayList<>();
             post.getContents().forEach(
-                    c -> contentDtos.add(convertContentToDtoLocal(c))
+                    c -> contentDtos.add(convertContentToDtoWithOutImg(c))
             );
             postResponseDto.setContents(contentDtos);
         }
+        return postResponseDto;
+    }*/
+
+    public PostResponseDto convertPostToDto(Post post){
+        PostResponseDto postResponseDto = new PostResponseDto();
+        BeanUtils.copyProperties(post, postResponseDto);
         return postResponseDto;
     }
 

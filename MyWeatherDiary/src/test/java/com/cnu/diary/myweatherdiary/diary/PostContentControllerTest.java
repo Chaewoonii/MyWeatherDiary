@@ -294,4 +294,13 @@ class PostContentControllerTest {
                                 fieldWithPath("serverDateTime").description("response date time")
                         )));
     }
+
+    @Test
+    @DisplayName("해당 연도의 포스트 모두 불러오기: 포스트 아이디, 기분, 포스트 날짜")
+    void testGetPostByYear() throws Exception{
+        mockMvc.perform(get("/activity/{year}", "2023")
+                .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk());
+
+    }
 }

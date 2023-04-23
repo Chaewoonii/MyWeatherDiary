@@ -59,11 +59,11 @@ public class DiaryController {
         return ApiResponse.ok(postResponseDto);
     }
 
-    @GetMapping({"/posts"})
+/*    @GetMapping({"/posts"})
     public ApiResponse<Iterable<PostResponseDto>> getAllPost(@AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException{
         List<PostResponseDto> posts = postService.getAllPostsByUsername(authentication.username);
         return ApiResponse.ok(posts);
-    }
+    }*/
 
     @RequestMapping(value = "", method={RequestMethod.GET})
     public ApiResponse<List<PostResponseDto>> getTimelinePost(@PageableDefault(size = 5, sort = "postDate", direction = Sort.Direction.DESC) Pageable pageable,
@@ -76,13 +76,32 @@ public class DiaryController {
         return ApiResponse.ok(posts);
     }
 
-
     @GetMapping("/{postId}")
     public ApiResponse<PostResponseDto> findPostByPostId(@PathVariable("postId") UUID postId) throws PostNotFoundException{
         PostResponseDto postResponseDto = postService.getPost(postId);
         List<ContentDto> contentList = contentService.findByPostId(postId);
         postResponseDto.setContents(contentList);
         return ApiResponse.ok(postResponseDto);
+    }
+
+    @PostMapping("/activity")
+    public ApiResponse<List<PostResponseDto>> getPostsByIdList(@RequestBody List<UUID> idList,
+                                                               @AuthenticationPrincipal JwtAuthentication authentication){
+        List<PostResponseDto> posts = postService.getPostsByIdList(idList);
+        posts.forEach(
+                p -> p.setContents(contentService.findByPostId(p.getId()))
+        );
+        return ApiResponse.ok(posts);
+    }
+
+    @PostMapping("/activity/{year}")
+    public ApiResponse<List<PostResponseDto>> getPostsByYear(@PathVariable("year") String year,
+                                                                @AuthenticationPrincipal JwtAuthentication authentication){
+        List<PostResponseDto> posts = postService.getPostsByYear(authentication.username, year);
+        posts.forEach(
+                p -> p.setContents(contentService.findByPostId(p.getId()))
+        );
+        return ApiResponse.ok(posts);
     }
 
     @PutMapping("")

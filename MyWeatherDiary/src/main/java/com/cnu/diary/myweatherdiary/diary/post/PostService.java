@@ -4,6 +4,7 @@ import com.cnu.diary.myweatherdiary.exception.PostNotFoundException;
 import com.cnu.diary.myweatherdiary.utill.EntityConverter;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,6 @@ public class PostService {
 
 
     @Transactional
-    @PostMapping("posts")
     public PostResponseDto addPost(String username, PostRequestDto postRequestDto) {
 
         Post post = Post.builder()
@@ -43,7 +43,6 @@ public class PostService {
     }
 
     @Transactional
-    @PostMapping("posts")
     public PostResponseDto updatePost(PostRequestDto postRequestDto) {
         Post found = postRepository.findById(postRequestDto.getId()).orElseThrow(
                 () -> new PostNotFoundException("Not found post - id: "+ postRequestDto.getId().toString())
@@ -62,7 +61,6 @@ public class PostService {
     }
 
     @Transactional
-    @GetMapping("posts")
     public PostResponseDto getPost(UUID id) {
         PostResponseDto postResponseDto = entityConverter.convertPostToDto(
                 postRepository.findById(id).orElseThrow(PostNotFoundException::new)
@@ -71,15 +69,14 @@ public class PostService {
     }
 
     @Transactional
-    @GetMapping("posts")
     public Post findPostById(UUID id){
         return postRepository.findById(id).orElseThrow(
                 () -> new PostNotFoundException("No such post: " + id)
         );
     }
 
+    //forEach문 중복코드 함수로 빼기
     @Transactional
-    @GetMapping("posts")
     public List<PostResponseDto> getAllPostsByUsername(String username) {
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
         postRepository.findAllByUsername(username).forEach(
@@ -98,9 +95,29 @@ public class PostService {
     }
 
     @Transactional
-    @GetMapping("posts")
     public void removePost(UUID id){
         postRepository.deleteById(id);
     }
 
+    @Transactional
+    public List<PostResponseDto> getPostsByYear(String username, String year) {
+        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+        postRepository.findAllByUserNameAndYear(username, Integer.valueOf(year))
+                .forEach(
+                        p -> postResponseDtos.add(entityConverter.convertPostToDto(p))
+                );
+        return postResponseDtos;
+    }
+
+    public List<PostResponseDto> getPostsByIdList(List<UUID> idList) {
+        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+        idList.forEach(
+                id -> postResponseDtos.add(
+                        entityConverter.convertPostToDto(
+                            postRepository.findById(id).orElseThrow(PostNotFoundException::new)
+                    )
+                )
+        );
+        return postResponseDtos;
+    }
 }

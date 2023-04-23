@@ -12,7 +12,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class PostRequestDto {
     private UUID id;
-
     private Emotion emotion;
     private LocalDateTime postDate;
 
@@ -20,4 +19,5 @@ public class PostRequestDto {
         this.emotion = emotion;
         this.postDate = postDate;
     }
+
 }
