@@ -27,8 +27,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 
 @Slf4j
@@ -104,23 +108,41 @@ public class WebSecurityConfigure{
         return new JwtSecurityContextRepository(jwtConfigure.getHeader(), jwt);
     }
 
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://192.168.0.46:3000", "http://localhost:3000"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3000L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+    }
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .requestMatchers("/diary/**", "/content/**","/auth/**").hasAnyRole("USER", "ADMIN")
-                    .anyRequest().permitAll()
+        http
+                .httpBasic().disable()
+                .cors().configurationSource(corsConfigurationSource())
                     .and()
+                .csrf()
+                    .disable()
+                .authorizeRequests()
+                    .requestMatchers(HttpMethod.OPTIONS, "/diary/asdf").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/diary/asdf").permitAll()
+                    .requestMatchers("/diary/**", "/content/**","/auth/**").hasAnyRole("USER", "ADMIN")
+                        .anyRequest().permitAll()
+                        .and()
                 /**
                  * formLogin, csrf, headers, http-basic, rememberMe, logout filter 비활성화
                  */
                 .formLogin()
                     .disable()
-                .csrf()
-                    .disable()
+
                 .headers()
-                    .disable()
-                .httpBasic()
                     .disable()
                 .rememberMe()
                     .disable()

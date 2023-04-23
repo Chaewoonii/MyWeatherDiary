@@ -65,15 +65,17 @@ public class DiaryController {
         return ApiResponse.ok(posts);
     }
 
-    @GetMapping({""})
+    @RequestMapping(value = "", method={RequestMethod.GET})
     public ApiResponse<List<PostResponseDto>> getTimelinePost(@PageableDefault(size = 5, sort = "postDate", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                  @AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException{
+                                                              @AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException{
         List<PostResponseDto> posts = postService.getTimelinePost(authentication.username, pageable);
         posts.forEach(
                 p -> p.setContents(contentService.findByPostId(p.getId()))
         );
+        log.info("timeline posts -> {}", posts);
         return ApiResponse.ok(posts);
     }
+
 
     @GetMapping("/{postId}")
     public ApiResponse<PostResponseDto> findPostByPostId(@PathVariable("postId") UUID postId) throws PostNotFoundException{

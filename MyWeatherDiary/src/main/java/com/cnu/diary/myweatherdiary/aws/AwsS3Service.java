@@ -31,6 +31,14 @@ public class AwsS3Service {
         log.info("buckets -> {}", buckets);
     }
 
+    /**
+     * 이미지 태그 지우고 AWS에 디코딩 해서 저장
+     * 불러올때는 MIME 알아서 처리
+     * 디코딩된 바이너리 데이터를 MIME 라이브러리에 넣으면
+     * 해당 바이너리가 무슨 타입인지(ex, image/png, image/jpeg)를 반환해줌
+     * data:image/png;base64,  <= 이거를 직접 만들어서 바이너리를 base64인코딩 한 결과 앞에 붙여서
+     * 프론트에 리턴해주면 ! 이미지가 뜹니다.
+     * */
 
     public String uploadFile(String contentType, String imgName, String imgString){
         byte[] imgBytes = getImgBytesFromString(imgString);
@@ -66,14 +74,22 @@ public class AwsS3Service {
 
     public String getImgBytesFromS3(String imgName){
         Base64.Encoder encoder = Base64.getEncoder();
-        S3ObjectInputStream s3ObjectInputStream = s3.getObject(bucketName, imgName).getObjectContent();
+
+        S3ObjectInputStream s3ObjectInputStream;
+        try{
+            s3ObjectInputStream = s3.getObject(bucketName, imgName).getObjectContent();
+        } catch (Exception e){
+            log.info("getOject Failed: {} / {}",bucketName, imgName);
+            return "";
+        }
+        log.info("getOject Successed: {} / {}",bucketName, imgName);
         byte[] bytesArray = new byte[4096];
         try {
             s3ObjectInputStream.read(bytesArray);
         } catch (IOException e) {
             throw new ImgNotFoundException("No Such Image: "+imgName);
         }
-        return new String(encoder.encode(bytesArray));
+        return "data:image/png;base64," + new String(encoder.encode(bytesArray));
     }
 
     public void deleteImg(String imgName){

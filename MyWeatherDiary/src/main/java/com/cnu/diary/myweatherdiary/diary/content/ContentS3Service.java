@@ -44,6 +44,7 @@ public class ContentS3Service {
             if (dto.getImg().isPresent()){
                 String imgName = content.getId().toString();
                 awsS3Service.uploadFile("img/png", imgName, dto.getImg().orElseThrow(() -> new ImgNotFoundException("이미지 없음")));
+                log.info("save success: {}", imgName);
             }
 
             contentRequestDtoList.add(entityConverter.convertContentToDtoWithOutImg(saved));
@@ -87,10 +88,14 @@ public class ContentS3Service {
             Content content = iterator.next();
             ContentDto contentDto = entityConverter.convertContentToDtoWithOutImg(content);
             contentDtos.add(contentDto);
+            Optional<String> imgData = Optional.ofNullable(awsS3Service.getImgBytesFromS3(content.getId().toString()));
+            log.info("img data : {}", imgData);
             contentDto.setImg(
-                    Optional.ofNullable(awsS3Service.getImgBytesFromS3(content.getId().toString()))
+                    imgData
             );
+            log.info("founded img name: {}", content.getId().toString());
         }
+
         return contentDtos;
     }
 

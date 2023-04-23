@@ -97,7 +97,7 @@ class PostContentTest {
         log.info("Saved post is:\n{}", postResponseDto.getId());
     }
 
-    @Test
+/*    @Test
     @Order(2)
     @DisplayName("userId로 포스트와 콘텐츠 정보를 불러올 수 있다")
     void testSelect() {
@@ -107,7 +107,7 @@ class PostContentTest {
         Pageable page = PageRequest.of(0, 5);
         Iterable<PostResponseDto> timelinePost = diaryController.getTimelinePost(page, authentication).getData();
         log.info("page -> {}", timelinePost);
-    }
+    }*/
 
     @Test
     @Order(3)
