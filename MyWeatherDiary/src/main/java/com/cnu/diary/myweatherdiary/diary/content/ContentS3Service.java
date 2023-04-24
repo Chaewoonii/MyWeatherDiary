@@ -88,11 +88,11 @@ public class ContentS3Service {
             Content content = iterator.next();
             ContentDto contentDto = entityConverter.convertContentToDtoWithOutImg(content);
             contentDtos.add(contentDto);
-            Optional<String> imgData = Optional.ofNullable(awsS3Service.getImgBytesFromS3(content.getId().toString()));
+            /*Optional<String> imgData = Optional.ofNullable(awsS3Service.getImgBytesFromS3(content.getId().toString()));
             log.info("img data : {}", imgData);
             contentDto.setImg(
                     imgData
-            );
+            );*/
             log.info("founded img name: {}", content.getId().toString());
         }
 
@@ -127,6 +127,10 @@ public class ContentS3Service {
                 log.warn("delete image failed -> name: {}", id);
             }
         }
+    }
+
+    public String getImgBase64FromId(UUID contentId){
+        return awsS3Service.getImgBytesFromS3(contentId.toString());
     }
 
 }

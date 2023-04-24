@@ -3,6 +3,7 @@ package com.cnu.diary.myweatherdiary.diary;
 import com.cnu.diary.myweatherdiary.diary.content.ContentDto;
 import com.cnu.diary.myweatherdiary.diary.content.ContentImgHandler;
 import com.cnu.diary.myweatherdiary.diary.post.Emotion;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,8 +21,7 @@ import java.util.UUID;
 public class PostContentDto {
     private UUID postId;
     private Emotion emotion;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime postDate;
     private List<ContentDto> contents;
 

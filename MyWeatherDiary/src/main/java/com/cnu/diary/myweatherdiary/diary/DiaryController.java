@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -65,7 +66,7 @@ public class DiaryController {
         return ApiResponse.ok(posts);
     }*/
 
-    @RequestMapping(value = "", method={RequestMethod.GET})
+    @GetMapping("")
     public ApiResponse<List<PostResponseDto>> getTimelinePost(@PageableDefault(size = 5, sort = "postDate", direction = Sort.Direction.DESC) Pageable pageable,
                                                               @AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException{
         List<PostResponseDto> posts = postService.getTimelinePost(authentication.username, pageable);
@@ -106,7 +107,6 @@ public class DiaryController {
     @PutMapping("")
     public ApiResponse<PostResponseDto> editPost(@RequestBody PostContentDto postContentDto,
                                                  @AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException, IOException {
-
         PostResponseDto postResponseDto = postService.updatePost(
                 new PostRequestDto(
                 postContentDto.getPostId(),
@@ -127,6 +127,11 @@ public class DiaryController {
         contentService.deleteAllContentsByPostId(postId);
         postService.removePost(postId);
         return ApiResponse.ok("Delete Success");
+    }
+
+    @GetMapping("/content/{contentId}")
+    public ApiResponse<String> getImgSource(@PathVariable("contentId") UUID id){
+        return ApiResponse.ok(contentService.getImgBase64FromId(id));
     }
 
     @DeleteMapping("/content/{contentId}")

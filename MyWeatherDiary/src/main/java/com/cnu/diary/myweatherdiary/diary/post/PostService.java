@@ -42,7 +42,9 @@ public class PostService {
                 .writtenDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
                 .build();
 
-        return entityConverter.convertPostToDto(postRepository.save(post));
+        Post saved = postRepository.save(post);
+        log.info("saved -> {}", saved);
+        return entityConverter.convertPostToDto(saved);
     }
 
     @Transactional
