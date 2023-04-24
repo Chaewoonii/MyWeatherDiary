@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -298,9 +299,10 @@ class PostContentControllerTest {
     @Test
     @DisplayName("해당 연도의 포스트 모두 불러오기: 포스트 아이디, 기분, 포스트 날짜")
     void testGetPostByYear() throws Exception{
-        mockMvc.perform(get("/activity/{year}", "2023")
-                .header(HttpHeaders.AUTHORIZATION, token))
-                .andExpect(status().isOk());
+        mockMvc.perform(get("/diary/activity/{year}", "2023")
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk())
+                .andDo(print());
 
     }
 }

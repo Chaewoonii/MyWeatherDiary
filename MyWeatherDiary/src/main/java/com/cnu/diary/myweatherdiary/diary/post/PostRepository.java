@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Repository
@@ -16,8 +18,7 @@ public interface PostRepository extends JpaRepository<Post, UUID>{
 
     Page<Post> findAllByUserNameOrderByPostDateDesc(String username, Pageable pageable);
 
-    @Query("select id, postDate, emotion from posts where userName = :username and YEAR(postDate) = :year order by postDate asc")
-    Iterable<Post> findAllByUserNameAndYear(String username, int year);
+    Iterable<Post> findByUserNameAndPostDateBetweenOrderByPostDateAsc(String userName, LocalDateTime startDate, LocalDateTime endDate);
 
 
 

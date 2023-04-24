@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,11 +103,19 @@ public class PostService {
     }
 
     @Transactional
-    public List<PostResponseDto> getPostsByYear(String username, String year) {
+    public List<PostResponseDto> getPostsByYear(String username, int year) {
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        postRepository.findAllByUserNameAndYear(username, Integer.valueOf(year))
+        postRepository.findByUserNameAndPostDateBetweenOrderByPostDateAsc(
+                        username,
+                        LocalDateTime.of(year, Month.JANUARY, 1, 0, 0, 0, 0),
+                        LocalDateTime.of(year, Month.DECEMBER, 31, 23, 59, 59, 999)
+                )
                 .forEach(
-                        p -> postResponseDtos.add(entityConverter.convertPostToDto(p))
+                        p -> {
+                            PostResponseDto dto = new PostResponseDto();
+                            BeanUtils.copyProperties(p, dto, "writtenDate", "contents");
+                            postResponseDtos.add(dto);
+                        }
                 );
         return postResponseDtos;
     }

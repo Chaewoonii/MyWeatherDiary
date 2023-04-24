@@ -85,8 +85,7 @@ public class DiaryController {
     }
 
     @PostMapping("/activity")
-    public ApiResponse<List<PostResponseDto>> getPostsByIdList(@RequestBody List<UUID> idList,
-                                                               @AuthenticationPrincipal JwtAuthentication authentication){
+    public ApiResponse<List<PostResponseDto>> getPostsByIdList(@RequestBody List<UUID> idList){
         List<PostResponseDto> posts = postService.getPostsByIdList(idList);
         posts.forEach(
                 p -> p.setContents(contentService.findByPostId(p.getId()))
@@ -94,14 +93,14 @@ public class DiaryController {
         return ApiResponse.ok(posts);
     }
 
-    @PostMapping("/activity/{year}")
-    public ApiResponse<List<PostResponseDto>> getPostsByYear(@PathVariable("year") String year,
-                                                                @AuthenticationPrincipal JwtAuthentication authentication){
+    @GetMapping("/activity/{year}")
+    public List<PostResponseDto> getPostsByYear(@PathVariable("year") int year,
+                                                             @AuthenticationPrincipal JwtAuthentication authentication){
         List<PostResponseDto> posts = postService.getPostsByYear(authentication.username, year);
         posts.forEach(
                 p -> p.setContents(contentService.findByPostId(p.getId()))
         );
-        return ApiResponse.ok(posts);
+        return posts;
     }
 
     @PutMapping("")

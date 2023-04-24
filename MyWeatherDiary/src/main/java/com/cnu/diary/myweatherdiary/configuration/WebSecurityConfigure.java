@@ -110,7 +110,7 @@ public class WebSecurityConfigure{
 
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://192.168.0.46:3000", "http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
         configuration.setAllowCredentials(true);
@@ -131,8 +131,6 @@ public class WebSecurityConfigure{
                 .csrf()
                     .disable()
                 .authorizeRequests()
-                    .requestMatchers(HttpMethod.OPTIONS, "/diary/asdf").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/diary/asdf").permitAll()
                     .requestMatchers("/diary/**", "/content/**","/auth/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().permitAll()
                         .and()
@@ -141,7 +139,6 @@ public class WebSecurityConfigure{
                  */
                 .formLogin()
                     .disable()
-
                 .headers()
                     .disable()
                 .rememberMe()
