@@ -18,7 +18,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:8080", "http://localhost:3000")
                 .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS")
-                //.allowedHeaders("*")
                 .allowCredentials(true)
                 .maxAge(3000);
     }
@@ -29,11 +28,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public EntityConverter convertEntityToDto(){
+    public EntityConverter entityConverter(){
         return new EntityConverter();
     }
 
     @Bean
-    public ContentImgHandler contentImgHandlerBean(){return new ContentImgHandler(); }
+    public ContentImgHandler contentImgHandler(){return new ContentImgHandler(); }
 
 }
