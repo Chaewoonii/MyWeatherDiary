@@ -4,6 +4,7 @@ import com.cnu.diary.myweatherdiary.diary.post.Post;
 import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
 import com.cnu.diary.myweatherdiary.utill.EntityConverter;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,16 +15,14 @@ import java.util.*;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ContentLocalService {
 
-    @Autowired
-    private ContentRepository contentRepository;
+    private final ContentRepository contentRepository;
 
-    @Autowired
-    private ContentImgHandler contentImgHandler;
+    private final ContentImgHandler contentImgHandler;
 
-    @Autowired
-    private EntityConverter entityConverter;
+    private final EntityConverter entityConverter;
 
     @Transactional
     @PostMapping("contents")

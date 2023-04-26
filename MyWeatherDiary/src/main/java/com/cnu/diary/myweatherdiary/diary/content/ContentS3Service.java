@@ -2,9 +2,11 @@ package com.cnu.diary.myweatherdiary.diary.content;
 
 import com.cnu.diary.myweatherdiary.aws.AwsS3Service;
 import com.cnu.diary.myweatherdiary.diary.post.Post;
+import com.cnu.diary.myweatherdiary.exception.ContentNotFoundException;
 import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
 import com.cnu.diary.myweatherdiary.utill.EntityConverter;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,16 +17,14 @@ import java.util.*;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ContentS3Service {
 
-    @Autowired
-    private ContentRepository contentRepository;
+    private final ContentRepository contentRepository;
 
-    @Autowired
-    private AwsS3Service awsS3Service;
+    private final AwsS3Service awsS3Service;
 
-    @Autowired
-    private EntityConverter entityConverter;
+    private final EntityConverter entityConverter;
 
     @Transactional
     @PostMapping("contents")
@@ -80,6 +80,15 @@ public class ContentS3Service {
         return contentList;
     }
 
+    public ContentDto findById(UUID id) {
+        Content content = contentRepository.findById(id).orElseThrow(ContentNotFoundException::new);
+        ContentDto contentDto = entityConverter.convertContentToDtoWithOutImg(content);
+        contentDto.setImg(
+                Optional.ofNullable(awsS3Service.getImgBytesFromS3(id.toString()))
+        );
+        return contentDto;
+    }
+
     public List<ContentDto> findByPostId(UUID id){
         List<ContentDto> contentDtos = new ArrayList<>();
         Iterator<Content> iterator = contentRepository.findAllByPostId(id).iterator();
@@ -132,6 +141,7 @@ public class ContentS3Service {
     public String getImgBase64FromId(UUID contentId){
         return awsS3Service.getImgBytesFromS3(contentId.toString());
     }
+
 
 }
 

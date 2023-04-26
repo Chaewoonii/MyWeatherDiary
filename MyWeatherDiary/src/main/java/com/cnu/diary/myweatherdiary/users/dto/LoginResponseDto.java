@@ -4,6 +4,7 @@ import com.cnu.diary.myweatherdiary.users.domain.GroupPermission;
 import com.cnu.diary.myweatherdiary.users.domain.UserGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class LoginResponseDto {
     private String username;

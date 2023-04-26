@@ -6,12 +6,15 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.GoogleCredentials;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,11 +63,16 @@ public class GmailConfig {
         return GoogleNetHttpTransport.newTrustedTransport();
     }
 
-    @Bean
-    public Gmail gmail(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-        return new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                .setApplicationName(APPLICATION_NAME)
+/*    @Bean
+    public Gmail gmailBean(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+        GoogleCredentials credentials = GoogleCredentials.getApplicationDefault()
+                .createScoped(GmailScopes.GMAIL_SEND);
+        HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
+        return new Gmail.Builder(new NetHttpTransport(),
+                GsonFactory.getDefaultInstance(),
+                requestInitializer)
+                .setApplicationName("Gmail samples")
                 .build();
-    }
+    }*/
 
 }

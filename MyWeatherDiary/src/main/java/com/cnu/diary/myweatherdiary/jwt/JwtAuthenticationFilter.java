@@ -1,13 +1,14 @@
 package com.cnu.diary.myweatherdiary.jwt;
 
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,18 +25,13 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+@Slf4j
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
-
-    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final String headerKey;
 
     private final Jwt jwt;
-
-    public JwtAuthenticationFilter(String headerKey, Jwt jwt) {
-        this.headerKey = headerKey;
-        this.jwt = jwt;
-    }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
@@ -55,7 +51,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
                     if (isNotEmpty(username) && authorities.size() > 0) {
                         JwtAuthenticationToken authentication =
-                                new JwtAuthenticationToken(new JwtAuthentication(token, username), null,authorities);
+                                new JwtAuthenticationToken(new JwtAuthentication(token, username), null, authorities);
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }

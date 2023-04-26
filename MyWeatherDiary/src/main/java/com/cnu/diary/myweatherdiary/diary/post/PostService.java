@@ -3,6 +3,7 @@ package com.cnu.diary.myweatherdiary.diary.post;
 import com.cnu.diary.myweatherdiary.exception.PostNotFoundException;
 import com.cnu.diary.myweatherdiary.utill.EntityConverter;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +24,12 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
-    @Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
 
-    @Autowired
-    private EntityConverter entityConverter;
+    private final EntityConverter entityConverter;
 
 
     @Transactional

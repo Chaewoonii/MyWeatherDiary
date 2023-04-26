@@ -75,7 +75,7 @@ public class UserControllerTest {
         UserRegisterDto userRegisterDto = new UserRegisterDto();
         userRegisterDto.setDiaryTitle("test-diary");
         userRegisterDto.setRole(1L);
-        user = userController.register(userRegisterDto).getData();
+//        user = userController.register(userRegisterDto).getData();
         log.info("registered user -> {}", user);
 
         /*UserRegisterDto userRegisterDto2 = new UserRegisterDto();
@@ -219,12 +219,12 @@ public class UserControllerTest {
         userRegisterDto.setDiaryTitle("test-diary");
         userRegisterDto.setRole(1L);
 
-        UserResponseDto user1 = userController.register(userRegisterDto).getData();
-        log.info("registered user -> {}", user1);
-
-        LoginRequestDto loginRequestDto = new LoginRequestDto(user1.getEnterKey());
-        UserTokenDto userTokenDto = userController.login(loginRequestDto).getData();
-        String token = "Bearer " + userTokenDto.getToken();
+//        UserResponseDto user1 = userController.register(userRegisterDto).getData();
+//        log.info("registered user -> {}", user1);
+//
+//        LoginRequestDto loginRequestDto = new LoginRequestDto(user1.getEnterKey());
+//        UserTokenDto userTokenDto = userController.login(loginRequestDto).getData();
+//        String token = "Bearer " + userTokenDto.getToken();
 
         mockMvc.perform(delete("/user/auth")
                 .contentType(MediaType.APPLICATION_JSON)

@@ -134,6 +134,12 @@ public class DiaryController {
         return ApiResponse.ok(contentService.getImgBase64FromId(id));
     }
 
+    @GetMapping("/content/all/{contentId}")
+    public ApiResponse<ContentDto> getContent(@PathVariable("contentId") UUID id){
+        ContentDto contentDto = contentService.findById(id);
+        return ApiResponse.ok(contentDto);
+    }
+
     @DeleteMapping("/content/{contentId}")
     public ApiResponse<String> removeContent(@PathVariable("contentId") UUID contentsId,
                                              @AuthenticationPrincipal JwtAuthentication authentication) throws ImgNotFoundException {

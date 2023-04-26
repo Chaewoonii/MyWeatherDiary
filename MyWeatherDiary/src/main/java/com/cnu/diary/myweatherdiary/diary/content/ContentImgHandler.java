@@ -1,9 +1,9 @@
 package com.cnu.diary.myweatherdiary.diary.content;
 
 import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
-import jakarta.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.util.*;
 
@@ -30,9 +30,16 @@ public class ContentImgHandler {
         return contentImgToByteList;
     }
 
+/*    public static byte[] getImgBytesFromString(String base64ImgString){
+        if (base64ImgString.startsWith("data:image/png;base64")){
+            //base64ImgString = base64ImgString.replace("data:image/png;base64,", "");
+        }
+        return base64ImgString.getBytes(); //DatatypeConverter.parseBase64Binary(base64ImgString);
+    }*/
+
     public static byte[] getImgBytesFromString(String base64ImgString){
-        if (base64ImgString.startsWith("data:image/jpeg;base64")){
-            base64ImgString = base64ImgString.replace("data:image/jpeg;base64,", "");
+        if (base64ImgString.startsWith("data:image/png;base64")){
+            base64ImgString = base64ImgString.replace("data:image/png;base64,", "");
         }
         return DatatypeConverter.parseBase64Binary(base64ImgString);
     }

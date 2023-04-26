@@ -61,7 +61,6 @@ public class GmailService {
             System.out.println(message.toPrettyString());
             return message;
         } catch (GoogleJsonResponseException e) {
-            // TODO(developer) - handle error appropriately
             GoogleJsonError error = e.getDetails();
             if (error.getCode() == 403) {
                 System.err.println("Unable to send message: " + e.getDetails());

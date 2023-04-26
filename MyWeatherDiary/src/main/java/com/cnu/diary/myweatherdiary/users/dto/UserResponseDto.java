@@ -8,6 +8,7 @@ import java.util.UUID;
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserResponseDto {
     private String enterKey;
     private String diaryTitle;

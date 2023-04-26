@@ -76,7 +76,7 @@ class PostContentControllerTest {
         userRegisterDto.setDiaryTitle("테스트 일기장 >_<");
         userRegisterDto.setRole(1L);
 
-        user = userController.register(userRegisterDto).getData();
+//        user = userController.register(userRegisterDto).getData();
         LoginRequestDto request = new LoginRequestDto(user.getEnterKey());
         UserTokenDto userTokenDto = userController.login(request).getData();
         token = "Bearer " + userTokenDto.getToken();

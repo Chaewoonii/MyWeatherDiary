@@ -31,10 +31,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
     private final PermissionRepository permissionRepository;
-    private final GroupPermissionRepository groupPermissionRepository;
     private final AuthenticationManager authenticationManager;
     private final EntityConverter entityConverter;
-
     private final PasswordEncoder passwordEncoder;
 
 

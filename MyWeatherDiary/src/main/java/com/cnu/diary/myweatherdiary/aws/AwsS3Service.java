@@ -7,12 +7,14 @@ import com.cnu.diary.myweatherdiary.diary.content.ContentImgHandler;
 import com.cnu.diary.myweatherdiary.exception.ImgNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
@@ -44,9 +46,11 @@ public class AwsS3Service {
      * */
 
     public String uploadFile(String contentType, String imgName, String imgString){
-        byte[] imgBytes = getImgBytesFromString(imgString);
+        byte[] imgBytes = imgString.getBytes();
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(imgBytes.length);
+        log.debug("upload image size {}", imgBytes.length);
+
         objectMetadata.setContentType(contentType); // image/png
         s3.putObject(new PutObjectRequest(this.bucketName, imgName, new ByteArrayInputStream(imgBytes), objectMetadata));
         String url = s3.getUrl(bucketName, imgName).toString();
@@ -60,9 +64,11 @@ public class AwsS3Service {
         try {
             OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFilePath+ "/" + imgName + ".png"));
             byte[] bytesArray = new byte[4096];
+            int bytesTotal = 0;
             int bytesRead = -1;
             while((bytesRead = objectContentInputStream.read(bytesArray)) != -1) {
-                outputStream.write(bytesArray, 0, bytesRead);
+                outputStream.write(bytesArray, bytesTotal, bytesRead);
+                bytesTotal += bytesRead;
             }
 
             outputStream.close();
@@ -79,6 +85,7 @@ public class AwsS3Service {
         Base64.Encoder encoder = Base64.getEncoder();
 
         S3ObjectInputStream s3ObjectInputStream;
+
         try{
             s3ObjectInputStream = s3.getObject(bucketName, imgName).getObjectContent();
         } catch (Exception e){
@@ -86,13 +93,19 @@ public class AwsS3Service {
             return "";
         }
         log.info("getOject Successed: {} / {}",bucketName, imgName);
-        byte[] bytesArray = new byte[4096];
+
+        byte[] bytesArray = new byte[0];
+        byte[] bytesBuffer = new byte[4096];
+        int read;
         try {
-            s3ObjectInputStream.read(bytesArray);
+            while((read=s3ObjectInputStream.read(bytesBuffer)) != -1) {
+                bytesArray = ArrayUtils.addAll(bytesArray, Arrays.copyOfRange(bytesBuffer, 0, read ));
+            }
         } catch (IOException e) {
             throw new ImgNotFoundException("No Such Image: "+imgName);
         }
-        return "data:image/png;base64," + new String(encoder.encode(bytesArray));
+        log.debug("download image size {}", bytesArray.length);
+        return new String(bytesArray);
     }
 
     public void deleteImg(String imgName){
