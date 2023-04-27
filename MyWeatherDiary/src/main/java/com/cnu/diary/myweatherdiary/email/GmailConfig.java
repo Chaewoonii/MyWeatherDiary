@@ -38,8 +38,8 @@ public class GmailConfig {
 
     private static final List<String> SCOPES = Collections.singletonList(GmailScopes.GMAIL_LABELS);
 
-    @Value("${google.gmail.credentials}")
-    private static String CREDENTIALS_FILE_PATH;
+//    @Value("${google.gmail.credentials}")
+    private static String CREDENTIALS_FILE_PATH = "./credentials.json";
 
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException{
         InputStream in = GmailConfig.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
@@ -59,20 +59,13 @@ public class GmailConfig {
     }
 
     @Bean
-    public NetHttpTransport netHttpTransport() throws GeneralSecurityException, IOException {
-        return GoogleNetHttpTransport.newTrustedTransport();
-    }
-
-/*    @Bean
-    public Gmail gmailBean(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-        GoogleCredentials credentials = GoogleCredentials.getApplicationDefault()
-                .createScoped(GmailScopes.GMAIL_SEND);
-        HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
-        return new Gmail.Builder(new NetHttpTransport(),
-                GsonFactory.getDefaultInstance(),
-                requestInitializer)
+    public Gmail gmailBean() throws IOException, GeneralSecurityException {
+        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        return new Gmail.Builder(HTTP_TRANSPORT,
+                JSON_FACTORY,
+                getCredentials(HTTP_TRANSPORT))
                 .setApplicationName("Gmail samples")
                 .build();
-    }*/
+    }
 
 }
