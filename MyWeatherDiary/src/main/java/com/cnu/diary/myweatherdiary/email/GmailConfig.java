@@ -33,13 +33,13 @@ public class GmailConfig {
 
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-    @Value("${google.gmail.token}")
-    private static String TOKENS_DIRECTORY_PATH;
+//    @Value("${google.gmail.token}")
+    private static String TOKENS_DIRECTORY_PATH = "/gcp";
 
-    private static final List<String> SCOPES = Collections.singletonList(GmailScopes.GMAIL_LABELS);
+    private static final List<String> SCOPES = Collections.singletonList(GmailScopes.GMAIL_SEND);
 
 //    @Value("${google.gmail.credentials}")
-    private static String CREDENTIALS_FILE_PATH = "./credentials.json";
+    private static String CREDENTIALS_FILE_PATH = "/gcp/credentials.json";
 
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException{
         InputStream in = GmailConfig.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
@@ -54,17 +54,17 @@ public class GmailConfig {
                 .setAccessType("offline")
                 .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+        Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("MyWeatherDiary");
         return credential;
     }
 
     @Bean
-    public Gmail gmailBean() throws IOException, GeneralSecurityException {
+    public static Gmail gmailBean() throws IOException, GeneralSecurityException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         return new Gmail.Builder(HTTP_TRANSPORT,
                 JSON_FACTORY,
                 getCredentials(HTTP_TRANSPORT))
-                .setApplicationName("Gmail samples")
+                .setApplicationName(APPLICATION_NAME)
                 .build();
     }
 

@@ -15,15 +15,14 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class EmailController {
 
-    private static String FROM_EMAIL = "mwd2023cnu@gmail.com";
-    private static String SUBJECT = "Hello! It's MyWeatherDiary";
-    private static String BODY_TEXT = "Hello";
+
 
     public final GmailService gmailService;
 
     @PostMapping("")
     public ApiResponse<String> sendMail(@RequestBody EmailDto emailDto) throws MessagingException, IOException {
-        GmailService.sendEmail(FROM_EMAIL, emailDto.getReceiver(), SUBJECT, BODY_TEXT);
+//        gmailService.printLabel("MyWeatherDiary");
+        gmailService.sendEnterKey(emailDto.getReceiver(), emailDto.getDiaryTitle(), emailDto.getEnterKey());
         return ApiResponse.ok("send email success: " + emailDto.getReceiver());
     }
 }

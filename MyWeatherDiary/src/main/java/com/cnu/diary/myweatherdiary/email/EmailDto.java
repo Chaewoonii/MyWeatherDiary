@@ -11,4 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class EmailDto {
     private String receiver;
+    private String diaryTitle;
+    private String enterKey;
 }

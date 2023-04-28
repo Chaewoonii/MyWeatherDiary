@@ -19,10 +19,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:8080",
                         "http://localhost:3000",
-                        "http://ip-10-10-2-10.ap-northeast-2.compute.internal:80",
-                        "http://ip-10-10-2-10.ap-northeast-2.compute.internal",
-                        "http://10.10.2.10:80",
-                        "http://myweatherdiary.site"
+                        "http://ip-10-10-2-10.ap-northeast-2.compute.internal:8080",
+                        "http://ip-10-10-2-10.ap-northeast-2.compute.internal:3000"
                 )
                 .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true)
