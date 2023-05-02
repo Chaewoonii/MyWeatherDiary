@@ -22,10 +22,14 @@ public class Content {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "id", unique = true, nullable = false, columnDefinition = "BINARY(16)")
     private UUID id;
+
+    @Column(name = "content_order", nullable = false)
+    private int contentOrder;
+
     @Enumerated(EnumType.STRING)
     private Prefix prefix; //develop/uuid~~~~.jpg
-    @Column(name = "comment", nullable = true)
-    @Lob
+
+    @Column(name = "comment", nullable = true, length = 1000)
     private String comment;
 
     @ManyToOne(fetch = FetchType.EAGER)

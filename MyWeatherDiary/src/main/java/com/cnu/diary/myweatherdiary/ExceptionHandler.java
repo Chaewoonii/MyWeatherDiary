@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.IOException;
 
-//@RestControllerAdvice
+@RestControllerAdvice
 public class ExceptionHandler {
 
     @org.springframework.web.bind.annotation.ExceptionHandler

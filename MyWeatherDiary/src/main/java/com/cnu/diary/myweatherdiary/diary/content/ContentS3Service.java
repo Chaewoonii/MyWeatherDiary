@@ -8,7 +8,6 @@ import com.cnu.diary.myweatherdiary.utill.EntityConverter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -36,6 +35,7 @@ public class ContentS3Service {
             ContentDto dto = iterator.next();
             Content content = Content.builder()
                     .comment(dto.getComment())
+                    .contentOrder(dto.getContentOrder())
                     .prefix(Prefix.develop)
                     .post(post)
                     .build();
@@ -56,15 +56,16 @@ public class ContentS3Service {
     @Transactional
     @PostMapping("contents")
     public List<ContentDto> updateContents(List<ContentDto> contentDtos, Post post) throws IOException{
-        deleteAllImgByPostId(post.getId()); //콘텐츠 다 삭제하고 다시 저장.
+        deleteAllContentsByPostId(post.getId()); //콘텐츠 다 삭제하고 다시 저장.
         List<ContentDto> contentList = new ArrayList<>();
         Iterator<ContentDto> iterator = contentDtos.iterator();
 
         while (iterator.hasNext()){
             ContentDto dto = iterator.next();
             Content content = Content.builder()
-                    .id(dto.getId())
                     .comment(dto.getComment())
+                    .prefix(Prefix.develop)
+                    .contentOrder(dto.getContentOrder())
                     .post(post)
                     .build();
 
@@ -73,7 +74,7 @@ public class ContentS3Service {
             if (dto.getImg().isPresent()){
                 String imgName = content.getId().toString();
                 awsS3Service.uploadFile("img/png", imgName, dto.getImg().orElseThrow(() -> new ImgNotFoundException("이미지 없음")));
-                log.info("save success: {}", imgName);
+                log.info("upload: save success: {}", imgName);
 
                 contentDto.setImg(
                         Optional.of(awsS3Service.getImgBytesFromS3(imgName))
@@ -103,11 +104,11 @@ public class ContentS3Service {
             Content content = iterator.next();
             ContentDto contentDto = entityConverter.convertContentToDtoWithOutImg(content);
             contentDtos.add(contentDto);
-            /*Optional<String> imgData = Optional.ofNullable(awsS3Service.getImgBytesFromS3(content.getId().toString()));
+            Optional<String> imgData = Optional.ofNullable(awsS3Service.getImgBytesFromS3(content.getId().toString()));
             log.info("img data : {}", imgData);
             contentDto.setImg(
                     imgData
-            );*/
+            );
             log.info("founded img name: {}", content.getId().toString());
         }
 
@@ -130,19 +131,20 @@ public class ContentS3Service {
         }
     }
 
-    public void deleteAllImgByPostId(UUID postId){
+/*    public void deleteAllImgByPostId(UUID postId){
         Iterator<Content> contents = contentRepository.findAllByPostId(postId).iterator();
         while (contents.hasNext()){
-            String id = contents.next().getId().toString();
+            UUID id = contents.next().getId();
             try {
-                awsS3Service.deleteImg(id);
+                contentRepository.deleteById(id);
+                awsS3Service.deleteImg(id.toString());
                 log.info("deleted Img -> name: {}", id);
             }catch (ImgNotFoundException e){
                 e.getMessage();
                 log.warn("delete image failed -> name: {}", id);
             }
         }
-    }
+    }*/
 
     public String getImgBase64FromId(UUID contentId){
         return awsS3Service.getImgBytesFromS3(contentId.toString());

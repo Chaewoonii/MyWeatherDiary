@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.mail.MessagingException;
 import java.io.IOException;
 
-@RestController
-@RequestMapping("/email")
+//@RestController
+//@RequestMapping("/email")
 @RequiredArgsConstructor
 public class EmailController {
 

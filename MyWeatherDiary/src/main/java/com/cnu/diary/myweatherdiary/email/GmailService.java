@@ -31,7 +31,7 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Properties;
 
-@Service
+//@Service
 public class GmailService {
 
     private static Gmail gmail = null;

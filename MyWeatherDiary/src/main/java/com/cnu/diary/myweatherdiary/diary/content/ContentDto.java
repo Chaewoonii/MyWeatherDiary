@@ -13,6 +13,7 @@ import java.util.UUID;
 public class ContentDto {
     private UUID id;
     private String comment;
+    private int contentOrder;
     private Optional<String> img; // base64
 
     public ContentDto(String comment, Optional<String> img){

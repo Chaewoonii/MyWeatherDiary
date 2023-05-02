@@ -126,7 +126,7 @@ class PostContentTest {
 
         while (contents.hasNext()){
             ContentDto dto = contents.next();
-            dtoList.add(new ContentDto(dto.getId(), comments.get(i), images.get(i++)));
+            dtoList.add(new ContentDto(dto.getId(), comments.get(i), dto.getContentOrder(),images.get(i++)));
         }
 
         PostContentDto postContentDto = new PostContentDto();

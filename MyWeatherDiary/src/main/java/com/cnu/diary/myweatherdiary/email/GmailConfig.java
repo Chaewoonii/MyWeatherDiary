@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-@Configuration
+//@Configuration
 public class GmailConfig {
 
     @Value("${google.gmail.application-name}")
