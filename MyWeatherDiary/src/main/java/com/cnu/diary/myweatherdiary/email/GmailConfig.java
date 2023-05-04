@@ -6,18 +6,12 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
-import com.google.auth.http.HttpCredentialsAdapter;
-import com.google.auth.oauth2.GoogleCredentials;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
@@ -28,20 +22,22 @@ import java.util.List;
 //@Configuration
 public class GmailConfig {
 
-    @Value("${google.gmail.application-name}")
-    private static String APPLICATION_NAME;
-
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-
-//    @Value("${google.gmail.token}")
-    private static String TOKENS_DIRECTORY_PATH = "/gcp";
 
     private static final List<String> SCOPES = Collections.singletonList(GmailScopes.GMAIL_SEND);
 
-//    @Value("${google.gmail.credentials}")
-    private static String CREDENTIALS_FILE_PATH = "/gcp/credentials.json";
+    private final String CREDENTIALS_FILE_PATH;
+    private final String TOKENS_DIRECTORY_PATH;
+    private final String APPLICATION_NAME;
 
-    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException{
+    public GmailConfig(GmailApiProperties properties){
+        this.CREDENTIALS_FILE_PATH = properties.getCredential();
+        this.TOKENS_DIRECTORY_PATH = properties.getToken();
+        this.APPLICATION_NAME = properties.getName();
+
+    }
+
+    private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException{
         InputStream in = GmailConfig.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null){
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
@@ -58,8 +54,8 @@ public class GmailConfig {
         return credential;
     }
 
-    @Bean
-    public static Gmail gmailBean() throws IOException, GeneralSecurityException {
+//    @Bean
+    public Gmail gmailBean() throws IOException, GeneralSecurityException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         return new Gmail.Builder(HTTP_TRANSPORT,
                 JSON_FACTORY,

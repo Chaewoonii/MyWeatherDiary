@@ -11,14 +11,11 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 
-import static com.cnu.diary.myweatherdiary.diary.content.ContentImgHandler.getImgBytesFromString;
 
 @Slf4j
 @Component
@@ -49,12 +46,12 @@ public class AwsS3Service {
         byte[] imgBytes = imgString.getBytes();
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(imgBytes.length);
-        log.debug("upload image size {}", imgBytes.length);
+//        log.debug("upload image size {}", imgBytes.length);
 
         objectMetadata.setContentType(contentType); // image/png
         s3.putObject(new PutObjectRequest(this.bucketName, imgName, new ByteArrayInputStream(imgBytes), objectMetadata));
         String url = s3.getUrl(bucketName, imgName).toString();
-        log.info(url);
+//        log.info(url);
         return url;
     }
 
@@ -82,17 +79,15 @@ public class AwsS3Service {
     }
 
     public String getImgBytesFromS3(String imgName){
-        Base64.Encoder encoder = Base64.getEncoder();
-
         S3ObjectInputStream s3ObjectInputStream;
 
         try{
             s3ObjectInputStream = s3.getObject(bucketName, imgName).getObjectContent();
+//            log.info("getOject Successed: {} / {}",bucketName, imgName);
         } catch (Exception e){
-            log.info("getOject Failed: {} / {}",bucketName, imgName);
+//            log.info("getOject Failed: {} / {}",bucketName, imgName);
             return "";
         }
-        log.info("getOject Successed: {} / {}",bucketName, imgName);
 
         byte[] bytesArray = new byte[0];
         byte[] bytesBuffer = new byte[4096];
@@ -104,7 +99,7 @@ public class AwsS3Service {
         } catch (IOException e) {
             throw new ImgNotFoundException("No Such Image: "+imgName);
         }
-        log.debug("download image size {}", bytesArray.length);
+//        log.debug("download image size {}", bytesArray.length);
         return new String(bytesArray);
     }
 

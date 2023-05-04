@@ -1,6 +1,8 @@
 package com.cnu.diary.myweatherdiary.configuration;
 
 import com.cnu.diary.myweatherdiary.diary.content.ContentImgHandler;
+import com.cnu.diary.myweatherdiary.email.GmailSmtp;
+import com.cnu.diary.myweatherdiary.email.GmailSmtpProperties;
 import com.cnu.diary.myweatherdiary.utill.EntityConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebMvc
-public class WebMvcConfig implements WebMvcConfigurer {
+public class ApplicationConfigure implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -40,4 +42,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     public ContentImgHandler contentImgHandler(){return new ContentImgHandler(); }
 
+    @Bean
+    public GmailSmtp gmailSmtp(GmailSmtpProperties properties){return new GmailSmtp(properties); }
 }

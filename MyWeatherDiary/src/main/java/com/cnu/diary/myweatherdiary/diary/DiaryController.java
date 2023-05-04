@@ -38,13 +38,6 @@ public class DiaryController {
     @Autowired
     private ContentS3Service contentService;
 
-    /**
-     * 해당 년도의 전체 포스트 불러오기
-     * "2023-04-10" : 4
-     * 유저의 전체 포스트 중에서 postDate 전부 가져오기! -> 날짜 list
-     *  >> 각 날짜별로 contents 가 몇개인지? -> 날짜(key) : 콘텐츠 갯수(value: int) list
-     * */
-
     @PostMapping("")
     public ApiResponse<PostResponseDto> addPost(@RequestBody PostContentDto postContentDto,
                                                 @AuthenticationPrincipal JwtAuthentication authentication) throws IOException {
@@ -60,12 +53,6 @@ public class DiaryController {
         return ApiResponse.ok(postResponseDto);
     }
 
-/*    @GetMapping({"/posts"})
-    public ApiResponse<Iterable<PostResponseDto>> getAllPost(@AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException{
-        List<PostResponseDto> posts = postService.getAllPostsByUsername(authentication.username);
-        return ApiResponse.ok(posts);
-    }*/
-
     @GetMapping("")
     public ApiResponse<List<PostResponseDto>> getTimelinePost(@PageableDefault(size = 5, sort = "postDate", direction = Sort.Direction.DESC) Pageable pageable,
                                                               @AuthenticationPrincipal JwtAuthentication authentication) throws PostNotFoundException{
@@ -73,7 +60,7 @@ public class DiaryController {
         posts.forEach(
                 p -> p.setContents(contentService.findByPostId(p.getId()))
         );
-        log.info("timeline posts -> {}", posts);
+//        log.info("timeline posts -> {}", posts);
         return ApiResponse.ok(posts);
     }
 
@@ -97,11 +84,7 @@ public class DiaryController {
     @GetMapping("/activity/{year}")
     public List<PostResponseDto> getPostsByYear(@PathVariable("year") int year,
                                                              @AuthenticationPrincipal JwtAuthentication authentication){
-        List<PostResponseDto> posts = postService.getPostsByYear(authentication.username, year);
-        posts.forEach(
-                p -> p.setContents(contentService.findByPostId(p.getId()))
-        );
-        return posts;
+        return postService.getPostsByYear(authentication.username, year);
     }
 
     @PutMapping("")
@@ -143,8 +126,8 @@ public class DiaryController {
     @DeleteMapping("/content/{contentId}")
     public ApiResponse<String> removeContent(@PathVariable("contentId") UUID contentsId,
                                              @AuthenticationPrincipal JwtAuthentication authentication) throws ImgNotFoundException {
-        log.info(authentication.username);
+//        log.info(authentication.username);
         contentService.deleteContents(contentsId);
-        return ApiResponse.ok("Delete Success");
+        return ApiResponse.ok("Delete Success: user <" + authentication.username + ">");
     }
 }

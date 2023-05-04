@@ -44,7 +44,7 @@ public class ContentS3Service {
             if (dto.getImg().isPresent()){
                 String imgName = content.getId().toString();
                 awsS3Service.uploadFile("img/png", imgName, dto.getImg().orElseThrow(() -> new ImgNotFoundException("이미지 없음")));
-                log.info("save success: {}", imgName);
+//                log.info("save success: {}", imgName);
             }
 
             contentRequestDtoList.add(entityConverter.convertContentToDtoWithOutImg(saved));
@@ -56,7 +56,7 @@ public class ContentS3Service {
     @Transactional
     @PostMapping("contents")
     public List<ContentDto> updateContents(List<ContentDto> contentDtos, Post post) throws IOException{
-        deleteAllContentsByPostId(post.getId()); //콘텐츠 다 삭제하고 다시 저장.
+        deleteAllContentsByPostId(post.getId());
         List<ContentDto> contentList = new ArrayList<>();
         Iterator<ContentDto> iterator = contentDtos.iterator();
 
@@ -74,7 +74,7 @@ public class ContentS3Service {
             if (dto.getImg().isPresent()){
                 String imgName = content.getId().toString();
                 awsS3Service.uploadFile("img/png", imgName, dto.getImg().orElseThrow(() -> new ImgNotFoundException("이미지 없음")));
-                log.info("upload: save success: {}", imgName);
+//                log.info("upload: save success: {}", imgName);
 
                 contentDto.setImg(
                         Optional.of(awsS3Service.getImgBytesFromS3(imgName))
@@ -105,11 +105,11 @@ public class ContentS3Service {
             ContentDto contentDto = entityConverter.convertContentToDtoWithOutImg(content);
             contentDtos.add(contentDto);
             Optional<String> imgData = Optional.ofNullable(awsS3Service.getImgBytesFromS3(content.getId().toString()));
-            log.info("img data : {}", imgData);
+//            log.info("img data : {}", imgData);
             contentDto.setImg(
                     imgData
             );
-            log.info("founded img name: {}", content.getId().toString());
+//            log.info("founded img name: {}", content.getId().toString());
         }
 
         return contentDtos;

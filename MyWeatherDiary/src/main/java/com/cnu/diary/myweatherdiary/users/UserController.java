@@ -25,14 +25,6 @@ public class UserController {
 
     private final MappedKeyService mappedKeyService;
 
-    /**
-     * username도 난수로 만들어주기!  -> URL로 접근 64 byte String
-     * username과 password 백엔드에서 만들어서 저장
-     * 사용자는 EnterKey만으로 접근 enterkey에 username, password mapping됨.
-     * 로그인 -> post, /user: request: loginDto
-     * 로그아웃 -> get, /user/auth request: authentication
-     * */
-
     @PostMapping("")
     public ApiResponse<UserResponseDto> register(@RequestBody UserRegisterDto userRegisterDto) {
         MappedKey entity = mappedKeyService.register();

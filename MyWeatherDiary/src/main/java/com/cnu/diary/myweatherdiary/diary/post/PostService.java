@@ -43,7 +43,7 @@ public class PostService {
                 .build();
 
         Post saved = postRepository.save(post);
-        log.info("saved -> {}", saved);
+//        log.info("saved -> {}", saved);
         return entityConverter.convertPostToDto(saved);
     }
 

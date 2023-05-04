@@ -58,7 +58,7 @@ public class UserService {
                     .build();
             groupPermission.addPermission(permission);
             groupPermissions.add(groupPermission);
-            log.info(groupPermission.toString());
+//            log.info(groupPermission.toString());
 //            groupPermissionRepository.save(groupPermission);
         }else {
             Long i = 1L;
@@ -93,7 +93,7 @@ public class UserService {
                 userGroup);
 
         User saved = userRepository.save(user);
-        log.info("saved -> {}", saved);
+//        log.info("saved -> {}", saved);
         return entityConverter.getUserDto(saved, mappedKeyEntity.getEnterKey());
     }
 
