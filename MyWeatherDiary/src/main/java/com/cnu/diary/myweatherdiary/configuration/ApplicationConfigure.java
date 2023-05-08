@@ -19,10 +19,8 @@ public class ApplicationConfigure implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
-                        "http://localhost:8080",
                         "http://localhost:3000",
-                        "http://ip-10-10-2-10.ap-northeast-2.compute.internal:8080",
-                        "http://ip-10-10-2-10.ap-northeast-2.compute.internal:3000"
+                        "http://myweatherdiary.site"
                 )
                 .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true)

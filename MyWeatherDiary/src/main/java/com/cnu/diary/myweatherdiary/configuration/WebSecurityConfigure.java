@@ -112,10 +112,7 @@ public class WebSecurityConfigure{
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:8080",
                 "http://localhost:3000",
-                "http://ip-10-10-2-10.ap-northeast-2.compute.internal:80",
-                "http://10.10.2.10:80",
                 "http://myweatherdiary.site"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
@@ -138,7 +135,6 @@ public class WebSecurityConfigure{
                     .disable()
                 .authorizeRequests()
                     .requestMatchers("/diary/**", "/content/**","/auth/**").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().permitAll()
                         .and()
                 /**
                  * formLogin, csrf, headers, http-basic, rememberMe, logout filter 비활성화
@@ -166,7 +162,6 @@ public class WebSecurityConfigure{
                 .securityContext()
                     .securityContextRepository(securityContextRepository())
                     .and()
-//                .addFilterAfter(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 ;
                 return http.build();
     }
