@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,11 +26,12 @@ public class Diary {
     @Id @GeneratedValue
     private Long id;
 
+    private String userId;
+
     private String enterKey;
 
     private String diaryTitle;
 
     @OneToMany(mappedBy = "diary")
     private List<Post> posts = new ArrayList<>();
-
 }

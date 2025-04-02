@@ -5,25 +5,30 @@ import com.myweatherdiary.v2.domain.diary.Diary;
 import com.myweatherdiary.v2.domain.diary.DiaryDto;
 import com.myweatherdiary.v2.repository.DiaryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class DiaryService {
 
     private final DiaryRepository diaryRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // 다이어리 등록
     // ToDo: diaryTitle 유효성 검사(중복 여부)
-    public Long register(String diaryTitle){
+    public String register(String diaryTitle){
+        String enterKey = createKey();
         Diary diary = Diary.builder()
                 .diaryTitle(diaryTitle)
-                .enterKey(createKey())
+                .userId(UUID.randomUUID().toString())
+                .enterKey(passwordEncoder.encode(enterKey))
                 .build();
         Diary saved = diaryRepository.save(diary);
-        return saved.getId();
+        return saved.getUserId() + "_" + enterKey;
     }
 
     public String createKey(){
@@ -35,7 +40,10 @@ public class DiaryService {
         Optional<Diary> diary = diaryRepository.findById(diaryId);
         if (diary.isPresent()){
             Diary found = diary.get();
-            return new DiaryDto(found.getId(), found.getDiaryTitle());
+            return DiaryDto.builder()
+                    .id(found.getId())
+                    .diaryTitle(found.getDiaryTitle())
+                    .build();
         }else {
             throw  new IllegalStateException("다이어리 정보 없음");
         }

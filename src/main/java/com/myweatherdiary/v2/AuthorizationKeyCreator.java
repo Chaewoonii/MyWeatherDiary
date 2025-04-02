@@ -9,7 +9,7 @@ import java.security.SecureRandom;
 @AllArgsConstructor
 public class AuthorizationKeyCreator {
 
-    private String CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefuhijklmnopqrstuvwxyz0123456789!@#$%^&*{}[]+=()-_";
+    private String CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefuhijklmnopqrstuvwxyz0123456789@!#${[(";
     private StringBuffer stringBuffer;
     private SecureRandom secureRandom;
 

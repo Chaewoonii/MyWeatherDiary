@@ -12,9 +12,9 @@ public class DiaryController {
 
     private final DiaryService diaryService;
 
-    @PostMapping("/new")
-    public Long createDiary(@RequestBody DiaryDto request){
-        return diaryService.register(request.getDiaryTitle());
+    @PostMapping("/register")
+    public String createDiary(@RequestBody DiaryDto request){
+        return diaryService.register(request.getDiaryTitle()); // 아이디_비밀번호
     }
 
     @GetMapping("")
