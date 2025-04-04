@@ -19,12 +19,12 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Diary> found = diaryRepository.findFirstByUserId(username);
+        Optional<Diary> found = diaryRepository.findFirstByUsername(username);
 
         if (found.isPresent()){
             Diary diary = found.get();
             return User.builder()
-                    .username(diary.getUserId())
+                    .username(diary.getUsername())
                     .password(diary.getEnterKey())
                     .build();
         } else {

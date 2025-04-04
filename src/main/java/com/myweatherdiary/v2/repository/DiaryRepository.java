@@ -9,5 +9,5 @@ import java.util.Optional;
 @org.springframework.stereotype.Repository
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
-    Optional<Diary> findFirstByUserId(String userId);
+    Optional<Diary> findFirstByUsername(String username);
 }

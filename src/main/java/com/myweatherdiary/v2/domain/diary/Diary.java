@@ -12,9 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 @Builder
 @Getter
@@ -26,7 +24,7 @@ public class Diary {
     @Id @GeneratedValue
     private Long id;
 
-    private String userId;
+    private String username;
 
     private String enterKey;
 

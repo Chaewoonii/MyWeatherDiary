@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Getter
@@ -22,6 +24,11 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "diary_id")
     private Diary diary; // 다이어리
+
+    @OneToMany(mappedBy = "post")
+    private List<Picture> pictures = new ArrayList<>();
+
+    private String writing;
 
     private LocalDateTime postDate;
 

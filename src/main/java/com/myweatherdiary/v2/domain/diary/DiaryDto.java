@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 public class DiaryDto {
     private Long id;
-    private String userId;
+    private String username;
     private String enterKey;
     private String diaryTitle;
 }

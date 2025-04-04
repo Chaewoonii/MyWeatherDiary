@@ -24,11 +24,11 @@ public class DiaryService {
         String enterKey = createKey();
         Diary diary = Diary.builder()
                 .diaryTitle(diaryTitle)
-                .userId(UUID.randomUUID().toString())
+                .username(UUID.randomUUID().toString())
                 .enterKey(passwordEncoder.encode(enterKey))
                 .build();
         Diary saved = diaryRepository.save(diary);
-        return saved.getUserId() + "_" + enterKey;
+        return saved.getUsername() + "_" + enterKey;
     }
 
     public String createKey(){
@@ -36,13 +36,14 @@ public class DiaryService {
     }
 
     // 다이어리 조회
-    public DiaryDto findDiary(Long diaryId){
-        Optional<Diary> diary = diaryRepository.findById(diaryId);
+    public DiaryDto findDiary(String username){
+        Optional<Diary> diary = diaryRepository.findFirstByUsername(username);
         if (diary.isPresent()){
             Diary found = diary.get();
             return DiaryDto.builder()
                     .id(found.getId())
                     .diaryTitle(found.getDiaryTitle())
+                    .username(found.getUsername())
                     .build();
         }else {
             throw  new IllegalStateException("다이어리 정보 없음");
