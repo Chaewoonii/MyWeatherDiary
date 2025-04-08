@@ -1,15 +1,20 @@
-# About Projects
+## About Projects
 ### 나만의 비밀 일기장!
+
 ✅ 개인 정보를 저장하지 않아요 <br>
 ✅ 오로지 비밀번호만으로 접근해요 <br>
 ✅ 당신이 누구인지, 우리는 몰라요!
----
+
+<br>
+
 ## Used Skills and Tolls
+
 ![Static Badge](https://img.shields.io/badge/Git-F05032?style=flat&logo=Git&logoColor=white) ![Static Badge](https://img.shields.io/badge/Python-3776AB?style=flat&logo=Python&logoColor=white) ![Static Badge](https://img.shields.io/badge/java-004088?style=flat&logo=java&logoColor=white) ![Static Badge](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)
 ![Static Badge](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=springboot&logoColor=white) ![Static Badge](https://img.shields.io/badge/SpringSecurity-6DB33F?style=flat&logo=springsecurity&logoColor=white) ![Static Badge](https://img.shields.io/badge/jwt-004088?style=flat&logo=jwt&logoColor=white) ![Static Badge](https://img.shields.io/badge/Redis-FF4438?style=flat&logo=Redis&logoColor=white)
 ![Static Badge](https://img.shields.io/badge/Amazon%20EC2-FF9900?style=flat&logo=Amazon%20EC2&logoColor=white) ![Static Badge](https://img.shields.io/badge/Amazon%20S3-FF9900?style=flat&logo=Amazon%20S3&logoColor=white) ![Static Badge](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
 
----
+<br>
+
 ## Tasks
 > ❗기존의 프로젝트를 **리팩토링** 중 입니다! 
 
@@ -28,9 +33,10 @@
 7. ![Static Badge](https://img.shields.io/badge/%EC%8B%9C%EC%9E%91%EC%A0%84-545454)
    CI/CD: 미정
 
----
 
-### About Refactoring
+<br>
+
+## About Refactoring
 아래의 문제를 해결하기 위해 리팩토링 중 입니다!
 > 🚨 로그인 방식
 
