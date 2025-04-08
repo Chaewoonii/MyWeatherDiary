@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.rmi.NoSuchObjectException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,6 +48,37 @@ public class DiaryService {
                     .build();
         }else {
             throw  new IllegalStateException("다이어리 정보 없음");
+        }
+    }
+
+    public void remove(String username) throws NoSuchObjectException {
+        try {
+            Diary diary = diaryRepository.findFirstByUsername(username).get();
+            diaryRepository.delete(diary);
+        } catch (Exception e) {
+            throw new NoSuchObjectException("다이어리를 찾을 수 없습니다.");
+        }
+    }
+
+    public DiaryDto update(String username, DiaryDto request) {
+        try{
+            Diary diary = diaryRepository.findFirstByUsername(username).get();
+            Diary saved = diaryRepository.save(
+                    Diary.builder()
+                            .id(diary.getId())
+                            .diaryTitle(request.getDiaryTitle())
+                            .enterKey(diary.getEnterKey())
+                            .username(username)
+                            .posts(diary.getPosts())
+                            .build()
+            );
+
+            return DiaryDto.builder()
+                    .username(saved.getUsername())
+                    .diaryTitle(saved.getDiaryTitle())
+                    .build();
+        } catch (Exception e) {
+            throw new IllegalStateException("수정에 실패하였습니다.");
         }
     }
 }

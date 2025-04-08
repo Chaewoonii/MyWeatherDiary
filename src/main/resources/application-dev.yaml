@@ -3,10 +3,10 @@ spring:
     active: dev
 
   datasource:
-    url: jdbc:h2:tcp://localhost/~/v2/mwd/test;
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://localhost:3306/diarydb
+    username: root
+    password: mwdsqlnet4850!
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -14,6 +14,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    show-sql: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 logging:
   level:

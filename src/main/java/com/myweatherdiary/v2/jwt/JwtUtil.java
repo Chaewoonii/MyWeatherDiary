@@ -1,15 +1,9 @@
 package com.myweatherdiary.v2.jwt;
 
-import com.myweatherdiary.v2.configuration.SecurityConfig;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 
 @Component //component 등록, 컴포넌트 스캔 대상이 됨. 빈으로 등록
@@ -57,6 +51,16 @@ public class JwtUtil{
         }catch (JwtException | IllegalArgumentException e){
             return false;
         }
+    }
+
+    public long getExpirationTime(String token){
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration()
+                .getTime();
     }
 
 }

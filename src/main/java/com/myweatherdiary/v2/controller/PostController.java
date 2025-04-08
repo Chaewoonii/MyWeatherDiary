@@ -4,15 +4,12 @@ import com.myweatherdiary.v2.domain.post.PostDto;
 import com.myweatherdiary.v2.jwt.JwtUtil;
 import com.myweatherdiary.v2.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.rmi.NoSuchObjectException;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +21,8 @@ public class PostController {
 
     @PostMapping("/new")
     public Long addPost(@RequestBody PostDto postDto,
-                          @AuthenticationPrincipal UserDetails user) throws NoSuchObjectException {
-        return postService.post(user.getUsername(), postDto);
+                        @AuthenticationPrincipal UserDetails token) throws NoSuchObjectException {
+        return postService.post(token.getUsername(), postDto);
     }
 
     @GetMapping("")
@@ -33,5 +30,15 @@ public class PostController {
         return postService.getOnePost(postId);
     }
 
+    @PutMapping("")
+    public PostDto updatePost(@RequestBody PostDto postDto) throws NoSuchObjectException {
+        return postService.update(postDto);
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<?> deletePost(@RequestParam("id") Long postId) throws NoSuchObjectException{
+        postService.delete(postId);
+        return ResponseEntity.ok("게시글이 삭제되었습니다.");
+    }
 
 }
