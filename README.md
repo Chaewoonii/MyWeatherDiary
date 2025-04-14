@@ -31,7 +31,7 @@
 6. ![Static Badge](https://img.shields.io/badge/%EC%8B%9C%EC%9E%91%EC%A0%84-545454)
    배포: EC2, Docker
 7. ![Static Badge](https://img.shields.io/badge/%EC%8B%9C%EC%9E%91%EC%A0%84-545454)
-   CI/CD: 미정
+   CI/CD: GitActions
 
 
 <br>
