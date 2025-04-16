@@ -30,7 +30,7 @@
    메일 전송: Gmail SMTP
 6. ![Static Badge](https://img.shields.io/badge/%EC%8B%9C%EC%9E%91%EC%A0%84-545454)
    배포: EC2, Docker
-7. ![Static Badge](https://img.shields.io/badge/%EC%8B%9C%EC%9E%91%EC%A0%84-545454)
+7. ![Static Badge](https://img.shields.io/badge/%EA%B0%9C%EB%B0%9C%EC%A4%91-0717a8)
    CI/CD: GitActions
 
 
