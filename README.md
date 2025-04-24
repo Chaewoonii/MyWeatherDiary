@@ -28,7 +28,7 @@
    이미지 처리: S3
 5. ![Static Badge](https://img.shields.io/badge/%EC%8B%9C%EC%9E%91%EC%A0%84-545454)
    메일 전송: Gmail SMTP
-6. ![Static Badge](https://img.shields.io/badge/%EC%8B%9C%EC%9E%91%EC%A0%84-545454)
+6. ![Static Badge](https://img.shields.io/badge/%EA%B0%9C%EB%B0%9C%EC%A4%91-0717a8)
    배포: EC2, Docker
 7. ![Static Badge](https://img.shields.io/badge/%EA%B0%9C%EB%B0%9C%EC%A4%91-0717a8)
    CI/CD: GitActions
@@ -37,7 +37,7 @@
 <br>
 
 ## About Refactoring
-아래의 문제를 해결하기 위해 리팩토링 중 입니다!
+아래의 문제를 해결하기 위해 리팩토링 중 입니다! ✅ **완료!** 
 > 🚨 로그인 방식
 
 
