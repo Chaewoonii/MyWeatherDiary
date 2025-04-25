@@ -1,5 +1,5 @@
 # Step 1: 빌드 환경 (빌드를 위한 Gradle 환경)
-FROM gradle:7.4-jdk21 as build
+FROM gradle:7.4-jdk11 as build
 
 # 작업 디렉터리 생성
 WORKDIR /app
@@ -13,7 +13,7 @@ COPY settings.gradle .
 RUN ./gradlew build --no-daemon
 
 # Step 2: 실제 실행 환경 (최종 실행을 위한 JDK 환경)
-FROM openjdk:21-jdk-slim as runtime
+FROM openjdk:11-jre-slim
 
 WORKDIR /app
 
