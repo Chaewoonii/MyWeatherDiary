@@ -56,7 +56,8 @@ jobs:
           ECR_REPOSITORY: mwd-server
           IMAGE_TAG: latest
         run: |
-          docker build -t $ECR_REGISTRY:$IMAGE_TAG .
+          docker-compose build mwd-server
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: SSH로 EC2 접속 및 배포
