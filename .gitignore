@@ -38,5 +38,4 @@ out/
 
 application-deploy.yml
 application-dev.yml
-docker-compose.yml
 
