@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # 1. redis를 EC2에 다운받고 컨테이너를 띄운다.
+    # 2. 깃 액션으로 빌드한 후 mwd 컨테이너 이미지를 올린다,
+    # 3. EC2에서 이미지를 당겨온 후 실행한다.
 
     steps:
       - name: Github Repository에 올린 파일들을 불러오기
@@ -19,14 +22,18 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Install Docker Compose
-        run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-          docker-compose --version
-
       - name: application.yml 파일 만들기
         run: echo "${{  secrets.APPLICATION_PROPERTIES  }}" > ./src/main/resources/application.yml
+
+      - name: 테스트를 위한 redis 띄우기
+        run: |
+          docker pull redis
+          docker run --name test-redis -d redis
+
+      - name: 테스트 및 빌드하기
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -x test
 
       - name: AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
@@ -39,19 +46,13 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: 테스트 및 빌드하기
-        run: |
-          chmod +x ./gradlew
-          ./gradlew build -x test
+      - name: WAS - Docker 이미지 생성
+        run: docker build -t mwd-server .
 
-      - name: ECR에 이미지 푸시
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: mwd-server
-          IMAGE_TAG: latest
+      - name: 이미지에 태그 붙이고 푸시
         run: |
-          docker-compose build
-          docker-compose push
+          docker tag mwd-server ${{ steps.login-ecr.outputs.registry  }}/mwd-server:latest
+          doekr push ${{ steps.login-ecr.outputs.registry  }}/mwd-server:latest
 
       - name: SSH로 EC2 접속 및 배포
         uses: appleboy/ssh-action@v1.0.0
@@ -62,4 +63,6 @@ jobs:
           script_stop: true
           script: |
             docker pull ${{ steps.login-ecr.outputs.registry }}/mwd-server:latest
-            docker run ${{ steps.login-ecr.outputs.registry }}/mwd-server:latest
+            docker-compose down
+            docker-compose up -d
+
