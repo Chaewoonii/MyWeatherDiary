@@ -61,6 +61,6 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script_stop: true
           script: |
-            docker pull ${{ steps.login-ecr.outputs.registry }}/your-ecr-repository-name:latest
+            docker pull ${{ steps.login-ecr.outputs.registry }}/mwd-server:latest
             docker-compose down || true
             docker-compose up -d
