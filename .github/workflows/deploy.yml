@@ -33,7 +33,7 @@ jobs:
       - name: 테스트 및 빌드하기
         run: |
           chmod +x ./gradlew
-          ./gradlew build -x test
+          ./gradlew clean build
 
       - name: AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
@@ -52,7 +52,7 @@ jobs:
       - name: 이미지에 태그 붙이고 푸시
         run: |
           docker tag mwd-server ${{ steps.login-ecr.outputs.registry  }}/mwd-server:latest
-          doekr push ${{ steps.login-ecr.outputs.registry  }}/mwd-server:latest
+          docker push ${{ steps.login-ecr.outputs.registry  }}/mwd-server:latest
 
       - name: SSH로 EC2 접속 및 배포
         uses: appleboy/ssh-action@v1.0.0
