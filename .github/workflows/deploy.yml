@@ -28,17 +28,6 @@ jobs:
       - name: application.yml 파일 만들기
         run: echo "${{  secrets.APPLICATION_PROPERTIES  }}" > ./src/main/resources/application.yml
 
-      - name: Set up Docker Compose
-        run: docker-compose -f docker-compose.yml up -d
-
-      - name: Wait for Redis to be ready
-        run: |
-          for i in {1..10}; do
-            nc -z localhost 6379 && echo "Redis is up" && break
-            echo "Waiting for Redis..."
-            sleep 2
-          done
-
       - name: AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -49,6 +38,17 @@ jobs:
       - name: ECR에 로그인
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Compose
+        run: docker-compose -f docker-compose.yml up -d
+
+      - name: Wait for Redis to be ready
+        run: |
+          for i in {1..10}; do
+            nc -z localhost 6379 && echo "Redis is up" && break
+            echo "Waiting for Redis..."
+            sleep 2
+          done
 
       - name: ECR에 이미지 생성 및 푸시
         env:
