@@ -51,8 +51,7 @@ jobs:
           IMAGE_TAG: latest
         run: |
           docker-compose build
-          docker tag mwd-server $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker-compose push
 
       - name: SSH로 EC2 접속 및 배포
         uses: appleboy/ssh-action@v1.0.0
