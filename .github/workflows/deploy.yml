@@ -39,18 +39,18 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Set up Docker Compose
-        run: docker-compose -f docker-compose.yml up -d
-
-      - name: ECR에 이미지 생성
-        run: docker-compose build
+      - name: 테스트 및 빌드하기
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -x test
 
       - name: ECR에 이미지 푸시
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: mwd-server
           IMAGE_TAG: latest
-        run: | 
+        run: |
+          docker-compose build
           docker tag mwd-server $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
