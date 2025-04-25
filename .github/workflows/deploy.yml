@@ -9,6 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     # 1. redis를 EC2에 다운받고 컨테이너를 띄운다.
+    #   1-1. 네트워크를 생성하고 연결한다.
     # 2. 깃 액션으로 빌드한 후 mwd 컨테이너 이미지를 올린다,
     # 3. EC2에서 이미지를 당겨온 후 실행한다.
 
@@ -25,15 +26,15 @@ jobs:
       - name: application.yml 파일 만들기
         run: echo "${{  secrets.APPLICATION_PROPERTIES  }}" > ./src/main/resources/application.yml
 
-      - name: 테스트를 위한 docker network 생성
-        run: docker network create test-network
+#      - name: 테스트를 위한 docker network 생성
+#        run: docker network create test-network
+#
+#      - name: 테스트를 위한 redis 띄우기
+#        run: |
+#          docker pull redis
+#          docker run -d --network test-network --name test-redis -p 6379:6379 redis
 
-      - name: 테스트를 위한 redis 띄우기
-        run: |
-          docker pull redis
-          docker run -d --network test-network --name test-redis -p 6379:6379 redis
-
-      - name: 테스트 및 빌드하기
+      - name: 빌드하기
         run: |
           chmod +x ./gradlew
           ./gradlew build -x test
@@ -66,6 +67,6 @@ jobs:
           script_stop: true
           script: |
             docker pull ${{ steps.login-ecr.outputs.registry }}/mwd-server:latest
-            docker-compose down
-            docker-compose up -d
+            docker run -d --network mwd-backend-network --name mwd-server -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/mwd-server:latest
+            
 
