@@ -22,10 +22,16 @@ jobs:
       - name: application.yml 파일 만들기
         run: echo "${{  secrets.APPLICATION_PROPERTIES  }}" > ./src/main/resources/application.yml
 
-      - name: 테스트 및 빌드하기
+      - name: Set up Docker Compose
+        run: docker-compose -f docker-compose.yml up -d
+
+      - name: Wait for Redis to be ready
         run: |
-          chmod +x ./gradlew
-          ./gradlew clean build
+          for i in {1..10}; do
+            nc -z localhost 6379 && echo "Redis is up" && break
+            echo "Waiting for Redis..."
+            sleep 2
+          done
 
       - name: AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
