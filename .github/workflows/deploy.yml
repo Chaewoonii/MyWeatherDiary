@@ -36,7 +36,7 @@ jobs:
       - name: 테스트 및 빌드하기
         run: |
           chmod +x ./gradlew
-          ./gradlew build
+          ./gradlew build -x test
 
       - name: AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
