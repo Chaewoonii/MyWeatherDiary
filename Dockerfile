@@ -10,6 +10,7 @@ COPY gradle ./gradle
 COPY build.gradle .
 COPY settings.gradle .
 
+RUN chmod +x gradlew
 RUN ./gradlew build --no-daemon
 
 # Step 2: 실제 실행 환경 (최종 실행을 위한 JDK 환경)
