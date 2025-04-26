@@ -1,3 +1,6 @@
-FROM openjdk:21-jdk
+FROM eclipse-temurin:21-jdk
+
+WORKDIR /app
 COPY ./build/libs/*SNAPSHOT.jar mwd-server.jar
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=deploy", "mwd-server.jar"]
+
+ENTRYPOINT ["java", "-jar", "mwd-server.jar"]

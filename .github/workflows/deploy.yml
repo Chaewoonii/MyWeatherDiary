@@ -8,10 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # 1. redis를 EC2에 다운받고 컨테이너를 띄운다.
-    #   1-1. 네트워크를 생성하고 연결한다.
-    # 2. 깃 액션으로 빌드한 후 mwd 컨테이너 이미지를 올린다,
-    # 3. EC2에서 이미지를 당겨온 후 실행한다.
 
     steps:
       - name: Github Repository에 올린 파일들을 불러오기
@@ -25,14 +21,6 @@ jobs:
 
       - name: application.yml 파일 만들기
         run: echo "${{  secrets.APPLICATION_PROPERTIES  }}" > ./src/main/resources/application.yml
-
-#      - name: 테스트를 위한 docker network 생성
-#        run: docker network create test-network
-#
-#      - name: 테스트를 위한 redis 띄우기
-#        run: |
-#          docker pull redis
-#          docker run -d --network test-network --name test-redis -p 6379:6379 redis
 
       - name: 빌드하기
         run: |
@@ -54,9 +42,13 @@ jobs:
         run: docker build -t mwd-server .
 
       - name: 이미지에 태그 붙이고 푸시
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry  }}
+          ECR_REPOSITORY: mwd-server
+          IMAGE_TAG: latest
         run: |
-          docker tag mwd-server ${{ steps.login-ecr.outputs.registry  }}/mwd-server:latest
-          docker push ${{ steps.login-ecr.outputs.registry  }}/mwd-server:latest
+          docker tag mwd-server ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+          docker push  ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
 
       - name: SSH로 EC2 접속 및 배포
         uses: appleboy/ssh-action@v1.0.0
@@ -66,9 +58,9 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script_stop: true
           script: |
-            docker stop mwd-server || true
-            docker rm mwd-server || true
+            docker-compose down || true
             docker pull ${{ steps.login-ecr.outputs.registry }}/mwd-server:latest
-            docker run -d --network mwd-backend-network --name mwd-server -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/mwd-server:latest
+            echo "${{ secrets.DOCKER_COMPOSE }}" > ./docker-compose.yml
+            docker-compose up --build -d
             
 
