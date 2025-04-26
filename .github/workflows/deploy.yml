@@ -59,7 +59,7 @@ jobs:
           script_stop: true
           script: |
             docker-compose down || true
-            rm docker-compose.yml
+            rm docker-compose.yml || true
             docker pull ${{ steps.login-ecr.outputs.registry }}/mwd-server:latest
             echo "${{ secrets.DOCKER_COMPOSE }}" > ./docker-compose.yml
             docker-compose up --build -d
