@@ -50,8 +50,6 @@ jobs:
 
       - name: SSH로 EC2 접속 및 배포
         uses: appleboy/ssh-action@v1.0.0
-        env:
-          ECR_REGISTRY: ${{  steps.login-ecr.outputs.registry  }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -60,8 +58,8 @@ jobs:
           script: |
             docker-compose down || true
             rm webapp.env || true
-            echo "ECR_REGISTRY=${ECR_REGISTRY}" > ./webapp.env
-            docker pull ${ECR_REGISTRY}/mwd-server:latest
-            docker-compose up -e ECR_REGISTRY=${ECR_REGISTRY} --build -d
+            echo "ECR_REGISTRY= ${{  steps.login-ecr.outputs.registry  }}" > ./webapp.env
+            docker pull  ${{  steps.login-ecr.outputs.registry  }}/mwd-server:latest
+            docker-compose up --build -d
             
 
