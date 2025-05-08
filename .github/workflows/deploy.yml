@@ -47,7 +47,7 @@ jobs:
           ECR_REPOSITORY: mwd-server
           IMAGE_TAG: latest
         run: |
-          docker tag mwd-server ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+          docker tag mwd-server ${ECR_REGISTRY}/mwd-server:latest
           docker push  ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
 
       - name: SSH로 EC2 접속 및 배포
@@ -59,7 +59,9 @@ jobs:
           script_stop: true
           script: |
             docker-compose down || true
-            docker pull ${{ steps.login-ecr.outputs.registry }}/mwd-server:latest
+            rm .env || true
+            echo "ECR_REGISTRY=${ECR_REGISTRY}\nECR_REPOSITORY=${ECR_REPOSITORY}\nIMAGE_TAG=${IMAGE_TAG}" > .env
+            docker pull ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
             docker-compose up --build -d
             
 
