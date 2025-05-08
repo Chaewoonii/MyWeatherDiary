@@ -44,11 +44,9 @@ jobs:
       - name: 이미지에 태그 붙이고 푸시
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry  }}
-          ECR_REPOSITORY: mwd-server
-          IMAGE_TAG: latest
         run: |
           docker tag mwd-server ${ECR_REGISTRY}/mwd-server:latest
-          docker push  ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+          docker push  ${ECR_REGISTRY}/mwd-server:latest
 
       - name: SSH로 EC2 접속 및 배포
         uses: appleboy/ssh-action@v1.0.0
@@ -59,9 +57,9 @@ jobs:
           script_stop: true
           script: |
             docker-compose down || true
-            rm .env || true
-            echo "ECR_REGISTRY=${ECR_REGISTRY}\nECR_REPOSITORY=${ECR_REPOSITORY}\nIMAGE_TAG=${IMAGE_TAG}" > .env
-            docker pull ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
-            docker-compose up --build -d
+            rm webapp.env || true
+            echo "ECR_REGISTRY=${ECR_REGISTRY}" > ./webapp.env
+            docker pull ${ECR_REGISTRY}/mwd-server:latest
+            docker-compose up -e ECR_REGISTRY=${ECR_REGISTRY} --build -d
             
 
