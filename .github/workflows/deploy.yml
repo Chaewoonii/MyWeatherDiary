@@ -58,7 +58,7 @@ jobs:
           script: |
             docker-compose down || true
             rm webapp.env || true
-            echo "ECR_REGISTRY= ${{  steps.login-ecr.outputs.registry  }}" > ./webapp.env
+            echo "ECR_REGISTRY=${{  steps.login-ecr.outputs.registry  }}" > .env
             docker pull  ${{  steps.login-ecr.outputs.registry  }}/mwd-server:latest
             docker-compose up --build -d
             
