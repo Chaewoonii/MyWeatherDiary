@@ -50,6 +50,8 @@ jobs:
 
       - name: SSH로 EC2 접속 및 배포
         uses: appleboy/ssh-action@v1.0.0
+        env:
+          ECR_REGISTRY: ${{  steps.login-ecr.outputs.registry  }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
